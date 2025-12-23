@@ -88,4 +88,40 @@ public class DispositifServiceImpl implements DispositifService {
                 .map(dispositifMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DispositifResponseDTO> getDispositifsByStatut(String statut) {
+        return dispositifRepository.findByStatut(statut).stream()
+                .map(dispositifMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public DispositifResponseDTO updateDispositifStatut(int id, String statut) {
+        Dispositif dispositif = dispositifRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dispositif", "id", id));
+
+        dispositif.setStatut(statut);
+        Dispositif saved = dispositifRepository.save(dispositif);
+        return dispositifMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public com.polytechnique.backend.dto.response.DispositifStatsDTO getDispositifStats(int id) {
+        Dispositif dispositif = dispositifRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dispositif", "id", id));
+
+        long count = dispositifRepository.countParametresByDispositifId(id);
+
+        return com.polytechnique.backend.dto.response.DispositifStatsDTO.builder()
+                .nombreParametres(count)
+                // Assuming updatedAt reflects last activity, or fetch latest parameter date
+                .derniereActivite(
+                        dispositif.getUpdatedAt() != null ? dispositif.getUpdatedAt() : dispositif.getCreatedAt())
+                .statutActuel(dispositif.getStatut())
+                .emplacement(dispositif.getLocalisation())
+                .build();
+    }
 }

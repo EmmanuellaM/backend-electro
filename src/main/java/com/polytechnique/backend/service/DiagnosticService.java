@@ -44,4 +44,8 @@ public interface DiagnosticService {
      * Récupérer les diagnostics basés sur des paramètres spécifiques
      */
     List<DiagnosticResponseDTO> getDiagnosticsByParametres(int parametresId);
+
+    void sendSmsDiagnostic(com.polytechnique.backend.dto.request.SmsDiagnosticRequest smsRequest);
+
+    List<DiagnosticResponseDTO> getRecentDiagnostics();
 }

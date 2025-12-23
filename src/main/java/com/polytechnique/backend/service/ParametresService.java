@@ -44,4 +44,12 @@ public interface ParametresService {
      * Récupérer les paramètres par dispositif
      */
     List<ParametresResponseDTO> getParametresByDispositif(int dispositifId);
+
+    List<ParametresResponseDTO> getParametresByStatut(String statut);
+
+    List<ParametresResponseDTO> getHistoriquePatient(String identifiantPatient);
+
+    ParametresResponseDTO getDernieresParametresPatient(String identifiantPatient);
+
+    ParametresResponseDTO updateParametresStatut(int id, String statut);
 }

@@ -65,6 +65,13 @@ public class Medecin {
     private String statut = "actif";
 
     /**
+     * Rôle du médecin: "admin" ou "medecin"
+     * Valeur par défaut: "medecin"
+     */
+    @Column(name = "role", length = 20)
+    private String role = "medecin";
+
+    /**
      * Date d'inscription automatique
      */
     @CreationTimestamp
@@ -114,4 +121,110 @@ public class Medecin {
         diagnostics.remove(diagnostic);
         diagnostic.setMedecin(null);
     }
+
+    // Manual Getters and Setters to bypass Lombok issues
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMotDePasse() {
+        return motDePasse;
+    }
+
+    public void setMotDePasse(String motDePasse) {
+        this.motDePasse = motDePasse;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public String getStatut() {
+        return statut;
+    }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public java.time.LocalDateTime getDateInscription() {
+        return dateInscription;
+    }
+
+    public void setDateInscription(java.time.LocalDateTime dateInscription) {
+        this.dateInscription = dateInscription;
+    }
+
+    public java.time.LocalDateTime getDerniereConnexion() {
+        return derniereConnexion;
+    }
+
+    public void setDerniereConnexion(java.time.LocalDateTime derniereConnexion) {
+        this.derniereConnexion = derniereConnexion;
+    }
+
+    public java.time.LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(java.time.LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public java.time.LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(java.time.LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public List<Diagnostic> getDiagnostics() {
+        return diagnostics;
+    }
+
+    public void setDiagnostics(List<Diagnostic> diagnostics) {
+        this.diagnostics = diagnostics;
+    }
+
 }

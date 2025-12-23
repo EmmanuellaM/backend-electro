@@ -39,4 +39,10 @@ public interface DispositifService {
      * Rechercher des dispositifs par nom de centre
      */
     List<DispositifResponseDTO> searchByNomCentre(String nomCentre);
+
+    List<DispositifResponseDTO> getDispositifsByStatut(String statut);
+
+    DispositifResponseDTO updateDispositifStatut(int id, String statut);
+
+    com.polytechnique.backend.dto.response.DispositifStatsDTO getDispositifStats(int id);
 }

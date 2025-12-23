@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
  * Entité représentant un diagnostic médical établi par un médecin
  * Correspond à la table "diagnostic" dans PostgreSQL
  * 
- * IMPORTANT: Un seul diagnostic par paramètre (contrainte UNIQUE sur ID_Parametres)
+ * IMPORTANT: Un seul diagnostic par paramètre (contrainte UNIQUE sur
+ * ID_Parametres)
  */
 @Entity
 @Table(name = "diagnostic")

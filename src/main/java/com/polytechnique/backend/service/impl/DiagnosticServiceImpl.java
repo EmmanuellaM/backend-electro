@@ -139,4 +139,38 @@ public class DiagnosticServiceImpl implements DiagnosticService {
                 .map(diagnosticMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void sendSmsDiagnostic(com.polytechnique.backend.dto.request.SmsDiagnosticRequest smsRequest) {
+        // This is a mock implementation
+        // Validate presence of Medecin and Parametres
+        if (!medecinRepository.existsById(smsRequest.getMedecinId())) {
+            throw new ResourceNotFoundException("Médecin", "id", smsRequest.getMedecinId());
+        }
+        if (!parametresRepository.existsById(smsRequest.getParametresId())) {
+            throw new ResourceNotFoundException("Paramètres", "id", smsRequest.getParametresId());
+        }
+
+        // Simulate creating a diagnostic entry for the log if needed, or just log to
+        // console
+        System.out.println("SIMULATION SMS ENVOYÉ: ");
+        System.out.println("À: Patient lié aux paramètres " + smsRequest.getParametresId());
+        System.out.println("Message: " + smsRequest.getMessage());
+        System.out.println("Niveau Urgence: " + smsRequest.getNiveauUrgence());
+
+        // Optionally create a Diagnostic record here if the requirement implies storing
+        // it
+        // But the endpoint allows just sending notification.
+        // If we need to store it as a special Diagnostic:
+        // Diagnostic d = new Diagnostic(); ... save(d);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DiagnosticResponseDTO> getRecentDiagnostics() {
+        return diagnosticRepository.findLatestDiagnostics().stream()
+                .limit(10) // Limit to 10 most recent
+                .map(diagnosticMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 }

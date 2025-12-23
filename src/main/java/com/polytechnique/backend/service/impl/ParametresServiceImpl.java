@@ -118,4 +118,39 @@ public class ParametresServiceImpl implements ParametresService {
                 .map(parametresMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ParametresResponseDTO> getParametresByStatut(String statut) {
+        return parametresRepository.findByStatut(statut).stream()
+                .map(parametresMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ParametresResponseDTO> getHistoriquePatient(String identifiantPatient) {
+        return parametresRepository.findByIdentifiantPatientOrderByIdDesc(identifiantPatient).stream()
+                .map(parametresMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ParametresResponseDTO getDernieresParametresPatient(String identifiantPatient) {
+        return parametresRepository.findByIdentifiantPatientOrderByIdDesc(identifiantPatient).stream()
+                .findFirst()
+                .map(parametresMapper::toResponseDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Paramètres", "patient", identifiantPatient));
+    }
+
+    @Override
+    public ParametresResponseDTO updateParametresStatut(int id, String statut) {
+        Parametres parametres = parametresRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Paramètres", "id", id));
+
+        parametres.setStatut(statut);
+        Parametres saved = parametresRepository.save(parametres);
+        return parametresMapper.toResponseDTO(saved);
+    }
 }

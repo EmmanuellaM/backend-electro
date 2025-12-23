@@ -38,5 +38,16 @@ public interface MedecinService {
     /**
      * Récupérer un médecin par email
      */
+    /**
+     * Récupérer un médecin par email
+     */
     MedecinResponseDTO getMedecinByEmail(String email);
+
+    List<MedecinResponseDTO> getMedecinsByStatut(String statut);
+
+    MedecinResponseDTO updateMedecinStatut(int id, String statut);
+
+    List<MedecinResponseDTO> searchMedecins(String query);
+
+    com.polytechnique.backend.dto.response.MedecinStatsDTO getMedecinStats(int id);
 }

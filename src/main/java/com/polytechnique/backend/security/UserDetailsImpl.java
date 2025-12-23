@@ -1,0 +1,117 @@
+package com.polytechnique.backend.security;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.polytechnique.backend.entity.Medecin;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+public class UserDetailsImpl implements UserDetails {
+    private static final long serialVersionUID = 1L;
+
+    private Integer id;
+    private String email;
+    private String nom;
+    private String prenom;
+    private String role;
+
+    @JsonIgnore
+    private String password;
+
+    private Collection<? extends GrantedAuthority> authorities;
+
+    public UserDetailsImpl(Integer id, String email, String password, String nom, String prenom, String role,
+            Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.role = role;
+        this.authorities = authorities;
+    }
+
+    public static UserDetailsImpl build(Medecin medecin) {
+        List<GrantedAuthority> authorities = Collections.singletonList(
+                new SimpleGrantedAuthority("ROLE_" + medecin.getRole().toUpperCase()));
+
+        return new UserDetailsImpl(
+                medecin.getId(),
+                medecin.getEmail(),
+                medecin.getMotDePasse(),
+                medecin.getNom(),
+                medecin.getPrenom(),
+                medecin.getRole(),
+                authorities);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        UserDetailsImpl user = (UserDetailsImpl) o;
+        return Objects.equals(id, user.id);
+    }
+}
