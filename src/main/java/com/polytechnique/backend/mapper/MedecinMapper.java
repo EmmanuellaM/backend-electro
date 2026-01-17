@@ -24,7 +24,16 @@ public class MedecinMapper {
         medecin.setPrenom(dto.getPrenom());
         medecin.setEmail(dto.getEmail());
         medecin.setTel(dto.getTel());
-        
+        medecin.setNumeroCarteIdentite(dto.getNumeroCarteIdentite());
+
+        // Set password - use provided or generate default
+        if (dto.getMotDePasse() != null && !dto.getMotDePasse().isBlank()) {
+            medecin.setMotDePasse(dto.getMotDePasse());
+        } else {
+            // Default password: changeme123 (should be changed on first login)
+            medecin.setMotDePasse("changeme123");
+        }
+
         return medecin;
     }
 
@@ -40,6 +49,7 @@ public class MedecinMapper {
         medecin.setPrenom(dto.getPrenom());
         medecin.setEmail(dto.getEmail());
         medecin.setTel(dto.getTel());
+        medecin.setNumeroCarteIdentite(dto.getNumeroCarteIdentite());
     }
 
     /**
@@ -56,12 +66,16 @@ public class MedecinMapper {
         dto.setPrenom(medecin.getPrenom());
         dto.setEmail(medecin.getEmail());
         dto.setTel(medecin.getTel());
-        
+        dto.setNumeroCarteIdentite(medecin.getNumeroCarteIdentite());
+        dto.setStatut(medecin.getStatut());
+        dto.setDateInscription(medecin.getDateInscription());
+        dto.setDerniereConnexion(medecin.getDerniereConnexion());
+
         // Ajouter le nombre de diagnostics si la collection est chargée
         if (medecin.getDiagnostics() != null) {
             dto.setNombreDiagnostics(medecin.getDiagnostics().size());
         }
-        
+
         return dto;
     }
 }

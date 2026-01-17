@@ -48,6 +48,16 @@ public class Parametres {
     private BigDecimal poidsPatient;
 
     /**
+     * Âge du patient en années
+     * CHECK: > 0 AND < 120
+     */
+    @NotNull(message = "L'âge du patient est obligatoire")
+    @Min(value = 10, message = "L'âge doit être valide")
+    @Max(value = 100, message = "L'âge doit être valide")
+    @Column(name = "age_patient", nullable = true) // Nullable pour compatibilité mais devrait être not null
+    private Integer agePatient;
+
+    /**
      * Température du patient en degrés Celsius
      * NUMERIC(4,2) - CHECK: >= 30 AND <= 45
      */
@@ -84,6 +94,14 @@ public class Parametres {
     private Integer frequenceFoetale;
 
     /**
+     * Glycémie (Blood Sugar) en mmol/L (ou mg/dL selon contexte, ici on stocke la
+     * valeur brute)
+     * NUMERIC(4,2)
+     */
+    @Column(name = "glycemie", precision = 4, scale = 2)
+    private BigDecimal glycemie;
+
+    /**
      * Date et heure de la mesure
      */
     @CreationTimestamp
@@ -93,10 +111,25 @@ public class Parametres {
     /**
      * Statut des paramètres: en_attente, diagnostique, archive
      * Valeur par défaut: "en_attente"
-     * Change automatiquement à "diagnostique" quand un diagnostic est créé (trigger)
+     * Change automatiquement à "diagnostique" quand un diagnostic est créé
+     * (trigger)
      */
     @Column(name = "statut", length = 20)
     private String statut = "en_attente";
+
+    /**
+     * ID du médecin qui a verrouillé ces paramètres pour consultation
+     * Null si non verrouillé
+     */
+    @Column(name = "verrouille_par_medecin_id")
+    private Integer verrouilleParMedecinId;
+
+    /**
+     * Date/heure du verrouillage
+     * Utilisé pour auto-déverrouillage après timeout (30min)
+     */
+    @Column(name = "verrouille_at")
+    private LocalDateTime verrouilleAt;
 
     /**
      * Date de création automatique
@@ -116,7 +149,8 @@ public class Parametres {
 
     /**
      * Relation One-to-Many avec Diagnostic
-     * IMPORTANT: Un ensemble de paramètres peut avoir UN SEUL diagnostic (contrainte UNIQUE)
+     * IMPORTANT: Un ensemble de paramètres peut avoir UN SEUL diagnostic
+     * (contrainte UNIQUE)
      */
     @OneToMany(mappedBy = "parametres", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Diagnostic> diagnostics = new ArrayList<>();

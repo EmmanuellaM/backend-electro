@@ -1,0 +1,545 @@
+2026-01-17T01:25:17.079+01:00  INFO 34407 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Starting BackendElectroApplication using Java 23 with PID 34407 (/home/delta/DD/Projets 4Gi/electronique/backend-electro/target/classes started by delta in /home/delta/DD/Projets 4Gi/electronique/backend-electro)
+2026-01-17T01:25:17.086+01:00  INFO 34407 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-01-17T01:25:17.299+01:00  INFO 34407 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-17T01:25:17.300+01:00  INFO 34407 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-17T01:25:19.370+01:00  INFO 34407 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-17T01:25:19.678+01:00  INFO 34407 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 293 ms. Found 9 JPA repository interfaces.
+2026-01-17T01:25:20.842+01:00  INFO 34407 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-17T01:25:20.867+01:00  INFO 34407 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-17T01:25:20.868+01:00  INFO 34407 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2026-01-17T01:25:20.963+01:00  INFO 34407 --- [backend-electro] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 3661 ms
+2026-01-17T01:25:21.245+01:00  INFO 34407 --- [backend-electro] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-17T01:25:21.352+01:00  INFO 34407 --- [backend-electro] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 7.1.8.Final
+2026-01-17T01:25:22.123+01:00  INFO 34407 --- [backend-electro] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-17T01:25:22.179+01:00  INFO 34407 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-17T01:25:22.826+01:00  INFO 34407 --- [backend-electro] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@104ff91c
+2026-01-17T01:25:22.829+01:00  INFO 34407 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-17T01:25:22.889+01:00  WARN 34407 --- [backend-electro] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-17T01:25:22.935+01:00  INFO 34407 --- [backend-electro] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/bd_electro]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: bd_electro/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-17T01:25:25.511+01:00  INFO 34407 --- [backend-electro] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-17T01:25:25.802+01:00  INFO 34407 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:25:26.229+01:00  INFO 34407 --- [backend-electro] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-17T01:25:29.732+01:00  WARN 34407 --- [backend-electro] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-17T01:25:29.994+01:00 DEBUG 34407 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 63 mappings in 'requestMappingHandlerMapping'
+2026-01-17T01:25:30.053+01:00 DEBUG 34407 --- [backend-electro] [restartedMain] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-01-17T01:25:30.113+01:00 DEBUG 34407 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-01-17T01:25:30.197+01:00 DEBUG 34407 --- [backend-electro] [restartedMain] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-01-17T01:25:30.756+01:00  WARN 34407 --- [backend-electro] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-01-17T01:25:30.763+01:00  INFO 34407 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:25:30.768+01:00  INFO 34407 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-01-17T01:25:30.781+01:00  INFO 34407 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-01-17T01:25:30.840+01:00  INFO 34407 --- [backend-electro] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-01-17T01:25:30.872+01:00 ERROR 34407 --- [backend-electro] [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-01-17T01:26:55.215+01:00  INFO 35622 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Starting BackendElectroApplication using Java 23 with PID 35622 (/home/delta/DD/Projets 4Gi/electronique/backend-electro/target/classes started by delta in /home/delta/DD/Projets 4Gi/electronique/backend-electro)
+2026-01-17T01:26:55.220+01:00  INFO 35622 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-01-17T01:26:55.371+01:00  INFO 35622 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-17T01:26:55.372+01:00  INFO 35622 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-17T01:26:57.163+01:00  INFO 35622 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-17T01:26:57.513+01:00  INFO 35622 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 331 ms. Found 9 JPA repository interfaces.
+2026-01-17T01:26:58.734+01:00  INFO 35622 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-17T01:26:58.768+01:00  INFO 35622 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-17T01:26:58.769+01:00  INFO 35622 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2026-01-17T01:26:58.885+01:00  INFO 35622 --- [backend-electro] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 3512 ms
+2026-01-17T01:26:59.245+01:00  INFO 35622 --- [backend-electro] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-17T01:26:59.314+01:00  INFO 35622 --- [backend-electro] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 7.1.8.Final
+2026-01-17T01:26:59.986+01:00  INFO 35622 --- [backend-electro] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-17T01:27:00.048+01:00  INFO 35622 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-17T01:27:00.851+01:00  INFO 35622 --- [backend-electro] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@54538221
+2026-01-17T01:27:00.854+01:00  INFO 35622 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-17T01:27:00.907+01:00  WARN 35622 --- [backend-electro] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-17T01:27:00.956+01:00  INFO 35622 --- [backend-electro] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/bd_electro]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: bd_electro/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-17T01:27:03.043+01:00  INFO 35622 --- [backend-electro] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-17T01:27:03.388+01:00  INFO 35622 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:27:03.924+01:00  INFO 35622 --- [backend-electro] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-17T01:27:07.682+01:00  WARN 35622 --- [backend-electro] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-17T01:27:07.967+01:00 DEBUG 35622 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 63 mappings in 'requestMappingHandlerMapping'
+2026-01-17T01:27:08.037+01:00 DEBUG 35622 --- [backend-electro] [restartedMain] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-01-17T01:27:08.099+01:00 DEBUG 35622 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-01-17T01:27:08.189+01:00 DEBUG 35622 --- [backend-electro] [restartedMain] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-01-17T01:27:08.563+01:00  INFO 35622 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/api'
+2026-01-17T01:27:08.586+01:00  INFO 35622 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Started BackendElectroApplication in 14.194 seconds (process running for 15.315)
+2026-01-17T01:27:50.815+01:00  INFO 36400 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Starting BackendElectroApplication using Java 23 with PID 36400 (/home/delta/DD/Projets 4Gi/electronique/backend-electro/target/classes started by delta in /home/delta/DD/Projets 4Gi/electronique/backend-electro)
+2026-01-17T01:27:50.820+01:00  INFO 36400 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-01-17T01:27:50.990+01:00  INFO 36400 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-17T01:27:50.991+01:00  INFO 36400 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-17T01:27:52.595+01:00  INFO 36400 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-17T01:27:52.868+01:00  INFO 36400 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 260 ms. Found 9 JPA repository interfaces.
+2026-01-17T01:27:54.212+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-17T01:27:54.238+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-17T01:27:54.240+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2026-01-17T01:27:54.319+01:00  INFO 36400 --- [backend-electro] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 3326 ms
+2026-01-17T01:27:54.601+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-17T01:27:54.684+01:00  INFO 36400 --- [backend-electro] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 7.1.8.Final
+2026-01-17T01:27:55.382+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-17T01:27:55.441+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-17T01:27:56.119+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@d9358e2
+2026-01-17T01:27:56.122+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-17T01:27:56.173+01:00  WARN 36400 --- [backend-electro] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-17T01:27:56.211+01:00  INFO 36400 --- [backend-electro] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/bd_electro]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: bd_electro/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-17T01:27:58.226+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-17T01:27:58.536+01:00  INFO 36400 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:27:59.130+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-17T01:28:02.348+01:00  WARN 36400 --- [backend-electro] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-17T01:28:02.621+01:00 DEBUG 36400 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 63 mappings in 'requestMappingHandlerMapping'
+2026-01-17T01:28:02.686+01:00 DEBUG 36400 --- [backend-electro] [restartedMain] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-01-17T01:28:02.741+01:00 DEBUG 36400 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-01-17T01:28:02.823+01:00 DEBUG 36400 --- [backend-electro] [restartedMain] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-01-17T01:28:03.205+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/api'
+2026-01-17T01:28:03.224+01:00  INFO 36400 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Started BackendElectroApplication in 13.15 seconds (process running for 14.435)
+2026-01-17T01:28:33.156+01:00  INFO 36400 --- [backend-electro] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-17T01:28:33.157+01:00  INFO 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-01-17T01:28:33.158+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2026-01-17T01:28:33.158+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2026-01-17T01:28:33.161+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5babb7cc
+2026-01-17T01:28:33.163+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@293c53d2
+2026-01-17T01:28:33.164+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2026-01-17T01:28:33.165+01:00  INFO 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 6 ms
+2026-01-17T01:28:33.184+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/ai/predict", parameters={}
+2026-01-17T01:28:33.198+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2026-01-17T01:28:33.213+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.w.s.r.ResourceHttpRequestHandler     : Resource not found
+2026-01-17T01:28:33.222+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.polytechnique.backend.exception.GlobalExceptionHandler#handleGenericException(Exception, HttpServletRequest)
+2026-01-17T01:28:33.310+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json, application/yaml]
+2026-01-17T01:28:33.317+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [ErrorResponse(timestamp=2026-01-17T01:28:33.224056500, status=500, error=Internal Server Error, mess (truncated)...]
+2026-01-17T01:28:33.430+01:00  WARN 36400 --- [backend-electro] [http-nio-8080-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource ai/predict for request '/api/ai/predict'.]
+2026-01-17T01:28:33.432+01:00 DEBUG 36400 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2026-01-17T01:29:36.338+01:00  INFO 36400 --- [backend-electro] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 3 class path changes (0 additions, 0 deletions, 3 modifications)
+2026-01-17T01:29:36.344+01:00  INFO 36400 --- [backend-electro] [Thread-1] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-01-17T01:29:36.348+01:00  INFO 36400 --- [backend-electro] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-01-17T01:29:36.370+01:00  INFO 36400 --- [backend-electro] [Thread-1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:29:36.373+01:00  INFO 36400 --- [backend-electro] [Thread-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-01-17T01:29:36.383+01:00  INFO 36400 --- [backend-electro] [Thread-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-01-17T01:29:36.535+01:00  INFO 36400 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Starting BackendElectroApplication using Java 23 with PID 36400 (/home/delta/DD/Projets 4Gi/electronique/backend-electro/target/classes started by delta in /home/delta/DD/Projets 4Gi/electronique/backend-electro)
+2026-01-17T01:29:36.535+01:00  INFO 36400 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-01-17T01:29:36.841+01:00  INFO 36400 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-17T01:29:36.881+01:00  INFO 36400 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 37 ms. Found 9 JPA repository interfaces.
+2026-01-17T01:29:37.053+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-17T01:29:37.055+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-17T01:29:37.055+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2026-01-17T01:29:37.081+01:00  INFO 36400 --- [backend-electro] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 543 ms
+2026-01-17T01:29:37.132+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-17T01:29:37.158+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-17T01:29:37.159+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-01-17T01:29:37.198+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@12133ae
+2026-01-17T01:29:37.198+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-01-17T01:29:37.202+01:00  WARN 36400 --- [backend-electro] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-17T01:29:37.206+01:00  INFO 36400 --- [backend-electro] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/bd_electro]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: bd_electro/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-17T01:29:37.547+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-17T01:29:37.750+01:00  INFO 36400 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:29:37.789+01:00  WARN 36400 --- [backend-electro] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'AIController': Resolution of declared constructors on bean Class [com.polytechnique.backend.controller.AIController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@45c3bfbf] failed
+2026-01-17T01:29:37.789+01:00  INFO 36400 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:29:37.790+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2026-01-17T01:29:37.805+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2026-01-17T01:29:37.806+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2026-01-17T01:29:37.832+01:00  INFO 36400 --- [backend-electro] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-01-17T01:29:37.872+01:00 ERROR 36400 --- [backend-electro] [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'AIController': Resolution of declared constructors on bean Class [com.polytechnique.backend.controller.AIController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@45c3bfbf] failed
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:367) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1321) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1218) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:565) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:196) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1218) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1184) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1121) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:983) ~[spring-context-7.0.1.jar:7.0.1]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:620) ~[spring-context-7.0.1.jar:7.0.1]
+	at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143) ~[spring-boot-web-server-4.0.0.jar:4.0.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:765) ~[spring-boot-4.0.0.jar:4.0.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:454) ~[spring-boot-4.0.0.jar:4.0.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321) ~[spring-boot-4.0.0.jar:4.0.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1374) ~[spring-boot-4.0.0.jar:4.0.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363) ~[spring-boot-4.0.0.jar:4.0.0]
+	at com.polytechnique.backend.BackendElectroApplication.main(BackendElectroApplication.java:12) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:52) ~[spring-boot-devtools-4.0.0.jar:4.0.0]
+Caused by: java.lang.NoClassDefFoundError: AIExplanationService
+	at java.base/java.lang.Class.getDeclaredConstructors0(Native Method) ~[na:na]
+	at java.base/java.lang.Class.privateGetDeclaredConstructors(Class.java:3621) ~[na:na]
+	at java.base/java.lang.Class.getDeclaredConstructors(Class.java:2786) ~[na:na]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:362) ~[spring-beans-7.0.1.jar:7.0.1]
+	... 23 common frames omitted
+Caused by: java.lang.ClassNotFoundException: AIExplanationService
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641) ~[na:na]
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188) ~[na:na]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:528) ~[na:na]
+	at java.base/java.lang.Class.forName0(Native Method) ~[na:na]
+	at java.base/java.lang.Class.forName(Class.java:578) ~[na:na]
+	at java.base/java.lang.Class.forName(Class.java:557) ~[na:na]
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:123) ~[spring-boot-devtools-4.0.0.jar:4.0.0]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:528) ~[na:na]
+	... 27 common frames omitted
+
+2026-01-17T01:30:03.459+01:00  INFO 36400 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Starting BackendElectroApplication using Java 23 with PID 36400 (/home/delta/DD/Projets 4Gi/electronique/backend-electro/target/classes started by delta in /home/delta/DD/Projets 4Gi/electronique/backend-electro)
+2026-01-17T01:30:03.461+01:00  INFO 36400 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-01-17T01:30:04.077+01:00  INFO 36400 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-17T01:30:04.087+01:00  INFO 36400 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 4 ms. Found 0 JPA repository interfaces.
+2026-01-17T01:30:04.414+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-17T01:30:04.416+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-17T01:30:04.416+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2026-01-17T01:30:04.490+01:00  INFO 36400 --- [backend-electro] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1019 ms
+2026-01-17T01:30:04.686+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-17T01:30:04.793+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-17T01:30:04.795+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2026-01-17T01:30:04.868+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@2738c6e5
+2026-01-17T01:30:04.872+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2026-01-17T01:30:04.878+01:00  WARN 36400 --- [backend-electro] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-17T01:30:04.889+01:00  INFO 36400 --- [backend-electro] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/bd_electro]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: bd_electro/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-17T01:30:04.935+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-17T01:30:04.936+01:00  INFO 36400 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:30:04.971+01:00  WARN 36400 --- [backend-electro] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'AIController': Resolution of declared constructors on bean Class [com.polytechnique.backend.controller.AIController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@74117271] failed
+2026-01-17T01:30:04.973+01:00  INFO 36400 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:30:04.975+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
+2026-01-17T01:30:05.066+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.
+2026-01-17T01:30:05.069+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2026-01-17T01:30:05.079+01:00  INFO 36400 --- [backend-electro] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-01-17T01:30:05.085+01:00 ERROR 36400 --- [backend-electro] [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'AIController': Resolution of declared constructors on bean Class [com.polytechnique.backend.controller.AIController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@74117271] failed
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:367) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1321) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1218) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:565) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:196) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1218) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1184) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1121) ~[spring-beans-7.0.1.jar:7.0.1]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:983) ~[spring-context-7.0.1.jar:7.0.1]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:620) ~[spring-context-7.0.1.jar:7.0.1]
+	at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143) ~[spring-boot-web-server-4.0.0.jar:4.0.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:765) ~[spring-boot-4.0.0.jar:4.0.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:454) ~[spring-boot-4.0.0.jar:4.0.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321) ~[spring-boot-4.0.0.jar:4.0.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1374) ~[spring-boot-4.0.0.jar:4.0.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363) ~[spring-boot-4.0.0.jar:4.0.0]
+	at com.polytechnique.backend.BackendElectroApplication.main(BackendElectroApplication.java:12) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:52) ~[spring-boot-devtools-4.0.0.jar:4.0.0]
+Caused by: java.lang.NoClassDefFoundError: com/polytechnique/backend/service/AIClientService
+	at java.base/java.lang.Class.getDeclaredConstructors0(Native Method) ~[na:na]
+	at java.base/java.lang.Class.privateGetDeclaredConstructors(Class.java:3621) ~[na:na]
+	at java.base/java.lang.Class.getDeclaredConstructors(Class.java:2786) ~[na:na]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:362) ~[spring-beans-7.0.1.jar:7.0.1]
+	... 23 common frames omitted
+Caused by: java.lang.ClassNotFoundException: com.polytechnique.backend.service.AIClientService
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641) ~[na:na]
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188) ~[na:na]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:528) ~[na:na]
+	at java.base/java.lang.Class.forName0(Native Method) ~[na:na]
+	at java.base/java.lang.Class.forName(Class.java:578) ~[na:na]
+	at java.base/java.lang.Class.forName(Class.java:557) ~[na:na]
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:123) ~[spring-boot-devtools-4.0.0.jar:4.0.0]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:528) ~[na:na]
+	... 27 common frames omitted
+
+2026-01-17T01:30:13.206+01:00  INFO 36400 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Starting BackendElectroApplication using Java 23 with PID 36400 (/home/delta/DD/Projets 4Gi/electronique/backend-electro/target/classes started by delta in /home/delta/DD/Projets 4Gi/electronique/backend-electro)
+2026-01-17T01:30:13.207+01:00  INFO 36400 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-01-17T01:30:13.690+01:00  INFO 36400 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-17T01:30:13.763+01:00  INFO 36400 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 68 ms. Found 9 JPA repository interfaces.
+2026-01-17T01:30:14.045+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-17T01:30:14.046+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-17T01:30:14.049+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2026-01-17T01:30:14.101+01:00  INFO 36400 --- [backend-electro] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 892 ms
+2026-01-17T01:30:14.306+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-17T01:30:14.341+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-17T01:30:14.342+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2026-01-17T01:30:14.402+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@10af6572
+2026-01-17T01:30:14.404+01:00  INFO 36400 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2026-01-17T01:30:14.412+01:00  WARN 36400 --- [backend-electro] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-17T01:30:14.417+01:00  INFO 36400 --- [backend-electro] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/bd_electro]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: bd_electro/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-17T01:30:14.897+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-17T01:30:15.085+01:00  INFO 36400 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:30:15.842+01:00  WARN 36400 --- [backend-electro] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-17T01:30:15.959+01:00 DEBUG 36400 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 63 mappings in 'requestMappingHandlerMapping'
+2026-01-17T01:30:15.981+01:00 DEBUG 36400 --- [backend-electro] [restartedMain] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-01-17T01:30:15.998+01:00 DEBUG 36400 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-01-17T01:30:16.016+01:00 DEBUG 36400 --- [backend-electro] [restartedMain] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-01-17T01:30:16.138+01:00  INFO 36400 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/api'
+2026-01-17T01:30:16.146+01:00  INFO 36400 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Started BackendElectroApplication in 2.989 seconds (process running for 147.357)
+2026-01-17T01:30:16.150+01:00  INFO 36400 --- [backend-electro] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-01-17T01:30:16.397+01:00  INFO 38430 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Starting BackendElectroApplication using Java 23 with PID 38430 (/home/delta/DD/Projets 4Gi/electronique/backend-electro/target/classes started by delta in /home/delta/DD/Projets 4Gi/electronique/backend-electro)
+2026-01-17T01:30:16.401+01:00  INFO 38430 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-01-17T01:30:16.512+01:00  INFO 38430 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-17T01:30:16.513+01:00  INFO 38430 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-17T01:30:17.890+01:00  INFO 38430 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-17T01:30:18.136+01:00  INFO 38430 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 230 ms. Found 9 JPA repository interfaces.
+2026-01-17T01:30:19.211+01:00  INFO 38430 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-17T01:30:19.230+01:00  INFO 38430 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-17T01:30:19.231+01:00  INFO 38430 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2026-01-17T01:30:19.301+01:00  INFO 38430 --- [backend-electro] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 2787 ms
+2026-01-17T01:30:19.596+01:00  INFO 38430 --- [backend-electro] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-17T01:30:19.649+01:00  INFO 38430 --- [backend-electro] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 7.1.8.Final
+2026-01-17T01:30:20.185+01:00  INFO 38430 --- [backend-electro] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-17T01:30:20.226+01:00  INFO 38430 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-17T01:30:20.723+01:00  INFO 38430 --- [backend-electro] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@34e025b7
+2026-01-17T01:30:20.725+01:00  INFO 38430 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-17T01:30:20.764+01:00  WARN 38430 --- [backend-electro] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-17T01:30:20.797+01:00  INFO 38430 --- [backend-electro] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/bd_electro]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: bd_electro/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-17T01:30:22.286+01:00  INFO 38430 --- [backend-electro] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-17T01:30:22.527+01:00  INFO 38430 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:30:22.907+01:00  INFO 38430 --- [backend-electro] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-17T01:30:25.691+01:00  WARN 38430 --- [backend-electro] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-17T01:30:25.915+01:00 DEBUG 38430 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 63 mappings in 'requestMappingHandlerMapping'
+2026-01-17T01:30:25.961+01:00 DEBUG 38430 --- [backend-electro] [restartedMain] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-01-17T01:30:26.007+01:00 DEBUG 38430 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-01-17T01:30:26.082+01:00 DEBUG 38430 --- [backend-electro] [restartedMain] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-01-17T01:30:26.430+01:00  WARN 38430 --- [backend-electro] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-01-17T01:30:26.438+01:00  INFO 38430 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:30:26.445+01:00  INFO 38430 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-01-17T01:30:26.455+01:00  INFO 38430 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-01-17T01:30:26.486+01:00  INFO 38430 --- [backend-electro] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-01-17T01:30:26.516+01:00 ERROR 38430 --- [backend-electro] [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-01-17T01:31:04.196+01:00  INFO 39417 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Starting BackendElectroApplication using Java 23 with PID 39417 (/home/delta/DD/Projets 4Gi/electronique/backend-electro/target/classes started by delta in /home/delta/DD/Projets 4Gi/electronique/backend-electro)
+2026-01-17T01:31:04.200+01:00  INFO 39417 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-01-17T01:31:04.326+01:00  INFO 39417 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-17T01:31:04.326+01:00  INFO 39417 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-17T01:31:05.618+01:00  INFO 39417 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-17T01:31:05.852+01:00  INFO 39417 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 223 ms. Found 9 JPA repository interfaces.
+2026-01-17T01:31:06.770+01:00  INFO 39417 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-17T01:31:06.791+01:00  INFO 39417 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-17T01:31:06.791+01:00  INFO 39417 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2026-01-17T01:31:06.853+01:00  INFO 39417 --- [backend-electro] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 2526 ms
+2026-01-17T01:31:07.072+01:00  INFO 39417 --- [backend-electro] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-17T01:31:07.153+01:00  INFO 39417 --- [backend-electro] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 7.1.8.Final
+2026-01-17T01:31:07.797+01:00  INFO 39417 --- [backend-electro] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-17T01:31:07.842+01:00  INFO 39417 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-17T01:31:08.343+01:00  INFO 39417 --- [backend-electro] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@e5d203d
+2026-01-17T01:31:08.345+01:00  INFO 39417 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-17T01:31:08.400+01:00  WARN 39417 --- [backend-electro] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-17T01:31:08.430+01:00  INFO 39417 --- [backend-electro] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/bd_electro]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: bd_electro/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-17T01:31:10.138+01:00  INFO 39417 --- [backend-electro] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-17T01:31:10.419+01:00  INFO 39417 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:31:10.820+01:00  INFO 39417 --- [backend-electro] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-17T01:31:13.424+01:00  WARN 39417 --- [backend-electro] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-17T01:31:13.641+01:00 DEBUG 39417 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 63 mappings in 'requestMappingHandlerMapping'
+2026-01-17T01:31:13.706+01:00 DEBUG 39417 --- [backend-electro] [restartedMain] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-01-17T01:31:13.768+01:00 DEBUG 39417 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-01-17T01:31:13.842+01:00 DEBUG 39417 --- [backend-electro] [restartedMain] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-01-17T01:31:14.192+01:00  INFO 39417 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/api'
+2026-01-17T01:31:14.205+01:00  INFO 39417 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Started BackendElectroApplication in 10.835 seconds (process running for 11.607)
+2026-01-17T01:31:57.651+01:00  INFO 40429 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Starting BackendElectroApplication using Java 23 with PID 40429 (/home/delta/DD/Projets 4Gi/electronique/backend-electro/target/classes started by delta in /home/delta/DD/Projets 4Gi/electronique/backend-electro)
+2026-01-17T01:31:57.658+01:00  INFO 40429 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-01-17T01:31:57.789+01:00  INFO 40429 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-17T01:31:57.789+01:00  INFO 40429 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-17T01:31:59.308+01:00  INFO 40429 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-17T01:31:59.545+01:00  INFO 40429 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 227 ms. Found 9 JPA repository interfaces.
+2026-01-17T01:32:00.443+01:00  INFO 40429 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-17T01:32:00.460+01:00  INFO 40429 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-17T01:32:00.462+01:00  INFO 40429 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2026-01-17T01:32:00.521+01:00  INFO 40429 --- [backend-electro] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 2730 ms
+2026-01-17T01:32:00.730+01:00  INFO 40429 --- [backend-electro] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-17T01:32:00.787+01:00  INFO 40429 --- [backend-electro] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 7.1.8.Final
+2026-01-17T01:32:01.318+01:00  INFO 40429 --- [backend-electro] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-17T01:32:01.361+01:00  INFO 40429 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-17T01:32:01.806+01:00  INFO 40429 --- [backend-electro] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@58f228cd
+2026-01-17T01:32:01.808+01:00  INFO 40429 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-17T01:32:01.852+01:00  WARN 40429 --- [backend-electro] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-17T01:32:01.890+01:00  INFO 40429 --- [backend-electro] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/bd_electro]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: bd_electro/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-17T01:32:03.370+01:00  INFO 40429 --- [backend-electro] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-17T01:32:03.590+01:00  INFO 40429 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:32:04.158+01:00  INFO 40429 --- [backend-electro] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-17T01:32:06.783+01:00  WARN 40429 --- [backend-electro] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-17T01:32:06.987+01:00 DEBUG 40429 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 63 mappings in 'requestMappingHandlerMapping'
+2026-01-17T01:32:07.030+01:00 DEBUG 40429 --- [backend-electro] [restartedMain] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-01-17T01:32:07.074+01:00 DEBUG 40429 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-01-17T01:32:07.146+01:00 DEBUG 40429 --- [backend-electro] [restartedMain] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-01-17T01:32:07.394+01:00  INFO 40429 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/api'
+2026-01-17T01:32:07.408+01:00  INFO 40429 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Started BackendElectroApplication in 10.38 seconds (process running for 11.156)
+2026-01-17T01:32:43.073+01:00  INFO 41408 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Starting BackendElectroApplication using Java 23 with PID 41408 (/home/delta/DD/Projets 4Gi/electronique/backend-electro/target/classes started by delta in /home/delta/DD/Projets 4Gi/electronique/backend-electro)
+2026-01-17T01:32:43.077+01:00  INFO 41408 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-01-17T01:32:43.182+01:00  INFO 41408 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-17T01:32:43.182+01:00  INFO 41408 --- [backend-electro] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-17T01:32:44.887+01:00  INFO 41408 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-17T01:32:45.143+01:00  INFO 41408 --- [backend-electro] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 243 ms. Found 9 JPA repository interfaces.
+2026-01-17T01:32:46.150+01:00  INFO 41408 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-17T01:32:46.174+01:00  INFO 41408 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-17T01:32:46.175+01:00  INFO 41408 --- [backend-electro] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2026-01-17T01:32:46.242+01:00  INFO 41408 --- [backend-electro] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 3059 ms
+2026-01-17T01:32:46.509+01:00  INFO 41408 --- [backend-electro] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-17T01:32:46.585+01:00  INFO 41408 --- [backend-electro] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 7.1.8.Final
+2026-01-17T01:32:47.150+01:00  INFO 41408 --- [backend-electro] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-17T01:32:47.192+01:00  INFO 41408 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-17T01:32:47.694+01:00  INFO 41408 --- [backend-electro] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@54538221
+2026-01-17T01:32:47.696+01:00  INFO 41408 --- [backend-electro] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-17T01:32:47.739+01:00  WARN 41408 --- [backend-electro] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-17T01:32:47.774+01:00  INFO 41408 --- [backend-electro] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/bd_electro]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: bd_electro/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-17T01:32:49.531+01:00  INFO 41408 --- [backend-electro] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-17T01:32:49.757+01:00  INFO 41408 --- [backend-electro] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-17T01:32:50.099+01:00  INFO 41408 --- [backend-electro] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-17T01:32:52.750+01:00  WARN 41408 --- [backend-electro] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-17T01:32:52.980+01:00 DEBUG 41408 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 63 mappings in 'requestMappingHandlerMapping'
+2026-01-17T01:32:53.023+01:00 DEBUG 41408 --- [backend-electro] [restartedMain] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-01-17T01:32:53.066+01:00 DEBUG 41408 --- [backend-electro] [restartedMain] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-01-17T01:32:53.137+01:00 DEBUG 41408 --- [backend-electro] [restartedMain] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-01-17T01:32:53.417+01:00  INFO 41408 --- [backend-electro] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/api'
+2026-01-17T01:32:53.434+01:00  INFO 41408 --- [backend-electro] [restartedMain] c.p.backend.BackendElectroApplication    : Started BackendElectroApplication in 10.936 seconds (process running for 11.68)
+2026-01-17T01:33:35.713+01:00  INFO 41408 --- [backend-electro] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-17T01:33:35.714+01:00  INFO 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-01-17T01:33:35.714+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2026-01-17T01:33:35.714+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2026-01-17T01:33:35.716+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@74e628f2
+2026-01-17T01:33:35.717+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@2c6b4e63
+2026-01-17T01:33:35.718+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2026-01-17T01:33:35.718+01:00  INFO 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2026-01-17T01:33:35.729+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/ai/predict", parameters={}
+2026-01-17T01:33:35.739+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2026-01-17T01:33:35.746+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.w.s.r.ResourceHttpRequestHandler     : Resource not found
+2026-01-17T01:33:35.752+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.polytechnique.backend.exception.GlobalExceptionHandler#handleGenericException(Exception, HttpServletRequest)
+2026-01-17T01:33:35.822+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json, application/yaml]
+2026-01-17T01:33:35.827+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [ErrorResponse(timestamp=2026-01-17T01:33:35.754294789, status=500, error=Internal Server Error, mess (truncated)...]
+2026-01-17T01:33:35.911+01:00  WARN 41408 --- [backend-electro] [http-nio-8080-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource ai/predict for request '/api/ai/predict'.]
+2026-01-17T01:33:35.912+01:00 DEBUG 41408 --- [backend-electro] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR

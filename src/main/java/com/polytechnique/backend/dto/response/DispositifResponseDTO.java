@@ -17,13 +17,17 @@ public class DispositifResponseDTO {
 
     private Integer id;
     private String codeDispositif;
+    private String deveui;
     private String nomCentreDeSante;
     private String localisation;
     private String contact;
     private String statut;
     private LocalDate dateInstallation;
     private LocalDateTime createdAt;
-    
-    // Optionnel: nombre de paramètres collectés
+
+    // Informations complètes ou partielles de l'infirmier
+    private InfirmierLocalResponseDTO infirmierLocal;
+
+    // Optionnel
     private int nombreParametres;
 }

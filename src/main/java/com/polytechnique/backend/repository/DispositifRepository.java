@@ -26,6 +26,12 @@ public interface DispositifRepository extends JpaRepository<Dispositif, Integer>
     List<Dispositif> findByNomCentreDeSanteContaining(String nomCentre);
 
     /**
+     * Rechercher un dispositif par son DevEUI (identifiant LoRaWAN unique)
+     * Utilisé pour lier les messages uplink au dispositif
+     */
+    Optional<Dispositif> findByDeveui(String deveui);
+
+    /**
      * Rechercher un dispositif par nom exact de centre
      * Génère: SELECT * FROM dispositif WHERE nom_centre_de_sante = ?
      */
@@ -39,7 +45,8 @@ public interface DispositifRepository extends JpaRepository<Dispositif, Integer>
 
     /**
      * Rechercher par nom de centre ignorant la casse
-     * Génère: SELECT * FROM dispositif WHERE LOWER(nom_centre_de_sante) LIKE LOWER(%?%)
+     * Génère: SELECT * FROM dispositif WHERE LOWER(nom_centre_de_sante) LIKE
+     * LOWER(%?%)
      */
     List<Dispositif> findByNomCentreDeSanteContainingIgnoreCase(String nomCentre);
 
@@ -88,8 +95,8 @@ public interface DispositifRepository extends JpaRepository<Dispositif, Integer>
      * Recherche avancée par nom de centre ou contact (case-insensitive)
      */
     @Query("SELECT d FROM Dispositif d WHERE " +
-           "LOWER(d.nomCentreDeSante) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(d.contact) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+            "LOWER(d.nomCentreDeSante) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(d.contact) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Dispositif> searchDispositifs(@Param("searchTerm") String searchTerm);
 
     /**

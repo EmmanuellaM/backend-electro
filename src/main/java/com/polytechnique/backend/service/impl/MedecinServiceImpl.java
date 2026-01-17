@@ -1,5 +1,7 @@
 package com.polytechnique.backend.service.impl;
 
+import com.polytechnique.backend.dto.request.ChangePasswordRequestDTO;
+import com.polytechnique.backend.dto.request.LoginRequestDTO;
 import com.polytechnique.backend.dto.request.MedecinRequestDTO;
 import com.polytechnique.backend.dto.response.MedecinResponseDTO;
 import com.polytechnique.backend.entity.Medecin;
@@ -25,6 +27,7 @@ public class MedecinServiceImpl implements MedecinService {
 
     private final MedecinRepository medecinRepository;
     private final MedecinMapper medecinMapper;
+    private final com.polytechnique.backend.repository.AdministrateurRepository administrateurRepository;
 
     @Override
     public MedecinResponseDTO createMedecin(MedecinRequestDTO requestDTO) {
@@ -35,6 +38,15 @@ public class MedecinServiceImpl implements MedecinService {
 
         // Convertir DTO → Entité
         Medecin medecin = medecinMapper.toEntity(requestDTO);
+
+        // Lier l'administrateur
+        if (requestDTO.getAdministrateurId() != null) {
+            com.polytechnique.backend.entity.Administrateur admin = administrateurRepository
+                    .findById(requestDTO.getAdministrateurId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Administrateur", "id",
+                            requestDTO.getAdministrateurId()));
+            medecin.setAdministrateur(admin);
+        }
 
         // Sauvegarder
         Medecin savedMedecin = medecinRepository.save(medecin);
@@ -76,6 +88,15 @@ public class MedecinServiceImpl implements MedecinService {
         // Mettre à jour l'entité
         medecinMapper.updateEntity(requestDTO, medecin);
 
+        // Mettre à jour l'administrateur si nécessaire
+        if (requestDTO.getAdministrateurId() != null) {
+            com.polytechnique.backend.entity.Administrateur admin = administrateurRepository
+                    .findById(requestDTO.getAdministrateurId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Administrateur", "id",
+                            requestDTO.getAdministrateurId()));
+            medecin.setAdministrateur(admin);
+        }
+
         // Sauvegarder
         Medecin updatedMedecin = medecinRepository.save(medecin);
 
@@ -99,5 +120,37 @@ public class MedecinServiceImpl implements MedecinService {
                 .orElseThrow(() -> new ResourceNotFoundException("Médecin", "email", email));
 
         return medecinMapper.toResponseDTO(medecin);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MedecinResponseDTO login(LoginRequestDTO loginRequest) {
+        Medecin medecin = medecinRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Médecin", "email", loginRequest.getEmail()));
+
+        // Check password (handling null password for created users who haven't set one
+        // yet?)
+        if (medecin.getMotDePasse() == null || !medecin.getMotDePasse().equals(loginRequest.getMotDePasse())) {
+            throw new IllegalArgumentException("Email ou mot de passe incorrect.");
+        }
+
+        return medecinMapper.toResponseDTO(medecin);
+    }
+
+    @Override
+    @Transactional
+    public void updatePassword(int id, ChangePasswordRequestDTO changePasswordRequest) {
+        Medecin medecin = medecinRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Médecin", "id", id));
+
+        // If password was never set, maybe allow setting it without "old" password?
+        // For security, if old password exists, it must match.
+        if (medecin.getMotDePasse() != null
+                && !medecin.getMotDePasse().equals(changePasswordRequest.getAncienMotDePasse())) {
+            throw new IllegalArgumentException("L'ancien mot de passe est incorrect.");
+        }
+
+        medecin.setMotDePasse(changePasswordRequest.getNouveauMotDePasse());
+        medecinRepository.save(medecin);
     }
 }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Entité représentant un médecin dans le système
+ * Entité représentant un médecin
  * Correspond à la table "medecin" dans PostgreSQL
  */
 @Entity
@@ -46,48 +46,40 @@ public class Medecin {
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
-    /**
-     * Mot de passe hashé (BCrypt)
-     * Valeur par défaut temporaire: "password123"
-     */
-    @Column(name = "mot_de_passe", nullable = false, length = 255)
-    private String motDePasse = "password123";
-
     @Size(max = 20, message = "Le téléphone ne peut pas dépasser 20 caractères")
     @Column(name = "tel", length = 20)
     private String tel;
 
     /**
-     * Statut du médecin: actif, inactif, suspendu
-     * Valeur par défaut: "actif"
+     * Mot de passe du médecin pour l'accès à la plateforme
      */
-    @Column(name = "statut", length = 20)
+    @Column(name = "mot_de_passe")
+    private String motDePasse;
+
+    /**
+     * Numéro de Carte Nationale d'Identité
+     */
+    @NotBlank(message = "Le CNI est obligatoire")
+    @Size(max = 50)
+    @Column(name = "numero_carte_identite", nullable = false, unique = true)
+    private String numeroCarteIdentite;
+
+    /**
+     * Statut du médecin (actif, inactif, etc.)
+     */
+    @Column(name = "statut")
     private String statut = "actif";
 
-    /**
-     * Date d'inscription automatique
-     */
-    @CreationTimestamp
-    @Column(name = "date_inscription", updatable = false)
-    private LocalDateTime dateInscription;
+    @Column(name = "date_inscription")
+    private LocalDateTime dateInscription = LocalDateTime.now();
 
-    /**
-     * Date de dernière connexion
-     * Mise à jour manuellement lors de la connexion
-     */
     @Column(name = "derniere_connexion")
     private LocalDateTime derniereConnexion;
 
-    /**
-     * Date de création automatique
-     */
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    /**
-     * Date de dernière mise à jour automatique (trigger)
-     */
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -98,6 +90,13 @@ public class Medecin {
      */
     @OneToMany(mappedBy = "medecin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Diagnostic> diagnostics = new ArrayList<>();
+
+    /**
+     * Administrateur ayant créé ce médecin
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_administrateur")
+    private Administrateur administrateur;
 
     /**
      * Méthode utilitaire pour ajouter un diagnostic

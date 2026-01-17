@@ -27,7 +27,7 @@ public class ParametresMapper {
         parametres.setPressionArterielleSystolique(dto.getPressionArterielleSystolique());
         parametres.setPressionArterielleDiastolique(dto.getPressionArterielleDiastolique());
         parametres.setFrequenceFoetale(dto.getFrequenceFoetale());
-        
+
         return parametres;
     }
 
@@ -59,26 +59,32 @@ public class ParametresMapper {
         ParametresResponseDTO dto = new ParametresResponseDTO();
         dto.setId(parametres.getId());
         dto.setIdentifiantPatient(parametres.getIdentifiantPatient());
+        dto.setAgePatient(parametres.getAgePatient());
         dto.setPoidsPatient(parametres.getPoidsPatient());
         dto.setTemperature(parametres.getTemperature());
         dto.setPressionArterielleSystolique(parametres.getPressionArterielleSystolique());
         dto.setPressionArterielleDiastolique(parametres.getPressionArterielleDiastolique());
         dto.setFrequenceFoetale(parametres.getFrequenceFoetale());
+        dto.setGlycemie(parametres.getGlycemie());
         dto.setDateMesure(parametres.getDateMesure());
         dto.setStatut(parametres.getStatut());
-        
+
         // Ajouter les informations du dispositif
         if (parametres.getDispositif() != null) {
             dto.setDispositifId(parametres.getDispositif().getId());
             dto.setNomCentreDeSante(parametres.getDispositif().getNomCentreDeSante());
             dto.setCodeDispositif(parametres.getDispositif().getCodeDispositif());
         }
-        
+
         // Ajouter le nombre de diagnostics si la collection est chargée
         if (parametres.getDiagnostics() != null) {
             dto.setNombreDiagnostics(parametres.getDiagnostics().size());
         }
-        
+
+        // Ajouter les informations de verrouillage
+        dto.setVerrouilleParMedecinId(parametres.getVerrouilleParMedecinId());
+        dto.setVerrouilleAt(parametres.getVerrouilleAt());
+
         return dto;
     }
 }

@@ -13,7 +13,6 @@ public class DiagnosticMapper {
 
     /**
      * Convertir DiagnosticRequestDTO → Diagnostic (pour création)
-     * Note: Le médecin et les paramètres doivent être récupérés et assignés par le service
      */
     public Diagnostic toEntity(DiagnosticRequestDTO dto) {
         if (dto == null) {
@@ -22,7 +21,9 @@ public class DiagnosticMapper {
 
         Diagnostic diagnostic = new Diagnostic();
         diagnostic.setContenu(dto.getContenu());
-        
+        diagnostic.setRecommandations(dto.getRecommandations());
+        diagnostic.setNiveauUrgence(dto.getNiveauUrgence());
+
         return diagnostic;
     }
 
@@ -35,7 +36,8 @@ public class DiagnosticMapper {
         }
 
         diagnostic.setContenu(dto.getContenu());
-        // Note: Le médecin et les paramètres doivent être mis à jour par le service si nécessaire
+        diagnostic.setRecommandations(dto.getRecommandations());
+        diagnostic.setNiveauUrgence(dto.getNiveauUrgence());
     }
 
     /**
@@ -49,8 +51,11 @@ public class DiagnosticMapper {
         DiagnosticResponseDTO dto = new DiagnosticResponseDTO();
         dto.setId(diagnostic.getId());
         dto.setContenu(diagnostic.getContenu());
+        dto.setRecommandations(diagnostic.getRecommandations());
+        dto.setNiveauUrgence(diagnostic.getNiveauUrgence());
         dto.setDateDiagnostic(diagnostic.getDateDiagnostic());
-        
+        dto.setDateValidation(diagnostic.getDateValidation());
+
         // Ajouter les informations du médecin
         if (diagnostic.getMedecin() != null) {
             dto.setMedecinId(diagnostic.getMedecin().getId());
@@ -58,7 +63,7 @@ public class DiagnosticMapper {
             dto.setMedecinPrenom(diagnostic.getMedecin().getPrenom());
             dto.setMedecinEmail(diagnostic.getMedecin().getEmail());
         }
-        
+
         // Ajouter les informations des paramètres du patient
         if (diagnostic.getParametres() != null) {
             dto.setParametresId(diagnostic.getParametres().getId());
@@ -69,8 +74,9 @@ public class DiagnosticMapper {
             dto.setPressionArterielleDiastolique(diagnostic.getParametres().getPressionArterielleDiastolique());
             dto.setFrequenceFoetale(diagnostic.getParametres().getFrequenceFoetale());
             dto.setDateMesure(diagnostic.getParametres().getDateMesure());
+            dto.setGlycemie(diagnostic.getParametres().getGlycemie());
         }
-        
+
         return dto;
     }
 }

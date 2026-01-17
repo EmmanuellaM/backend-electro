@@ -118,4 +118,68 @@ public class ParametresServiceImpl implements ParametresService {
                 .map(parametresMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public ParametresResponseDTO lockParametres(int id, int medecinId) {
+        Parametres parametres = parametresRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Paramètres", "id", id));
+
+        // Vérifier si déjà verrouillé par un autre médecin
+        if (parametres.getVerrouilleParMedecinId() != null
+                && !parametres.getVerrouilleParMedecinId().equals(medecinId)) {
+            // Vérifier le timeout (30 minutes)
+            if (parametres.getVerrouilleAt() != null
+                    && parametres.getVerrouilleAt().plusMinutes(30).isAfter(java.time.LocalDateTime.now())) {
+                throw new IllegalStateException(
+                        "Ces paramètres sont actuellement consultés par un autre médecin (ID: "
+                                + parametres.getVerrouilleParMedecinId() + ")");
+            }
+            // Timeout expiré, on peut verrouiller
+        }
+
+        // Verrouiller
+        parametres.setVerrouilleParMedecinId(medecinId);
+        parametres.setVerrouilleAt(java.time.LocalDateTime.now());
+
+        Parametres saved = parametresRepository.save(parametres);
+        return parametresMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public ParametresResponseDTO unlockParametres(int id) {
+        Parametres parametres = parametresRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Paramètres", "id", id));
+
+        // Déverrouiller
+        parametres.setVerrouilleParMedecinId(null);
+        parametres.setVerrouilleAt(null);
+
+        Parametres saved = parametresRepository.save(parametres);
+        return parametresMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isLocked(int id, int medecinId) {
+        Parametres parametres = parametresRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Paramètres", "id", id));
+
+        // Pas verrouillé
+        if (parametres.getVerrouilleParMedecinId() == null) {
+            return false;
+        }
+
+        // Verrouillé par le même médecin = pas bloqué pour lui
+        if (parametres.getVerrouilleParMedecinId().equals(medecinId)) {
+            return false;
+        }
+
+        // Vérifier le timeout (30 minutes)
+        if (parametres.getVerrouilleAt() != null
+                && parametres.getVerrouilleAt().plusMinutes(30).isBefore(java.time.LocalDateTime.now())) {
+            return false; // Timeout expiré
+        }
+
+        return true; // Verrouillé par un autre médecin
+    }
 }

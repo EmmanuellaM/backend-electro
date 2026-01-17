@@ -3,6 +3,8 @@ package com.polytechnique.backend.controller;
 import com.polytechnique.backend.dto.request.MedecinRequestDTO;
 import com.polytechnique.backend.dto.response.MedecinResponseDTO;
 import com.polytechnique.backend.service.MedecinService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,46 +20,35 @@ import java.util.List;
 @RestController
 @RequestMapping("/medecins")
 @RequiredArgsConstructor
+@Tag(name = "Médecins", description = "Gestion des médecins et de leurs diagnostics")
 public class MedecinController {
 
     private final MedecinService medecinService;
 
-    /**
-     * Créer un nouveau médecin
-     * POST /api/medecins
-     */
     @PostMapping
+    @Operation(summary = "Créer un médecin", description = "Enregistre un nouveau médecin avec ses informations professionnelles et sa CNI.")
     public ResponseEntity<MedecinResponseDTO> createMedecin(
             @Valid @RequestBody MedecinRequestDTO requestDTO) {
         MedecinResponseDTO response = medecinService.createMedecin(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * Récupérer un médecin par son ID
-     * GET /api/medecins/{id}
-     */
     @GetMapping("/{id}")
+    @Operation(summary = "Récupérer un médecin par ID", description = "Retourne les détails complets d'un médecin.")
     public ResponseEntity<MedecinResponseDTO> getMedecinById(@PathVariable int id) {
         MedecinResponseDTO response = medecinService.getMedecinById(id);
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Récupérer tous les médecins
-     * GET /api/medecins
-     */
     @GetMapping
+    @Operation(summary = "Lister tous les médecins", description = "Retourne la liste complète des médecins enregistrés.")
     public ResponseEntity<List<MedecinResponseDTO>> getAllMedecins() {
         List<MedecinResponseDTO> response = medecinService.getAllMedecins();
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Mettre à jour un médecin
-     * PUT /api/medecins/{id}
-     */
     @PutMapping("/{id}")
+    @Operation(summary = "Mettre à jour un médecin", description = "Modifie les informations d'un médecin existant.")
     public ResponseEntity<MedecinResponseDTO> updateMedecin(
             @PathVariable int id,
             @Valid @RequestBody MedecinRequestDTO requestDTO) {
@@ -65,21 +56,15 @@ public class MedecinController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Supprimer un médecin
-     * DELETE /api/medecins/{id}
-     */
     @DeleteMapping("/{id}")
+    @Operation(summary = "Supprimer un médecin", description = "Supprime définitivement un médecin de la base de données.")
     public ResponseEntity<Void> deleteMedecin(@PathVariable int id) {
         medecinService.deleteMedecin(id);
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Rechercher un médecin par email
-     * GET /api/medecins/email/{email}
-     */
     @GetMapping("/email/{email}")
+    @Operation(summary = "Rechercher par email", description = "Trouve un médecin par son adresse email.")
     public ResponseEntity<MedecinResponseDTO> getMedecinByEmail(@PathVariable String email) {
         MedecinResponseDTO response = medecinService.getMedecinByEmail(email);
         return ResponseEntity.ok(response);

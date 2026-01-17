@@ -44,4 +44,19 @@ public interface ParametresService {
      * Récupérer les paramètres par dispositif
      */
     List<ParametresResponseDTO> getParametresByDispositif(int dispositifId);
+
+    /**
+     * Verrouiller des paramètres pour un médecin (empêche l'accès concurrent)
+     */
+    ParametresResponseDTO lockParametres(int id, int medecinId);
+
+    /**
+     * Déverrouiller des paramètres
+     */
+    ParametresResponseDTO unlockParametres(int id);
+
+    /**
+     * Vérifier le statut de verrouillage
+     */
+    boolean isLocked(int id, int medecinId);
 }

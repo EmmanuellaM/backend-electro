@@ -1,5 +1,7 @@
 package com.polytechnique.backend.service;
 
+import com.polytechnique.backend.dto.request.ChangePasswordRequestDTO;
+import com.polytechnique.backend.dto.request.LoginRequestDTO;
 import com.polytechnique.backend.dto.request.MedecinRequestDTO;
 import com.polytechnique.backend.dto.response.MedecinResponseDTO;
 
@@ -39,4 +41,8 @@ public interface MedecinService {
      * Récupérer un médecin par email
      */
     MedecinResponseDTO getMedecinByEmail(String email);
+
+    MedecinResponseDTO login(LoginRequestDTO loginRequest);
+
+    void updatePassword(int id, ChangePasswordRequestDTO changePasswordRequest);
 }

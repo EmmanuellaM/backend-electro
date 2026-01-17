@@ -38,6 +38,11 @@ public class Dispositif {
     @Column(name = "code_dispositif", nullable = false, unique = true, length = 50)
     private String codeDispositif;
 
+    @NotBlank(message = "Le DevEUI est obligatoire")
+    @Size(max = 50)
+    @Column(name = "deveui", nullable = false, unique = true, length = 50)
+    private String deveui;
+
     @NotBlank(message = "Le nom du centre de santé est obligatoire")
     @Size(max = 150, message = "Le nom du centre ne peut pas dépasser 150 caractères")
     @Column(name = "nom_centre_de_sante", nullable = false, length = 150)
@@ -103,4 +108,19 @@ public class Dispositif {
         parametres.remove(param);
         param.setDispositif(null);
     }
+
+    /**
+     * Relation Many-to-One avec InfirmierLocal
+     * Un dispositif est supervisé par un infirmier
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_infirmier_local")
+    private InfirmierLocal infirmierLocal;
+
+    /**
+     * Administrateur ayant créé ce dispositif
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_administrateur")
+    private Administrateur administrateur;
 }

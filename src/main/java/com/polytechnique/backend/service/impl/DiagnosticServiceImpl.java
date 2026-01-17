@@ -11,6 +11,7 @@ import com.polytechnique.backend.repository.DiagnosticRepository;
 import com.polytechnique.backend.repository.MedecinRepository;
 import com.polytechnique.backend.repository.ParametresRepository;
 import com.polytechnique.backend.service.DiagnosticService;
+import com.polytechnique.backend.service.NotificationSMSService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class DiagnosticServiceImpl implements DiagnosticService {
     private final MedecinRepository medecinRepository;
     private final ParametresRepository parametresRepository;
     private final DiagnosticMapper diagnosticMapper;
+    private final NotificationSMSService notificationSMSService;
 
     @Override
     public DiagnosticResponseDTO createDiagnostic(DiagnosticRequestDTO requestDTO) {
@@ -41,6 +43,13 @@ public class DiagnosticServiceImpl implements DiagnosticService {
         Parametres parametres = parametresRepository.findById(requestDTO.getParametresId())
                 .orElseThrow(() -> new ResourceNotFoundException("Paramètres", "id", requestDTO.getParametresId()));
 
+        // Vérifier qu'un diagnostic n'existe pas déjà pour ces paramètres
+        if (diagnosticRepository.countByParametresId(requestDTO.getParametresId()) > 0) {
+            throw new IllegalStateException(
+                    "Un diagnostic existe déjà pour les paramètres ID " + requestDTO.getParametresId() +
+                            ". Utilisez l'endpoint PUT /api/diagnostics/{id} pour modifier le diagnostic existant.");
+        }
+
         // Convertir DTO → Entité
         Diagnostic diagnostic = diagnosticMapper.toEntity(requestDTO);
         diagnostic.setMedecin(medecin);
@@ -49,8 +58,20 @@ public class DiagnosticServiceImpl implements DiagnosticService {
         // Sauvegarder
         Diagnostic savedDiagnostic = diagnosticRepository.save(diagnostic);
 
+        // Mettre à jour le statut des paramètres à "diagnostique"
+        parametres.setStatut("diagnostique");
+        parametresRepository.save(parametres);
+
         // Convertir Entité → DTO de réponse
-        return diagnosticMapper.toResponseDTO(savedDiagnostic);
+        DiagnosticResponseDTO response = diagnosticMapper.toResponseDTO(savedDiagnostic);
+
+        // Générer une notification SMS automatique vers l'infirmier local
+        if (parametres.getDispositif() != null && parametres.getDispositif().getInfirmierLocal() != null) {
+            notificationSMSService.createAutomaticNotification(savedDiagnostic,
+                    parametres.getDispositif().getInfirmierLocal());
+        }
+
+        return response;
     }
 
     @Override

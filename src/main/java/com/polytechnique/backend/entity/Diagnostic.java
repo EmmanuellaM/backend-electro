@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
  * Entité représentant un diagnostic médical établi par un médecin
  * Correspond à la table "diagnostic" dans PostgreSQL
  * 
- * IMPORTANT: Un seul diagnostic par paramètre (contrainte UNIQUE sur ID_Parametres)
+ * IMPORTANT: Un seul diagnostic par paramètre (contrainte UNIQUE sur
+ * ID_Parametres)
  */
 @Entity
 @Table(name = "diagnostic")
@@ -40,9 +41,26 @@ public class Diagnostic {
     /**
      * Date et heure du diagnostic
      */
-    @CreationTimestamp
     @Column(name = "date_diagnostic")
     private LocalDateTime dateDiagnostic;
+
+    /**
+     * Date de validation par le médecin
+     */
+    @Column(name = "date_validation")
+    private LocalDateTime dateValidation;
+
+    /**
+     * Recommandations cliniques
+     */
+    @Column(name = "recommandations", columnDefinition = "TEXT")
+    private String recommandations;
+
+    /**
+     * Niveau d'urgence (NORMAL, CRITIQUE)
+     */
+    @Column(name = "niveau_urgence", length = 20)
+    private String niveauUrgence;
 
     /**
      * Date de création automatique
