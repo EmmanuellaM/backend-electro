@@ -83,4 +83,13 @@ public class InfirmierLocalServiceImpl implements InfirmierLocalService {
         }
         infirmierLocalRepository.deleteById(id);
     }
+
+    @Override
+    public InfirmierLocalResponseDTO updateStatut(int id, String statut) {
+        InfirmierLocal infirmier = infirmierLocalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Infirmier", "id", id));
+        infirmier.setStatut(statut != null ? statut.toLowerCase() : "actif");
+        InfirmierLocal updatedInfirmier = infirmierLocalRepository.save(infirmier);
+        return infirmierLocalMapper.toResponseDTO(updatedInfirmier);
+    }
 }

@@ -63,6 +63,26 @@ public class DispositifController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{id}/statut")
+    @Operation(summary = "Modifier le statut d'un dispositif", description = "Change uniquement le statut d'un dispositif. Valeurs possibles: ACTIF (opérationnel), INACTIF (désactivé), MAINTENANCE (en réparation).")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nouveau statut du dispositif", required = true, content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = com.polytechnique.backend.dto.request.StatutDispositifRequestDTO.class), examples = @io.swagger.v3.oas.annotations.media.ExampleObject(name = "Activer un dispositif", value = "{\"statut\": \"ACTIF\"}")))
+    public ResponseEntity<DispositifResponseDTO> updateStatut(
+            @PathVariable int id,
+            @RequestBody com.polytechnique.backend.dto.request.StatutDispositifRequestDTO body) {
+        String newStatut = body.getStatut().name();
+        DispositifResponseDTO response = dispositifService.updateStatut(id, newStatut);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}/activer")
+    @Operation(summary = "Activer un dispositif", description = "Assigne un infirmier et active un dispositif en attente.")
+    public ResponseEntity<DispositifResponseDTO> activerDispositif(
+            @PathVariable int id,
+            @jakarta.validation.Valid @RequestBody com.polytechnique.backend.dto.request.ActivationDispositifRequestDTO body) {
+        DispositifResponseDTO response = dispositifService.activerDispositif(id, body);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/search")
     @Operation(summary = "Rechercher par centre de santé", description = "Trouve des dispositifs par nom de centre de santé.")
     public ResponseEntity<List<DispositifResponseDTO>> searchByNomCentre(

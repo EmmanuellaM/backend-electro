@@ -45,4 +45,9 @@ public interface MedecinService {
     MedecinResponseDTO login(LoginRequestDTO loginRequest);
 
     void updatePassword(int id, ChangePasswordRequestDTO changePasswordRequest);
+
+    /**
+     * Mettre à jour uniquement le statut d'un médecin
+     */
+    MedecinResponseDTO updateStatut(int id, String statut);
 }

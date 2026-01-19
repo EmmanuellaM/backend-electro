@@ -40,6 +40,9 @@ public class ParametresResponseDTO {
     private Integer verrouilleParMedecinId;
     private LocalDateTime verrouilleAt;
 
+    // Diagnostic associé (le plus récent)
+    private DiagnosticSummary diagnostic;
+
     /**
      * Méthode utilitaire pour obtenir la tension sous forme "120/80"
      */
@@ -48,5 +51,22 @@ public class ParametresResponseDTO {
             return pressionArterielleSystolique + "/" + pressionArterielleDiastolique;
         }
         return null;
+    }
+
+    /**
+     * DTO simplifié pour le diagnostic embarqué
+     */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DiagnosticSummary {
+        private Integer id;
+        private String contenu;
+        private String recommandations;
+        private String niveauUrgence;
+        private LocalDateTime dateDiagnostic;
+        private Integer medecinId;
+        private String medecinNom;
+        private String medecinPrenom;
     }
 }

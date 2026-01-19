@@ -25,6 +25,9 @@ public class StatistiquesResponseDTO {
     @Schema(description = "Nombre de dispositifs en maintenance", example = "1")
     private int dispositifsMaintenance;
 
+    @Schema(description = "Nombre de dispositifs en attente d'activation", example = "1")
+    private int dispositifsEnAttente;
+
     @Schema(description = "Nombre total de médecins", example = "5")
     private int totalMedecins;
 
@@ -34,6 +37,9 @@ public class StatistiquesResponseDTO {
     @Schema(description = "Nombre de médecins inactifs", example = "1")
     private int medecinsInactifs;
 
+    @Schema(description = "Nombre de médecins suspendus", example = "0")
+    private int medecinsSuspendus;
+
     @Schema(description = "Nombre total de patients (identifiants uniques)", example = "45")
     private int totalPatients;
 
@@ -42,6 +48,12 @@ public class StatistiquesResponseDTO {
 
     @Schema(description = "Nombre de patients diagnostiqués", example = "33")
     private int patientsDiagnostiques;
+
+    @Schema(description = "Nombre total de paramètres médicaux", example = "120")
+    private int totalParametres;
+
+    @Schema(description = "Nombre de paramètres en attente de diagnostic", example = "15")
+    private int parametresEnAttente;
 
     @Schema(description = "Nombre total de diagnostics effectués", example = "565")
     private int totalDiagnostics;

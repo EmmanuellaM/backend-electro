@@ -54,4 +54,13 @@ public class InfirmierLocalController {
         infirmierLocalService.deleteInfirmier(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/statut")
+    @Operation(summary = "Modifier le statut d'un infirmier", description = "Active ou désactive un infirmier.")
+    public ResponseEntity<InfirmierLocalResponseDTO> updateStatut(
+            @PathVariable int id,
+            @RequestBody java.util.Map<String, String> body) {
+        String statut = body.get("statut");
+        return ResponseEntity.ok(infirmierLocalService.updateStatut(id, statut));
+    }
 }

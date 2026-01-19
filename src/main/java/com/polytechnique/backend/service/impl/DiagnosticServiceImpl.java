@@ -54,6 +54,8 @@ public class DiagnosticServiceImpl implements DiagnosticService {
         Diagnostic diagnostic = diagnosticMapper.toEntity(requestDTO);
         diagnostic.setMedecin(medecin);
         diagnostic.setParametres(parametres);
+        diagnostic.setDateDiagnostic(java.time.LocalDateTime.now());
+        diagnostic.setDateValidation(java.time.LocalDateTime.now());
 
         // Sauvegarder
         Diagnostic savedDiagnostic = diagnosticRepository.save(diagnostic);
@@ -155,9 +157,16 @@ public class DiagnosticServiceImpl implements DiagnosticService {
             throw new ResourceNotFoundException("Paramètres", "id", parametresId);
         }
 
-        return diagnosticRepository.findByParametresId(parametresId)
-                .stream()
+        List<Diagnostic> diagnostics = diagnosticRepository.findByParametresIdOrderByIdDesc(parametresId);
+
+        return diagnostics.stream()
                 .map(diagnosticMapper::toResponseDTO)
-                .collect(Collectors.toList());
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Double getAverageProcessingTime() {
+        return diagnosticRepository.getAverageProcessingTime();
     }
 }

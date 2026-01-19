@@ -60,11 +60,12 @@ public class Dispositif {
     private String contact;
 
     /**
-     * Statut du dispositif: actif, inactif, maintenance
-     * Valeur par défaut: "actif"
+     * Statut du dispositif
+     * Valeur par défaut: ACTIF
      */
-    @Column(name = "statut", length = 20)
-    private String statut = "actif";
+    @Enumerated(EnumType.STRING)
+    @Column(name = "statut", length = 50)
+    private StatutDispositif statut = StatutDispositif.ACTIF;
 
     /**
      * Date d'installation du dispositif

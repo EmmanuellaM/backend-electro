@@ -43,5 +43,13 @@ public interface DiagnosticService {
     /**
      * Récupérer les diagnostics basés sur des paramètres spécifiques
      */
+    /**
+     * Récupérer les diagnostics basés sur des paramètres spécifiques
+     */
     List<DiagnosticResponseDTO> getDiagnosticsByParametres(int parametresId);
+
+    /**
+     * Calculer le temps moyen de traitement en secondes
+     */
+    Double getAverageProcessingTime();
 }

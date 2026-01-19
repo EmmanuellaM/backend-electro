@@ -2,6 +2,7 @@ package com.polytechnique.backend.mapper;
 
 import com.polytechnique.backend.dto.request.ParametresRequestDTO;
 import com.polytechnique.backend.dto.response.ParametresResponseDTO;
+import com.polytechnique.backend.entity.Diagnostic;
 import com.polytechnique.backend.entity.Parametres;
 import org.springframework.stereotype.Component;
 
@@ -79,6 +80,30 @@ public class ParametresMapper {
         // Ajouter le nombre de diagnostics si la collection est chargée
         if (parametres.getDiagnostics() != null) {
             dto.setNombreDiagnostics(parametres.getDiagnostics().size());
+
+            // Ajouter le diagnostic le plus récent
+            if (!parametres.getDiagnostics().isEmpty()) {
+                Diagnostic latestDiag = parametres.getDiagnostics().stream()
+                        .reduce((first, second) -> second) // Get last element (most recent)
+                        .orElse(null);
+
+                if (latestDiag != null) {
+                    ParametresResponseDTO.DiagnosticSummary diagSummary = new ParametresResponseDTO.DiagnosticSummary();
+                    diagSummary.setId(latestDiag.getId());
+                    diagSummary.setContenu(latestDiag.getContenu());
+                    diagSummary.setRecommandations(latestDiag.getRecommandations());
+                    diagSummary.setNiveauUrgence(latestDiag.getNiveauUrgence());
+                    diagSummary.setDateDiagnostic(latestDiag.getDateDiagnostic());
+
+                    if (latestDiag.getMedecin() != null) {
+                        diagSummary.setMedecinId(latestDiag.getMedecin().getId());
+                        diagSummary.setMedecinNom(latestDiag.getMedecin().getNom());
+                        diagSummary.setMedecinPrenom(latestDiag.getMedecin().getPrenom());
+                    }
+
+                    dto.setDiagnostic(diagSummary);
+                }
+            }
         }
 
         // Ajouter les informations de verrouillage

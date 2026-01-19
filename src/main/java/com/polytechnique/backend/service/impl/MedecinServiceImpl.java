@@ -5,6 +5,8 @@ import com.polytechnique.backend.dto.request.LoginRequestDTO;
 import com.polytechnique.backend.dto.request.MedecinRequestDTO;
 import com.polytechnique.backend.dto.response.MedecinResponseDTO;
 import com.polytechnique.backend.entity.Medecin;
+import com.polytechnique.backend.entity.StatutMedecin;
+import com.polytechnique.backend.exception.AuthenticationException;
 import com.polytechnique.backend.exception.EmailAlreadyExistsException;
 import com.polytechnique.backend.exception.ResourceNotFoundException;
 import com.polytechnique.backend.mapper.MedecinMapper;
@@ -152,5 +154,16 @@ public class MedecinServiceImpl implements MedecinService {
 
         medecin.setMotDePasse(changePasswordRequest.getNouveauMotDePasse());
         medecinRepository.save(medecin);
+    }
+
+    @Override
+    public MedecinResponseDTO updateStatut(int id, String statut) {
+        Medecin medecin = medecinRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Médecin", "id", id));
+
+        medecin.setStatut(StatutMedecin.valueOf(statut.toUpperCase()));
+        Medecin updatedMedecin = medecinRepository.save(medecin);
+
+        return medecinMapper.toResponseDTO(updatedMedecin);
     }
 }

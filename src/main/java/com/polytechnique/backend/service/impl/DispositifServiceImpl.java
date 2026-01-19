@@ -4,6 +4,7 @@ import com.polytechnique.backend.dto.request.DispositifRequestDTO;
 import com.polytechnique.backend.dto.response.DispositifResponseDTO;
 import com.polytechnique.backend.entity.Dispositif;
 import com.polytechnique.backend.entity.InfirmierLocal;
+import com.polytechnique.backend.entity.StatutDispositif;
 import com.polytechnique.backend.exception.ResourceNotFoundException;
 import com.polytechnique.backend.mapper.DispositifMapper;
 import com.polytechnique.backend.repository.DispositifRepository;
@@ -139,5 +140,33 @@ public class DispositifServiceImpl implements DispositifService {
                 .stream()
                 .map(dispositifMapper::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public DispositifResponseDTO updateStatut(int id, String statut) {
+        Dispositif dispositif = dispositifRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dispositif", "id", id));
+
+        StatutDispositif newStatut = StatutDispositif.valueOf(statut.toUpperCase());
+        dispositif.setStatut(newStatut);
+        Dispositif updatedDispositif = dispositifRepository.save(dispositif);
+
+        return dispositifMapper.toResponseDTO(updatedDispositif);
+    }
+
+    @Override
+    public DispositifResponseDTO activerDispositif(int id,
+            com.polytechnique.backend.dto.request.ActivationDispositifRequestDTO requestDTO) {
+        Dispositif dispositif = dispositifRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dispositif", "id", id));
+
+        InfirmierLocal infirmier = infirmierLocalRepository.findById(requestDTO.getInfirmierId())
+                .orElseThrow(() -> new ResourceNotFoundException("InfirmierLocal", "id", requestDTO.getInfirmierId()));
+
+        dispositif.setInfirmierLocal(infirmier);
+        dispositif.setStatut(StatutDispositif.ACTIF); // Passage à ACTIF
+
+        Dispositif savedDispositif = dispositifRepository.save(dispositif);
+        return dispositifMapper.toResponseDTO(savedDispositif);
     }
 }

@@ -3,6 +3,7 @@ package com.polytechnique.backend.mapper;
 import com.polytechnique.backend.dto.request.MedecinRequestDTO;
 import com.polytechnique.backend.dto.response.MedecinResponseDTO;
 import com.polytechnique.backend.entity.Medecin;
+import com.polytechnique.backend.entity.StatutMedecin;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,14 +26,19 @@ public class MedecinMapper {
         medecin.setEmail(dto.getEmail());
         medecin.setTel(dto.getTel());
         medecin.setNumeroCarteIdentite(dto.getNumeroCarteIdentite());
+        medecin.setGenre(dto.getGenre());
+        medecin.setSpecialite(dto.getSpecialite());
 
         // Set password - use provided or generate default
         if (dto.getMotDePasse() != null && !dto.getMotDePasse().isBlank()) {
             medecin.setMotDePasse(dto.getMotDePasse());
         } else {
-            // Default password: changeme123 (should be changed on first login)
-            medecin.setMotDePasse("changeme123");
+            // Default password: password123 (should be changed on first login)
+            medecin.setMotDePasse("password123");
         }
+
+        // Default status
+        medecin.setStatut(dto.getStatut() != null ? dto.getStatut() : StatutMedecin.ACTIF);
 
         return medecin;
     }
@@ -50,6 +56,21 @@ public class MedecinMapper {
         medecin.setEmail(dto.getEmail());
         medecin.setTel(dto.getTel());
         medecin.setNumeroCarteIdentite(dto.getNumeroCarteIdentite());
+
+        // Update genre if provided
+        if (dto.getGenre() != null) {
+            medecin.setGenre(dto.getGenre());
+        }
+
+        // Update specialite if provided
+        if (dto.getSpecialite() != null) {
+            medecin.setSpecialite(dto.getSpecialite());
+        }
+
+        // Update statut if provided
+        if (dto.getStatut() != null) {
+            medecin.setStatut(dto.getStatut());
+        }
     }
 
     /**
@@ -67,14 +88,15 @@ public class MedecinMapper {
         dto.setEmail(medecin.getEmail());
         dto.setTel(medecin.getTel());
         dto.setNumeroCarteIdentite(medecin.getNumeroCarteIdentite());
+        dto.setGenre(medecin.getGenre());
+        dto.setSpecialite(medecin.getSpecialite());
         dto.setStatut(medecin.getStatut());
         dto.setDateInscription(medecin.getDateInscription());
         dto.setDerniereConnexion(medecin.getDerniereConnexion());
 
-        // Ajouter le nombre de diagnostics si la collection est chargée
-        if (medecin.getDiagnostics() != null) {
-            dto.setNombreDiagnostics(medecin.getDiagnostics().size());
-        }
+        // Utiliser le champ calculé par @Formula s'il est disponible, sinon 0
+        dto.setNombreDiagnostics(
+                medecin.getNombreDiagnosticsCalculated() != null ? medecin.getNombreDiagnosticsCalculated() : 0);
 
         return dto;
     }

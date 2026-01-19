@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+import com.polytechnique.backend.entity.StatutDispositif;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,14 +40,13 @@ public class DispositifRequestDTO {
     @Schema(description = "Contact du centre de santé", example = "+237699111222")
     private String contact;
 
-    @Schema(description = "Statut du dispositif", example = "actif", allowableValues = { "actif", "inactif",
-            "maintenance" })
-    private String statut;
+    @Schema(description = "Statut du dispositif: ACTIF (opérationnel), INACTIF (désactivé), MAINTENANCE (en réparation)", example = "ACTIF")
+    private StatutDispositif statut;
 
     @Schema(description = "Date d'installation du dispositif", example = "2024-01-15")
     private LocalDate dateInstallation;
 
-    @Schema(description = "ID de l'infirmier local supervisé", example = "1")
+    @Schema(description = "ID de l'infirmier local supervisé (Optionnel à la création si statut EN_ATTENTE_ACTIVATION)", example = "1")
     private Integer infirmierLocalId;
 
     @Schema(description = "ID de l'administrateur créateur", example = "1")

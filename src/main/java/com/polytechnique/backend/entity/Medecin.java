@@ -65,10 +65,25 @@ public class Medecin {
     private String numeroCarteIdentite;
 
     /**
-     * Statut du médecin (actif, inactif, etc.)
+     * Statut du médecin (ACTIF, INACTIF, SUSPENDU)
      */
+    @Enumerated(EnumType.STRING)
     @Column(name = "statut")
-    private String statut = "actif";
+    private StatutMedecin statut = StatutMedecin.ACTIF;
+
+    /**
+     * Genre du médecin
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "genre")
+    private Genre genre;
+
+    /**
+     * Spécialité médicale du médecin
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "specialite")
+    private SpecialiteMedecin specialite;
 
     @Column(name = "date_inscription")
     private LocalDateTime dateInscription = LocalDateTime.now();
@@ -90,6 +105,9 @@ public class Medecin {
      */
     @OneToMany(mappedBy = "medecin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Diagnostic> diagnostics = new ArrayList<>();
+
+    @org.hibernate.annotations.Formula("(SELECT count(*) FROM diagnostic d WHERE d.id_medecin = id_medecin)")
+    private Integer nombreDiagnosticsCalculated;
 
     /**
      * Administrateur ayant créé ce médecin

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,7 +26,18 @@ public class AIClientService {
     }
 
     /**
+     * Exception personnalisée pour signaler que le service IA n'est pas disponible
+     */
+    public static class AIServiceUnavailableException extends RuntimeException {
+        public AIServiceUnavailableException(String message) {
+            super(message);
+        }
+    }
+
+    /**
      * Envoie les paramètres médicaux au service IA pour obtenir un diagnostic
+     * 
+     * @throws AIServiceUnavailableException si le service IA n'est pas accessible
      */
     public Map<String, Object> predictDiagnosis(
             int agePatient,
@@ -68,8 +78,9 @@ public class AIClientService {
 
         } catch (Exception e) {
             log.error("Erreur lors de l'appel au service IA: {}", e.getMessage());
-            // Retourner une prédiction par défaut en cas d'erreur
-            return createDefaultPrediction();
+            // NE PAS retourner de prédiction par défaut - lever une exception
+            throw new AIServiceUnavailableException(
+                    "Le service IA n'est pas disponible. Veuillez réessayer ultérieurement.");
         }
     }
 
@@ -108,25 +119,5 @@ public class AIClientService {
                     "status", "unavailable",
                     "message", "Service IA non disponible");
         }
-    }
-
-    /**
-     * Créer une prédiction par défaut quand le service IA n'est pas disponible
-     */
-    private Map<String, Object> createDefaultPrediction() {
-        Map<String, Object> defaultResponse = new HashMap<>();
-        defaultResponse.put("classe_predite", "Normal");
-        defaultResponse.put("score_confiance", 0.5);
-        defaultResponse.put("probabilites", Map.of(
-                "Normal", 0.5,
-                "Pre-eclampsie", 0.25,
-                "Diabete_gestationnel", 0.15,
-                "Hypertension", 0.10));
-        defaultResponse.put("recommandations", List.of(
-                Map.of(
-                        "categorie", "Surveillance",
-                        "description", "Service IA non disponible - consultation médicale recommandée",
-                        "priorite", "moyenne")));
-        return defaultResponse;
     }
 }

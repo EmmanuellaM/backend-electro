@@ -11,4 +11,10 @@ public interface AuthService {
      * @return LoginResponseDTO avec le rôle (admin ou medecin)
      */
     LoginResponseDTO login(LoginRequestDTO loginRequest);
+
+    void initiatePasswordReset(String email);
+
+    boolean verifyResetToken(String email, String token);
+
+    void resetPassword(String email, String token, String newPassword);
 }

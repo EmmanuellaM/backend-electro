@@ -1,5 +1,6 @@
 package com.polytechnique.backend.dto.request;
 
+import com.polytechnique.backend.entity.Genre;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -25,6 +26,9 @@ public class InfirmierLocalRequestDTO {
 
     @Schema(description = "Statut de l'infirmier", example = "actif", defaultValue = "actif")
     private String statut;
+
+    @Schema(description = "Genre de l'infirmier", example = "MASCULIN")
+    private Genre genre;
 
     @Schema(description = "ID de l'administrateur créateur", example = "1")
     private Integer administrateurId;

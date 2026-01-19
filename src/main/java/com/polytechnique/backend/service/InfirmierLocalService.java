@@ -15,4 +15,6 @@ public interface InfirmierLocalService {
     InfirmierLocalResponseDTO updateInfirmier(int id, InfirmierLocalRequestDTO requestDTO);
 
     void deleteInfirmier(int id);
+
+    InfirmierLocalResponseDTO updateStatut(int id, String statut);
 }

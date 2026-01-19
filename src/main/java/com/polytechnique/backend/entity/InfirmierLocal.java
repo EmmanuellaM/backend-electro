@@ -50,6 +50,13 @@ public class InfirmierLocal {
     @Column(name = "statut")
     private String statut = "actif";
 
+    /**
+     * Genre de l'infirmier
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "genre")
+    private Genre genre;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

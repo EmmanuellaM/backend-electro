@@ -19,6 +19,7 @@ public class InfirmierLocalMapper {
         infirmier.setTelephone2(dto.getTelephone2());
         infirmier.setZoneAffectation(dto.getZoneAffectation());
         infirmier.setStatut(dto.getStatut() != null ? dto.getStatut() : "actif");
+        infirmier.setGenre(dto.getGenre());
         return infirmier;
     }
 
@@ -34,6 +35,9 @@ public class InfirmierLocalMapper {
         if (dto.getStatut() != null) {
             infirmier.setStatut(dto.getStatut());
         }
+        if (dto.getGenre() != null) {
+            infirmier.setGenre(dto.getGenre());
+        }
     }
 
     public InfirmierLocalResponseDTO toResponseDTO(InfirmierLocal infirmier) {
@@ -48,6 +52,7 @@ public class InfirmierLocalMapper {
         dto.setTelephone2(infirmier.getTelephone2());
         dto.setZoneAffectation(infirmier.getZoneAffectation());
         dto.setStatut(infirmier.getStatut());
+        dto.setGenre(infirmier.getGenre());
         return dto;
     }
 }

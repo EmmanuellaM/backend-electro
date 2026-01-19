@@ -62,6 +62,14 @@ public class ParametresController {
                 return ResponseEntity.ok(response);
         }
 
+        @GetMapping("/pending")
+        @Operation(summary = "Lister les paramètres sans diagnostic", description = "Retourne la liste des paramètres médicaux qui n'ont pas encore de diagnostic associé.")
+        @ApiResponse(responseCode = "200", description = "Liste des paramètres en attente de diagnostic")
+        public ResponseEntity<List<ParametresResponseDTO>> getParametresSansDiagnostic() {
+                List<ParametresResponseDTO> response = parametresService.getParametresSansDiagnostic();
+                return ResponseEntity.ok(response);
+        }
+
         @PutMapping("/{id}")
         @Operation(summary = "Mettre à jour des paramètres", description = "Modifie un enregistrement de paramètres médicaux existant.")
         @ApiResponses({

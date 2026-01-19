@@ -182,4 +182,12 @@ public class ParametresServiceImpl implements ParametresService {
 
         return true; // Verrouillé par un autre médecin
     }
+
+    @Override
+    public List<ParametresResponseDTO> getParametresSansDiagnostic() {
+        List<Parametres> parametresList = parametresRepository.findParametresSansDiagnostics();
+        return parametresList.stream()
+                .map(parametresMapper::toResponseDTO)
+                .collect(java.util.stream.Collectors.toList());
+    }
 }

@@ -8,6 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.polytechnique.backend.entity.StatutMedecin;
+import com.polytechnique.backend.entity.SpecialiteMedecin;
+import com.polytechnique.backend.entity.Genre;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -41,6 +45,15 @@ public class MedecinRequestDTO {
 
     @Schema(description = "Mot de passe (optionnel, pour création manuelle via API)", example = "SecurePass123!")
     private String motDePasse;
+
+    @Schema(description = "Genre du médecin", example = "MASCULIN")
+    private Genre genre;
+
+    @Schema(description = "Spécialité médicale", example = "GYNECOLOGIE_OBSTETRIQUE")
+    private SpecialiteMedecin specialite;
+
+    @Schema(description = "Statut du médecin (ACTIF, INACTIF, SUSPENDU)", example = "ACTIF")
+    private StatutMedecin statut;
 
     @Schema(description = "ID de l'administrateur créateur", example = "1")
     private Integer administrateurId;

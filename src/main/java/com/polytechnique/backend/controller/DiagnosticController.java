@@ -78,4 +78,11 @@ public class DiagnosticController {
         List<DiagnosticResponseDTO> response = diagnosticService.getDiagnosticsByParametres(parametresId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/stats/average-time")
+    @Operation(summary = "Temps moyen de diagnostic", description = "Retourne le temps moyen (en secondes) entre la prise de mesures et la validation du diagnostic.")
+    public ResponseEntity<Double> getAverageProcessingTime() {
+        Double averageTime = diagnosticService.getAverageProcessingTime();
+        return ResponseEntity.ok(averageTime != null ? averageTime : 0.0);
+    }
 }

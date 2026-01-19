@@ -60,4 +60,28 @@ public class AuthController {
         medecinService.updatePassword(id, changePasswordRequest);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/forgot-password")
+    @Operation(summary = "Mot de passe oublié", description = "Initie la procédure de réinitialisation de mot de passe (envoie un code).")
+    public ResponseEntity<Void> forgotPassword(
+            @RequestBody com.polytechnique.backend.dto.request.EmailRequestDTO request) {
+        authService.initiatePasswordReset(request.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify-code")
+    @Operation(summary = "Vérifier le code", description = "Vérifie si le code de réinitialisation est valide.")
+    public ResponseEntity<Boolean> verifyCode(
+            @RequestBody com.polytechnique.backend.dto.request.CodeVerifyRequestDTO request) {
+        boolean isValid = authService.verifyResetToken(request.getEmail(), request.getCode());
+        return ResponseEntity.ok(isValid);
+    }
+
+    @PostMapping("/reset-password")
+    @Operation(summary = "Réinitialiser le mot de passe", description = "Définit un nouveau mot de passe si le code est valide.")
+    public ResponseEntity<Void> resetPassword(
+            @RequestBody com.polytechnique.backend.dto.request.ResetPasswordRequestDTO request) {
+        authService.resetPassword(request.getEmail(), request.getCode(), request.getNewPassword());
+        return ResponseEntity.ok().build();
+    }
 }

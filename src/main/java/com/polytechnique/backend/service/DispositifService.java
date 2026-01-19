@@ -1,6 +1,7 @@
 package com.polytechnique.backend.service;
 
 import com.polytechnique.backend.dto.request.DispositifRequestDTO;
+import com.polytechnique.backend.dto.request.ActivationDispositifRequestDTO;
 import com.polytechnique.backend.dto.response.DispositifResponseDTO;
 
 import java.util.List;
@@ -39,4 +40,14 @@ public interface DispositifService {
      * Rechercher des dispositifs par nom de centre
      */
     List<DispositifResponseDTO> searchByNomCentre(String nomCentre);
+
+    /**
+     * Mettre à jour uniquement le statut d'un dispositif
+     */
+    DispositifResponseDTO updateStatut(int id, String statut);
+
+    /**
+     * Activer un dispositif en assignant un infirmier
+     */
+    DispositifResponseDTO activerDispositif(int id, ActivationDispositifRequestDTO requestDTO);
 }

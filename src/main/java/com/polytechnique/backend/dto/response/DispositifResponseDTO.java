@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.polytechnique.backend.entity.StatutDispositif;
+
 /**
  * DTO pour renvoyer les informations d'un dispositif
  */
@@ -21,7 +23,7 @@ public class DispositifResponseDTO {
     private String nomCentreDeSante;
     private String localisation;
     private String contact;
-    private String statut;
+    private StatutDispositif statut;
     private LocalDate dateInstallation;
     private LocalDateTime createdAt;
 

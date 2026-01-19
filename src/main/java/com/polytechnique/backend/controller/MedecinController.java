@@ -69,4 +69,23 @@ public class MedecinController {
         MedecinResponseDTO response = medecinService.getMedecinByEmail(email);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/{id}/password")
+    @Operation(summary = "Changer le mot de passe", description = "Permet à un médecin de changer son mot de passe.")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable int id,
+            @Valid @RequestBody com.polytechnique.backend.dto.request.ChangePasswordRequestDTO requestDTO) {
+        medecinService.updatePassword(id, requestDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}/statut")
+    @Operation(summary = "Modifier le statut d'un médecin", description = "Change uniquement le statut d'un médecin. Valeurs possibles: ACTIF, INACTIF.")
+    public ResponseEntity<MedecinResponseDTO> updateStatut(
+            @PathVariable int id,
+            @RequestBody java.util.Map<String, String> body) {
+        String newStatut = body.get("statut");
+        MedecinResponseDTO response = medecinService.updateStatut(id, newStatut);
+        return ResponseEntity.ok(response);
+    }
 }

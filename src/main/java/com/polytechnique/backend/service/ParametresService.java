@@ -59,4 +59,9 @@ public interface ParametresService {
      * Vérifier le statut de verrouillage
      */
     boolean isLocked(int id, int medecinId);
+
+    /**
+     * Récupérer les paramètres sans diagnostics (en attente)
+     */
+    List<ParametresResponseDTO> getParametresSansDiagnostic();
 }

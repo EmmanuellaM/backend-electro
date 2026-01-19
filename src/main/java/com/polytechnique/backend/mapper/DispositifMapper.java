@@ -5,6 +5,7 @@ import com.polytechnique.backend.dto.response.DispositifResponseDTO;
 import com.polytechnique.backend.dto.response.InfirmierLocalResponseDTO;
 import com.polytechnique.backend.entity.Dispositif;
 import com.polytechnique.backend.entity.InfirmierLocal;
+import com.polytechnique.backend.entity.StatutDispositif;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,7 @@ public class DispositifMapper {
         dispositif.setNomCentreDeSante(dto.getNomCentreDeSante());
         dispositif.setLocalisation(dto.getLocalisation());
         dispositif.setContact(dto.getContact());
-        dispositif.setStatut(dto.getStatut() != null ? dto.getStatut() : "actif");
+        dispositif.setStatut(dto.getStatut() != null ? dto.getStatut() : StatutDispositif.EN_ATTENTE_ACTIVATION);
         dispositif.setDateInstallation(dto.getDateInstallation());
 
         return dispositif;
