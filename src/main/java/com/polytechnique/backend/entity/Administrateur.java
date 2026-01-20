@@ -48,6 +48,14 @@ public class Administrateur {
     @Column(name = "mot_de_passe", nullable = false)
     private String motDePasse;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role = Role.ADMIN;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "statut")
+    private StatutAdministrateur statut = StatutAdministrateur.ACTIF;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -58,12 +66,12 @@ public class Administrateur {
 
     // Relations vers les entités créées
 
-    @OneToMany(mappedBy = "administrateur", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "administrateur", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Medecin> medecins = new ArrayList<>();
 
-    @OneToMany(mappedBy = "administrateur", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "administrateur", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InfirmierLocal> infirmiers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "administrateur", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "administrateur", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Dispositif> dispositifs = new ArrayList<>();
 }

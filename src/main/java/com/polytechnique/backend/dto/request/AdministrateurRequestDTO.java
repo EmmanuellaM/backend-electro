@@ -26,7 +26,8 @@ public class AdministrateurRequestDTO {
     private String email;
 
     @NotBlank(message = "Le mot de passe est obligatoire")
-    @Size(min = 6, max = 255)
-    @Schema(description = "Mot de passe sécurisé", example = "AdminSecurePass1!")
+    @Size(min = 6, message = "Le mot de passe doit contenir au moins 6 caractères")
     private String motDePasse;
+
+    private String role; // Optionnel, par défaut ADMIN
 }

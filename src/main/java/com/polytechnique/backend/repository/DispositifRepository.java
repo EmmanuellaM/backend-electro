@@ -117,4 +117,9 @@ public interface DispositifRepository extends JpaRepository<Dispositif, Integer>
      */
     @Query("SELECT COUNT(DISTINCT d.nomCentreDeSante) FROM Dispositif d")
     long countDistinctCentresDeSante();
+
+    /**
+     * Rechercher les dispositifs créés par un administrateur spécifique
+     */
+    List<Dispositif> findByAdministrateurId(Integer id);
 }

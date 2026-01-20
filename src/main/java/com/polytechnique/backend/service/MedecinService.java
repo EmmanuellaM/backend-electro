@@ -23,9 +23,9 @@ public interface MedecinService {
     MedecinResponseDTO getMedecinById(int id);
 
     /**
-     * Récupérer tous les médecins
+     * Récupérer tous les médecins (filtrés par admin si adminId fourni)
      */
-    List<MedecinResponseDTO> getAllMedecins();
+    List<MedecinResponseDTO> getAllMedecins(Integer adminId);
 
     /**
      * Mettre à jour un médecin

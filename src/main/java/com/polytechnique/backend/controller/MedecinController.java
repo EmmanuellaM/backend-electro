@@ -42,8 +42,9 @@ public class MedecinController {
 
     @GetMapping
     @Operation(summary = "Lister tous les médecins", description = "Retourne la liste complète des médecins enregistrés.")
-    public ResponseEntity<List<MedecinResponseDTO>> getAllMedecins() {
-        List<MedecinResponseDTO> response = medecinService.getAllMedecins();
+    public ResponseEntity<List<MedecinResponseDTO>> getAllMedecins(
+            @RequestParam(required = false) Integer adminId) {
+        List<MedecinResponseDTO> response = medecinService.getAllMedecins(adminId);
         return ResponseEntity.ok(response);
     }
 

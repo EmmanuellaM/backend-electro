@@ -184,8 +184,13 @@ public class ParametresServiceImpl implements ParametresService {
     }
 
     @Override
-    public List<ParametresResponseDTO> getParametresSansDiagnostic() {
-        List<Parametres> parametresList = parametresRepository.findParametresSansDiagnostics();
+    public List<ParametresResponseDTO> getParametresSansDiagnostic(Integer adminId) {
+        List<Parametres> parametresList;
+        if (adminId != null) {
+            parametresList = parametresRepository.findParametresSansDiagnosticsByAdminId(adminId);
+        } else {
+            parametresList = parametresRepository.findParametresSansDiagnostics();
+        }
         return parametresList.stream()
                 .map(parametresMapper::toResponseDTO)
                 .collect(java.util.stream.Collectors.toList());

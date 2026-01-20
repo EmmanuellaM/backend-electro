@@ -11,4 +11,6 @@ public interface InfirmierLocalRepository extends JpaRepository<InfirmierLocal, 
     List<InfirmierLocal> findByZoneAffectation(String zoneAffectation);
 
     List<InfirmierLocal> findByStatut(String statut);
+
+    List<InfirmierLocal> findByAdministrateurId(Integer id);
 }

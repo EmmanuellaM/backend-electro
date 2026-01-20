@@ -10,7 +10,7 @@ public interface InfirmierLocalService {
 
     InfirmierLocalResponseDTO getInfirmierById(int id);
 
-    List<InfirmierLocalResponseDTO> getAllInfirmiers();
+    List<InfirmierLocalResponseDTO> getAllInfirmiers(Integer adminId);
 
     InfirmierLocalResponseDTO updateInfirmier(int id, InfirmierLocalRequestDTO requestDTO);
 

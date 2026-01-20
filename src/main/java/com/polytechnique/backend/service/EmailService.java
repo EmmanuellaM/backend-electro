@@ -12,4 +12,13 @@ public interface EmailService {
      * @param code Code de vérification à 6 chiffres
      */
     void sendPasswordResetCode(String to, String code);
+
+    /**
+     * Envoie un email de bienvenue avec les identifiants de connexion
+     * 
+     * @param to       Adresse email du destinataire
+     * @param nom      Nom complet du médecin
+     * @param password Mot de passe généré
+     */
+    void sendNewAccountEmail(String to, String nom, String password);
 }

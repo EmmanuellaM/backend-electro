@@ -49,9 +49,14 @@ public class InfirmierLocalServiceImpl implements InfirmierLocalService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<InfirmierLocalResponseDTO> getAllInfirmiers() {
-        return infirmierLocalRepository.findAll()
-                .stream()
+    public List<InfirmierLocalResponseDTO> getAllInfirmiers(Integer adminId) {
+        List<InfirmierLocal> infirmiers;
+        if (adminId != null) {
+            infirmiers = infirmierLocalRepository.findByAdministrateurId(adminId);
+        } else {
+            infirmiers = infirmierLocalRepository.findAll();
+        }
+        return infirmiers.stream()
                 .map(infirmierLocalMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }

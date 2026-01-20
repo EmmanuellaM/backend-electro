@@ -118,4 +118,110 @@ public class EmailServiceImpl implements EmailService {
                 """
                 .formatted(code);
     }
+
+    @Override
+    public void sendNewAccountEmail(String to, String nom, String password) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromEmail, fromName);
+            helper.setTo(to);
+            helper.setSubject("🎉 Bienvenue sur MaterniCare - Vos identifiants");
+
+            String htmlContent = buildNewAccountEmail(nom, to, password);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+            log.info("Email de bienvenue envoyé à {}", to);
+
+        } catch (MessagingException | java.io.UnsupportedEncodingException e) {
+            log.error("Erreur lors de l'envoi de l'email de bienvenue à {}: {}", to, e.getMessage());
+            // On ne lance pas d'exception fatale pour ne pas bloquer la création du compte
+            // si l'envoi de mail échoue
+            // Ou alors on throw new RuntimeException("Erreur mail", e); si c'est critique
+            // user preference.
+            // Ici, log error suffisant ? Non, le user veut l'email.
+            throw new RuntimeException("Erreur lors de l'envoi de l'email de bienvenue", e);
+        }
+    }
+
+    private String buildNewAccountEmail(String nom, String email, String password) {
+        return """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                </head>
+                <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;">
+                    <table role="presentation" style="width: 100%%; border-collapse: collapse;">
+                        <tr>
+                            <td align="center" style="padding: 40px 0;">
+                                <table role="presentation" style="width: 100%%; max-width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                                    <!-- Header -->
+                                    <tr>
+                                        <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #ec4899 0%%, #8b5cf6 100%%); border-radius: 16px 16px 0 0;">
+                                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">
+                                                Bienvenue sur MaterniCare
+                                            </h1>
+                                            <p style="margin: 10px 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">
+                                                Votre compte professionnel a été créé
+                                            </p>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Content -->
+                                    <tr>
+                                        <td style="padding: 40px;">
+                                            <p style="margin: 0 0 20px; color: #1f2937; font-size: 16px; line-height: 1.6;">
+                                                Bonjour <strong>Dr. %s</strong>,
+                                            </p>
+                                            <p style="margin: 0 0 30px; color: #6b7280; font-size: 16px; line-height: 1.6;">
+                                                Un compte médecin a été créé pour vous sur la plateforme MaterniCare. Voici vos identifiants de connexion :
+                                            </p>
+
+                                            <!-- Credentials Box -->
+                                            <div style="background-color: #f3f4f6; border-radius: 12px; padding: 25px; margin: 30px 0;">
+                                                <p style="margin: 0 0 10px; color: #4b5563; font-size: 14px;">
+                                                    <strong>Identifiant (Email) :</strong><br>
+                                                    <span style="color: #1f2937; font-family: monospace; font-size: 16px;">%s</span> (votre email)
+                                                </p>
+                                                <p style="margin: 15px 0 0; color: #4b5563; font-size: 14px;">
+                                                    <strong>Mot de passe provisoire :</strong><br>
+                                                    <span style="color: #7c3aed; font-family: monospace; font-size: 18px; font-weight: 700;">%s</span>
+                                                </p>
+                                            </div>
+
+                                            <div style="text-align: center; margin-top: 30px;">
+                                                <a href="http://localhost:3000" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%%, #8b5cf6 100%%); color: white; text-decoration: none; padding: 12px 30px; border-radius: 50px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);">
+                                                    Accéder à mon compte
+                                                </a>
+                                            </div>
+
+                                            <p style="margin: 30px 0 0; color: #9ca3af; font-size: 13px; font-style: italic;">
+                                                Pour votre sécurité, nous vous recommandons de changer ce mot de passe dès votre première connexion.
+                                            </p>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Footer -->
+                                    <tr>
+                                        <td style="padding: 20px 40px; background-color: #f9fafb; border-radius: 0 0 16px 16px; text-align: center;">
+                                            <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                                                2026 MaterniCare - Tous droits réservés
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+                """
+                .formatted(nom, email, password); // Note: "to" is used as email in the template for clarity
+        // Correction: The formatted arguments order must match %s placeholders.
+        // Template order: 1. Dr. %s (nom), 2. Email %s (to), 3. Password %s (password)
+    }
 }

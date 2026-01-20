@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import java.util.List;
 
 @RestController
@@ -54,5 +55,13 @@ public class AdministrateurController {
     public ResponseEntity<Void> deleteAdministrateur(@PathVariable int id) {
         administrateurService.deleteAdministrateur(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/statut")
+    @Operation(summary = "Modifier le statut d'un administrateur", description = "Suspendre ou Activer un administrateur.")
+    public ResponseEntity<AdministrateurResponseDTO> updateStatut(
+            @PathVariable int id,
+            @RequestParam @Parameter(description = "ACTIF ou SUSPENDU") String statut) {
+        return ResponseEntity.ok(administrateurService.updateStatut(id, statut));
     }
 }

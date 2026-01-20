@@ -32,15 +32,20 @@ public class AuthServiceImpl implements AuthService {
             Administrateur admin = adminOpt.get();
             // Vérifier le mot de passe
             if (admin.getMotDePasse().equals(motDePasse)) {
+                // Check if suspended
+                if (com.polytechnique.backend.entity.StatutAdministrateur.SUSPENDU.equals(admin.getStatut())) {
+                    throw new AuthenticationException("Votre compte est suspendu. Veuillez contacter le Super Admin.");
+                }
+
                 return LoginResponseDTO.builder()
                         .id(admin.getId())
                         .nom(admin.getNom())
                         .prenom(null) // Admin n'a pas de prénom dans l'entité
                         .email(admin.getEmail())
-                        .role("admin")
+                        .role(admin.getRole() != null ? admin.getRole().name() : "ADMIN")
                         .specialite(null)
                         .telephone(null)
-                        .statut("actif")
+                        .statut("actif") // Statut for frontend
                         .build();
             } else {
                 throw new AuthenticationException("Mot de passe incorrect");
@@ -62,6 +67,14 @@ public class AuthServiceImpl implements AuthService {
                             "Votre compte est temporairement suspendu. Contactez l'administrateur.");
                 }
 
+                // Check if associated Admin is suspended
+                if (medecin.getAdministrateur() != null
+                        && com.polytechnique.backend.entity.StatutAdministrateur.SUSPENDU
+                                .equals(medecin.getAdministrateur().getStatut())) {
+                    throw new AuthenticationException(
+                            "Votre administrateur est suspendu. Veuillez le contacter pour plus d'informations.");
+                }
+
                 // Update last connection
                 medecin.setDerniereConnexion(java.time.LocalDateTime.now());
                 medecinRepository.save(medecin);
@@ -72,9 +85,12 @@ public class AuthServiceImpl implements AuthService {
                         .prenom(medecin.getPrenom())
                         .email(medecin.getEmail())
                         .role("medecin")
-                        .specialite(null) // Medecin entity doesn't have this field
+                        .specialite(medecin.getSpecialite() != null ? medecin.getSpecialite().name() : null)
                         .telephone(medecin.getTel())
-                        .statut(medecin.getStatut().name())
+                        .statut(medecin.getStatut() != null ? medecin.getStatut().name() : "ACTIF")
+                        // Ajouter l'ID de l'admin
+                        .administrateurId(
+                                medecin.getAdministrateur() != null ? medecin.getAdministrateur().getId() : null)
                         .build();
             } else {
                 throw new AuthenticationException("Mot de passe incorrect");
@@ -91,11 +107,28 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @org.springframework.transaction.annotation.Transactional
     public void initiatePasswordReset(String email) {
-        // Only for Medecins (Admins should contact system support)
+        boolean distinctUserFound = false;
+
+        // 1. Check Medecin
         Optional<Medecin> medecinOpt = medecinRepository.findByEmail(email);
-        if (medecinOpt.isEmpty()) {
+        if (medecinOpt.isPresent()) {
+            distinctUserFound = true;
+        } else {
+            // 2. Check Administrateur
+            Optional<Administrateur> adminOpt = administrateurRepository.findByEmail(email);
+            if (adminOpt.isPresent()) {
+                Administrateur admin = adminOpt.get();
+                if (com.polytechnique.backend.entity.Role.SUPER_ADMIN.equals(admin.getRole())) {
+                    throw new com.polytechnique.backend.exception.AuthenticationException(
+                            "Le Super Admin ne peut pas réinitialiser son mot de passe par email. Contactez le support technique.");
+                }
+                distinctUserFound = true;
+            }
+        }
+
+        if (!distinctUserFound) {
             throw new com.polytechnique.backend.exception.ResourceNotFoundException(
-                    "Aucun médecin trouvé avec cet email");
+                    "Aucun utilisateur trouvé avec cet email");
         }
 
         // Delete existing token if any
@@ -136,12 +169,36 @@ public class AuthServiceImpl implements AuthService {
                     "Code de vérification invalide ou expiré");
         }
 
-        Medecin medecin = medecinRepository.findByEmail(email)
-                .orElseThrow(
-                        () -> new com.polytechnique.backend.exception.ResourceNotFoundException("Médecin non trouvé"));
+        boolean passwordUpdated = false;
 
-        medecin.setMotDePasse(newPassword); // In production, use BCrypt
-        medecinRepository.save(medecin);
+        // 1. Try Medecin
+        Optional<Medecin> medecinOpt = medecinRepository.findByEmail(email);
+        if (medecinOpt.isPresent()) {
+            Medecin medecin = medecinOpt.get();
+            medecin.setMotDePasse(newPassword);
+            medecinRepository.save(medecin);
+            passwordUpdated = true;
+        }
+
+        // 2. Try Admin if not Medecin (or both if email shared? assuming unique email
+        // across system or priority)
+        if (!passwordUpdated) {
+            Optional<Administrateur> adminOpt = administrateurRepository.findByEmail(email);
+            if (adminOpt.isPresent()) {
+                Administrateur admin = adminOpt.get();
+                if (com.polytechnique.backend.entity.Role.SUPER_ADMIN.equals(admin.getRole())) {
+                    throw new com.polytechnique.backend.exception.AuthenticationException(
+                            "Impossible de réinitialiser le mot de passe du Super Admin.");
+                }
+                admin.setMotDePasse(newPassword);
+                administrateurRepository.save(admin);
+                passwordUpdated = true;
+            }
+        }
+
+        if (!passwordUpdated) {
+            throw new com.polytechnique.backend.exception.ResourceNotFoundException("Utilisateur non trouvé");
+        }
 
         // Consume token
         passwordResetTokenRepository.deleteByEmail(email);

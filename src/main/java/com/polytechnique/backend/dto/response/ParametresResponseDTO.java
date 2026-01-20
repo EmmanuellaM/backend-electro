@@ -32,6 +32,8 @@ public class ParametresResponseDTO {
     private Integer dispositifId;
     private String nomCentreDeSante;
     private String codeDispositif;
+    private String localisation;
+    private String contact;
 
     // Optionnel: nombre de diagnostics
     private int nombreDiagnostics;

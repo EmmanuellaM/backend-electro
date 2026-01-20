@@ -65,8 +65,9 @@ public class ParametresController {
         @GetMapping("/pending")
         @Operation(summary = "Lister les paramètres sans diagnostic", description = "Retourne la liste des paramètres médicaux qui n'ont pas encore de diagnostic associé.")
         @ApiResponse(responseCode = "200", description = "Liste des paramètres en attente de diagnostic")
-        public ResponseEntity<List<ParametresResponseDTO>> getParametresSansDiagnostic() {
-                List<ParametresResponseDTO> response = parametresService.getParametresSansDiagnostic();
+        public ResponseEntity<List<ParametresResponseDTO>> getParametresSansDiagnostic(
+                        @Parameter(description = "ID de l'admin (pour filtrage)", example = "1") @RequestParam(required = false) Integer adminId) {
+                List<ParametresResponseDTO> response = parametresService.getParametresSansDiagnostic(adminId);
                 return ResponseEntity.ok(response);
         }
 

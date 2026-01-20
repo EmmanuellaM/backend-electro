@@ -36,8 +36,9 @@ public class InfirmierLocalController {
 
     @GetMapping
     @Operation(summary = "Lister les infirmiers", description = "Retourne la liste de tous les infirmiers locaux enregistrés.")
-    public ResponseEntity<List<InfirmierLocalResponseDTO>> getAllInfirmiers() {
-        return ResponseEntity.ok(infirmierLocalService.getAllInfirmiers());
+    public ResponseEntity<List<InfirmierLocalResponseDTO>> getAllInfirmiers(
+            @RequestParam(required = false) Integer adminId) {
+        return ResponseEntity.ok(infirmierLocalService.getAllInfirmiers(adminId));
     }
 
     @PutMapping("/{id}")

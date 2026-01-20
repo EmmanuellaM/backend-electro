@@ -13,6 +13,8 @@ public class AdministrateurResponseDTO {
     private Integer id;
     private String nom;
     private String email;
+    private String role;
+    private String statut;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

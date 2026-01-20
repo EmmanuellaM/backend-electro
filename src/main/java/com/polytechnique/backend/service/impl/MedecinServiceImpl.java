@@ -6,7 +6,6 @@ import com.polytechnique.backend.dto.request.MedecinRequestDTO;
 import com.polytechnique.backend.dto.response.MedecinResponseDTO;
 import com.polytechnique.backend.entity.Medecin;
 import com.polytechnique.backend.entity.StatutMedecin;
-import com.polytechnique.backend.exception.AuthenticationException;
 import com.polytechnique.backend.exception.EmailAlreadyExistsException;
 import com.polytechnique.backend.exception.ResourceNotFoundException;
 import com.polytechnique.backend.mapper.MedecinMapper;
@@ -30,6 +29,7 @@ public class MedecinServiceImpl implements MedecinService {
     private final MedecinRepository medecinRepository;
     private final MedecinMapper medecinMapper;
     private final com.polytechnique.backend.repository.AdministrateurRepository administrateurRepository;
+    private final com.polytechnique.backend.service.EmailService emailService;
 
     @Override
     public MedecinResponseDTO createMedecin(MedecinRequestDTO requestDTO) {
@@ -50,8 +50,31 @@ public class MedecinServiceImpl implements MedecinService {
             medecin.setAdministrateur(admin);
         }
 
+        // Générer un mot de passe si non fourni
+        String rawPassword = requestDTO.getMotDePasse();
+        boolean isGeneratedPassword = false;
+        if (rawPassword == null || rawPassword.isBlank()) {
+            // Générer un mot de passe aléatoire (8 caractères)
+            rawPassword = java.util.UUID.randomUUID().toString().substring(0, 8);
+            System.out.println("DEBUG - NEW MEDECIN PASSWORD: [" + rawPassword + "]");
+            medecin.setMotDePasse(rawPassword);
+            isGeneratedPassword = true;
+        }
+
         // Sauvegarder
         Medecin savedMedecin = medecinRepository.save(medecin);
+
+        // Envoyer l'email avec le mot de passe (si généré ou si on décide de tout le
+        // temps l'envoyer)
+        // Ici on envoie toujours pour confirmer la création + identifiants
+        try {
+            emailService.sendNewAccountEmail(savedMedecin.getEmail(), savedMedecin.getNom(), rawPassword);
+        } catch (Exception e) {
+            // Loguer l'erreur mais ne pas faire échouer la transaction car le compte est
+            // créé
+            // TODO: Gérer plus proprement (queue, retry)
+            System.err.println("Erreur envoi email: " + e.getMessage());
+        }
 
         // Convertir Entité → DTO de réponse
         return medecinMapper.toResponseDTO(savedMedecin);
@@ -68,9 +91,14 @@ public class MedecinServiceImpl implements MedecinService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MedecinResponseDTO> getAllMedecins() {
-        return medecinRepository.findAll()
-                .stream()
+    public List<MedecinResponseDTO> getAllMedecins(Integer adminId) {
+        List<Medecin> medecins;
+        if (adminId != null) {
+            medecins = medecinRepository.findByAdministrateurId(adminId);
+        } else {
+            medecins = medecinRepository.findAll();
+        }
+        return medecins.stream()
                 .map(medecinMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }

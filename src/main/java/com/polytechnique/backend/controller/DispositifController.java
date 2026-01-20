@@ -42,8 +42,9 @@ public class DispositifController {
 
     @GetMapping
     @Operation(summary = "Lister tous les dispositifs", description = "Retourne la liste complète des dispositifs déployés.")
-    public ResponseEntity<List<DispositifResponseDTO>> getAllDispositifs() {
-        List<DispositifResponseDTO> response = dispositifService.getAllDispositifs();
+    public ResponseEntity<List<DispositifResponseDTO>> getAllDispositifs(
+            @RequestParam(required = false) Integer adminId) {
+        List<DispositifResponseDTO> response = dispositifService.getAllDispositifs(adminId);
         return ResponseEntity.ok(response);
     }
 

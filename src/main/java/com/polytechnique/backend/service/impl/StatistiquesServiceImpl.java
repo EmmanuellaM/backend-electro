@@ -11,8 +11,6 @@ import com.polytechnique.backend.entity.StatutMedecin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -26,9 +24,15 @@ public class StatistiquesServiceImpl implements StatistiquesService {
         private final InfirmierLocalRepository infirmierLocalRepository;
 
         @Override
-        public StatistiquesResponseDTO getStatistiques() {
+        public StatistiquesResponseDTO getStatistiques(Integer adminId) {
                 // Dispositifs
-                List<Dispositif> allDispositifs = dispositifRepository.findAll();
+                List<Dispositif> allDispositifs;
+                if (adminId != null) {
+                        allDispositifs = dispositifRepository.findByAdministrateurId(adminId);
+                } else {
+                        allDispositifs = dispositifRepository.findAll();
+                }
+
                 int totalDispositifs = allDispositifs.size();
                 int dispositifsActifs = (int) allDispositifs.stream()
                                 .filter(d -> StatutDispositif.ACTIF.equals(d.getStatut()))
@@ -44,7 +48,13 @@ public class StatistiquesServiceImpl implements StatistiquesService {
                                 .count();
 
                 // Médecins
-                List<Medecin> allMedecins = medecinRepository.findAll();
+                List<Medecin> allMedecins;
+                if (adminId != null) {
+                        allMedecins = medecinRepository.findByAdministrateurId(adminId);
+                } else {
+                        allMedecins = medecinRepository.findAll();
+                }
+
                 int totalMedecins = allMedecins.size();
                 int medecinsActifs = (int) allMedecins.stream()
                                 .filter(m -> StatutMedecin.ACTIF.equals(m.getStatut()))
@@ -55,17 +65,34 @@ public class StatistiquesServiceImpl implements StatistiquesService {
                 int medecinsInactifs = totalMedecins - medecinsActifs - medecinsSuspendus;
 
                 // Infirmiers
-                List<InfirmierLocal> allInfirmiers = infirmierLocalRepository.findAll();
+                List<InfirmierLocal> allInfirmiers;
+                if (adminId != null) {
+                        allInfirmiers = infirmierLocalRepository.findByAdministrateurId(adminId);
+                } else {
+                        allInfirmiers = infirmierLocalRepository.findAll();
+                }
+
                 int totalInfirmiers = allInfirmiers.size();
                 int infirmiersActifs = (int) allInfirmiers.stream()
                                 .filter(i -> "actif".equalsIgnoreCase(i.getStatut()))
                                 .count();
 
-                // Patients (distinct identifiantPatient from Parametres)
-                long totalPatients = parametresRepository.countDistinctPatients();
+                // Patients
+                long totalPatients;
+                if (adminId != null) {
+                        totalPatients = parametresRepository.countDistinctPatientsByAdministrateurId(adminId);
+                } else {
+                        totalPatients = parametresRepository.countDistinctPatients();
+                }
 
-                // Patients par statut
-                List<com.polytechnique.backend.entity.Parametres> allParametres = parametresRepository.findAll();
+                // Patients par statut & Paramètres
+                List<com.polytechnique.backend.entity.Parametres> allParametres;
+                if (adminId != null) {
+                        allParametres = parametresRepository.findAllByAdministrateurId(adminId);
+                } else {
+                        allParametres = parametresRepository.findAll();
+                }
+
                 int patientsEnAttente = (int) allParametres.stream()
                                 .filter(p -> "en_attente".equalsIgnoreCase(p.getStatut()))
                                 .map(p -> p.getIdentifiantPatient())
@@ -77,32 +104,58 @@ public class StatistiquesServiceImpl implements StatistiquesService {
                                 .distinct()
                                 .count();
 
-                // Paramètres en attente (nombre total de mesures sans diagnostic)
                 int totalParametres = allParametres.size();
                 int parametresEnAttente = (int) allParametres.stream()
                                 .filter(p -> "en_attente".equalsIgnoreCase(p.getStatut()))
                                 .count();
 
                 // Diagnostics
-                long totalDiagnostics = diagnosticRepository.count();
+                long totalDiagnostics;
+                List<com.polytechnique.backend.entity.Diagnostic> allDiagnostics = null; // Used for some counts if
+                                                                                         // needed, but here we use
+                                                                                         // repository for dates
 
-                // Diagnostics par période - basé sur createdAt réel
+                if (adminId != null) {
+                        // For specific counts often repository is better, but here we used count()
+                        // globally.
+                        // Let's implement logic consistent with "all or filtered".
+                        // Since we added findAllByAdministrateurId, we can use that for total count
+                        allDiagnostics = diagnosticRepository.findAllByAdministrateurId(adminId);
+                        totalDiagnostics = allDiagnostics.size();
+                } else {
+                        totalDiagnostics = diagnosticRepository.count();
+                }
+
+                // Diagnostics par période
                 java.time.LocalDateTime now = java.time.LocalDateTime.now();
                 java.time.LocalDateTime yesterday = now.minusHours(24);
                 java.time.LocalDateTime weekStart = now.minusDays(7);
                 java.time.LocalDateTime monthStart = now.minusDays(30);
 
-                int diagnosticsAujourdHui = (int) diagnosticRepository.countByCreatedAtAfter(yesterday);
-                int diagnosticsCetteSemaine = (int) diagnosticRepository.countByCreatedAtAfter(weekStart);
-                int diagnosticsCeMois = (int) diagnosticRepository.countByCreatedAtAfter(monthStart);
+                int diagnosticsAujourdHui;
+                int diagnosticsCetteSemaine;
+                int diagnosticsCeMois;
+
+                if (adminId != null) {
+                        diagnosticsAujourdHui = (int) diagnosticRepository
+                                        .countByAdministrateurIdAndCreatedAtAfter(adminId, yesterday);
+                        diagnosticsCetteSemaine = (int) diagnosticRepository
+                                        .countByAdministrateurIdAndCreatedAtAfter(adminId, weekStart);
+                        diagnosticsCeMois = (int) diagnosticRepository.countByAdministrateurIdAndCreatedAtAfter(adminId,
+                                        monthStart);
+                } else {
+                        diagnosticsAujourdHui = (int) diagnosticRepository.countByCreatedAtAfter(yesterday);
+                        diagnosticsCetteSemaine = (int) diagnosticRepository.countByCreatedAtAfter(weekStart);
+                        diagnosticsCeMois = (int) diagnosticRepository.countByCreatedAtAfter(monthStart);
+                }
 
                 // Métriques calculées
                 double tauxReponse = totalPatients > 0
                                 ? (double) patientsDiagnostiques / totalPatients * 100
                                 : 0.0;
-                tauxReponse = Math.round(tauxReponse * 10) / 10.0; // Arrondi à 1 décimale
+                tauxReponse = Math.round(tauxReponse * 10) / 10.0;
 
-                String tempsReponseMoyen = "2h 15min"; // Valeur par défaut, nécessite un champ timestamp
+                String tempsReponseMoyen = "2h 15min";
 
                 return StatistiquesResponseDTO.builder()
                                 .totalDispositifs(totalDispositifs)

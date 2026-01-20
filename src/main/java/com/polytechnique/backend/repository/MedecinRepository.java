@@ -109,9 +109,9 @@ public interface MedecinRepository extends JpaRepository<Medecin, Integer> {
      * Utile pour une barre de recherche générale
      */
     @Query("SELECT m FROM Medecin m WHERE " +
-           "LOWER(m.nom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(m.prenom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(m.email) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+            "LOWER(m.nom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(m.prenom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(m.email) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Medecin> searchMedecins(@Param("searchTerm") String searchTerm);
 
     /**
@@ -119,4 +119,9 @@ public interface MedecinRepository extends JpaRepository<Medecin, Integer> {
      */
     @Query("SELECT m FROM Medecin m WHERE SIZE(m.diagnostics) >= :minCount")
     List<Medecin> findMedecinsWithMinDiagnostics(@Param("minCount") int minCount);
+
+    /**
+     * Rechercher les médecins créés par un administrateur spécifique
+     */
+    List<Medecin> findByAdministrateurId(Integer id);
 }

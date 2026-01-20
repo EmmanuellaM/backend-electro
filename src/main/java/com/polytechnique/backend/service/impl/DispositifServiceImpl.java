@@ -50,6 +50,11 @@ public class DispositifServiceImpl implements DispositifService {
                     .orElseThrow(() -> new ResourceNotFoundException("InfirmierLocal", "id",
                             requestDTO.getInfirmierLocalId()));
             dispositif.setInfirmierLocal(infirmier);
+            // Si un infirmier est assigné, le dispositif est directement ACTIF
+            dispositif.setStatut(StatutDispositif.ACTIF);
+        } else {
+            // Sans infirmier, le dispositif reste EN_ATTENTE_ACTIVATION
+            dispositif.setStatut(StatutDispositif.EN_ATTENTE_ACTIVATION);
         }
 
         // Sauvegarder
@@ -70,9 +75,14 @@ public class DispositifServiceImpl implements DispositifService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<DispositifResponseDTO> getAllDispositifs() {
-        return dispositifRepository.findAll()
-                .stream()
+    public List<DispositifResponseDTO> getAllDispositifs(Integer adminId) {
+        List<Dispositif> dispositifs;
+        if (adminId != null) {
+            dispositifs = dispositifRepository.findByAdministrateurId(adminId);
+        } else {
+            dispositifs = dispositifRepository.findAll();
+        }
+        return dispositifs.stream()
                 .map(dispositifMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }

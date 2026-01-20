@@ -61,7 +61,8 @@ public interface ParametresService {
     boolean isLocked(int id, int medecinId);
 
     /**
-     * Récupérer les paramètres sans diagnostics (en attente)
+     * Récupérer les paramètres sans diagnostics (en attente), optionnellement
+     * filtrés par admin
      */
-    List<ParametresResponseDTO> getParametresSansDiagnostic();
+    List<ParametresResponseDTO> getParametresSansDiagnostic(Integer adminId);
 }

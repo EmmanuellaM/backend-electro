@@ -75,6 +75,8 @@ public class ParametresMapper {
             dto.setDispositifId(parametres.getDispositif().getId());
             dto.setNomCentreDeSante(parametres.getDispositif().getNomCentreDeSante());
             dto.setCodeDispositif(parametres.getDispositif().getCodeDispositif());
+            dto.setLocalisation(parametres.getDispositif().getLocalisation());
+            dto.setContact(parametres.getDispositif().getContact());
         }
 
         // Ajouter le nombre de diagnostics si la collection est chargée

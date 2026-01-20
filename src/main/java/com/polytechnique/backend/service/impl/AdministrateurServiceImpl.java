@@ -109,4 +109,22 @@ public class AdministrateurServiceImpl implements AdministrateurService {
         admin.setMotDePasse(changePasswordRequest.getNouveauMotDePasse());
         administrateurRepository.save(admin);
     }
+
+    @Override
+    @Transactional
+    public AdministrateurResponseDTO updateStatut(int id, String statut) {
+        Administrateur admin = administrateurRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Administrateur non trouvé avec l'ID : " + id));
+
+        try {
+            com.polytechnique.backend.entity.StatutAdministrateur newStatut = com.polytechnique.backend.entity.StatutAdministrateur
+                    .valueOf(statut.toUpperCase());
+            admin.setStatut(newStatut);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Statut invalide : " + statut);
+        }
+
+        Administrateur updatedAdmin = administrateurRepository.save(admin);
+        return administrateurMapper.toResponseDTO(updatedAdmin);
+    }
 }

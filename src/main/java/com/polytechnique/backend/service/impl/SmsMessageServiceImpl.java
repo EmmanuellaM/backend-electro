@@ -29,6 +29,7 @@ public class SmsMessageServiceImpl implements SmsMessageService {
 
     private final SmsMessageRepository smsMessageRepository;
     private final InfirmierLocalRepository infirmierLocalRepository;
+    private final com.polytechnique.backend.service.InfobipSmsService infobipSmsService;
 
     @Override
     public SmsMessageResponseDTO sendSms(SmsMessageRequestDTO requestDTO) {
@@ -40,17 +41,23 @@ public class SmsMessageServiceImpl implements SmsMessageService {
         SmsMessage smsMessage = new SmsMessage();
         smsMessage.setInfirmierLocal(infirmier);
         smsMessage.setTelephone(infirmier.getTelephone1());
-        smsMessage.setMessage(requestDTO.getMessage());
+
+        // Préfixer le message
+        String fullMessage = "Admin MaterniCare:\n" + requestDTO.getMessage();
+        smsMessage.setMessage(fullMessage);
+
         smsMessage.setSentAt(LocalDateTime.now());
         smsMessage.setSentBy(requestDTO.getSentBy() != null ? requestDTO.getSentBy() : "Admin");
-        smsMessage.setStatus(SmsStatus.SIMULATED);
 
-        // TODO: Ici, on intégrerait l'API SMS (Twilio, Orange, etc.)
-        // Pour le moment, on simule simplement l'envoi
-        log.info("SMS simulé envoyé à {} ({}): {}",
-                infirmier.getPrenom() + " " + infirmier.getNom(),
-                infirmier.getTelephone1(),
-                requestDTO.getMessage());
+        try {
+            // Envoyer le SMS via Infobip
+            infobipSmsService.sendSms(infirmier.getTelephone1(), fullMessage);
+            smsMessage.setStatus(SmsStatus.SENT);
+            log.info("SMS envoyé avec succès à {} ({})", infirmier.getPrenom(), infirmier.getTelephone1());
+        } catch (Exception e) {
+            log.error("Erreur lors de l'envoi du SMS à {}", infirmier.getTelephone1(), e);
+            smsMessage.setStatus(SmsStatus.FAILED);
+        }
 
         // Sauvegarder en base
         SmsMessage saved = smsMessageRepository.save(smsMessage);

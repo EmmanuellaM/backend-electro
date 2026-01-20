@@ -93,4 +93,12 @@ public class Diagnostic {
     @JoinColumn(name = "id_parametres", nullable = false, unique = true)
     @NotNull(message = "Les paramètres sont obligatoires")
     private Parametres parametres;
+
+    /**
+     * Relation One-to-One avec NotificationSMS
+     * Suppression en cascade : si le diagnostic est supprimé, la notification
+     * associée l'est aussi
+     */
+    @OneToOne(mappedBy = "diagnostic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private NotificationSMS notificationSMS;
 }

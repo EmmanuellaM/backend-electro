@@ -241,4 +241,18 @@ public interface DiagnosticRepository extends JpaRepository<Diagnostic, Integer>
                      "GROUP BY m.id, m.nom, m.prenom " +
                      "ORDER BY COUNT(d) DESC")
        List<Object[]> findTopActiveMedecins();
+
+       /**
+        * Rechercher les diagnostics établis par des médecins créés par un
+        * administrateur spécifique
+        */
+       @Query("SELECT d FROM Diagnostic d WHERE d.medecin.administrateur.id = :adminId")
+       List<Diagnostic> findAllByAdministrateurId(@Param("adminId") Integer adminId);
+
+       /**
+        * Comparer les diagnostics créés par un admin après une date
+        */
+       @Query("SELECT COUNT(d) FROM Diagnostic d WHERE d.medecin.administrateur.id = :adminId AND d.createdAt > :date")
+       long countByAdministrateurIdAndCreatedAtAfter(@Param("adminId") Integer adminId,
+                     @Param("date") java.time.LocalDateTime date);
 }

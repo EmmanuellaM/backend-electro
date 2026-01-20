@@ -13,6 +13,7 @@ public enum SpecialiteMedecin {
     OPHTALMOLOGIE,
     ORL,
     CHIRURGIE_GENERALE,
+    SAGE_FEMME,
     ANESTHESIE_REANIMATION,
     RADIOLOGIE,
     PSYCHIATRIE,

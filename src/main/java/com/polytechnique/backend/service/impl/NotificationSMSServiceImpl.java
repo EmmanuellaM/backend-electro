@@ -28,6 +28,7 @@ public class NotificationSMSServiceImpl implements NotificationSMSService {
     private final NotificationSMSMapper notificationMapper;
     private final InfirmierLocalRepository infirmierRepository;
     private final DiagnosticRepository diagnosticRepository;
+    private final com.polytechnique.backend.service.InfobipSmsService infobipSmsService;
 
     @Override
     public NotificationSMSResponseDTO createNotification(NotificationSMSRequestDTO requestDTO) {
@@ -54,17 +55,39 @@ public class NotificationSMSServiceImpl implements NotificationSMSService {
         NotificationSMS notification = new NotificationSMS();
 
         // Formatage du message SMS
-        String message = String.format("Alerte Patient %s: %s. Recommandations: %s. Urgence: %s",
-                diagnostic.getParametres().getIdentifiantPatient(),
-                diagnostic.getContenu(),
-                diagnostic.getRecommandations(),
-                diagnostic.getNiveauUrgence());
+        String patientId = diagnostic.getParametres().getIdentifiantPatient();
+        // Extraire la partie après le dernier tiret (ex: P088 de XXX-P088)
+        String shortId = patientId.contains("-")
+                ? patientId.substring(patientId.lastIndexOf("-") + 1)
+                : patientId;
+
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append(String.format("AlertePatient %s:\n%s",
+                shortId,
+                diagnostic.getContenu()));
+
+        if (diagnostic.getRecommandations() != null && !diagnostic.getRecommandations().isEmpty()) {
+            messageBuilder.append("\n").append(diagnostic.getRecommandations());
+        }
+
+        if (diagnostic.getNiveauUrgence() != null && !diagnostic.getNiveauUrgence().isEmpty()) {
+            messageBuilder.append("\n").append(diagnostic.getNiveauUrgence());
+        }
+
+        String message = messageBuilder.toString();
 
         notification.setContenuMessage(message);
         notification.setNumeroDestinataire(infirmier.getTelephone1());
         notification.setInfirmierLocal(infirmier);
         notification.setDiagnostic(diagnostic);
-        notification.setSucces(true); // Simulation de succès
+
+        try {
+            infobipSmsService.sendSms(infirmier.getTelephone1(), message);
+            notification.setSucces(true);
+        } catch (Exception e) {
+            notification.setSucces(false);
+            // On pourrait logger l'erreur ici, mais elle est déjà loggée dans le service
+        }
 
         notificationRepository.save(notification);
     }

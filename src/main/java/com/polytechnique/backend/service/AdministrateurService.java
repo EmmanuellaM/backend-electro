@@ -21,4 +21,6 @@ public interface AdministrateurService {
     AdministrateurResponseDTO login(LoginRequestDTO loginRequest);
 
     void updatePassword(int id, ChangePasswordRequestDTO changePasswordRequest);
+
+    AdministrateurResponseDTO updateStatut(int id, String statut);
 }

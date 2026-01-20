@@ -22,9 +22,9 @@ public interface DispositifService {
     DispositifResponseDTO getDispositifById(int id);
 
     /**
-     * Récupérer tous les dispositifs
+     * Récupérer tous les dispositifs (filtrés par admin si adminId fourni)
      */
-    List<DispositifResponseDTO> getAllDispositifs();
+    List<DispositifResponseDTO> getAllDispositifs(Integer adminId);
 
     /**
      * Mettre à jour un dispositif

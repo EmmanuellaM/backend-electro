@@ -16,6 +16,13 @@ public class AdministrateurMapper {
         admin.setNom(dto.getNom());
         admin.setEmail(dto.getEmail());
         admin.setMotDePasse(dto.getMotDePasse());
+        try {
+            if (dto.getRole() != null) {
+                admin.setRole(com.polytechnique.backend.entity.Role.valueOf(dto.getRole()));
+            }
+        } catch (IllegalArgumentException e) {
+            // Ignore invalid roles, default is ADMIN
+        }
 
         return admin;
     }
@@ -28,6 +35,8 @@ public class AdministrateurMapper {
         dto.setId(admin.getId());
         dto.setNom(admin.getNom());
         dto.setEmail(admin.getEmail());
+        dto.setRole(admin.getRole().name());
+        dto.setStatut(admin.getStatut() != null ? admin.getStatut().name() : "ACTIF");
         dto.setCreatedAt(admin.getCreatedAt());
         dto.setUpdatedAt(admin.getUpdatedAt());
 
@@ -44,5 +53,12 @@ public class AdministrateurMapper {
             admin.setEmail(dto.getEmail());
         if (dto.getMotDePasse() != null)
             admin.setMotDePasse(dto.getMotDePasse());
+        if (dto.getRole() != null) {
+            try {
+                admin.setRole(com.polytechnique.backend.entity.Role.valueOf(dto.getRole()));
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid role updates
+            }
+        }
     }
 }

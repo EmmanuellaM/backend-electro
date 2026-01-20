@@ -36,4 +36,7 @@ public class LoginResponseDTO {
 
     @Schema(description = "Statut du compte", example = "actif")
     private String statut;
+
+    @Schema(description = "ID de l'administrateur (si médecin)", example = "1")
+    private Integer administrateurId;
 }

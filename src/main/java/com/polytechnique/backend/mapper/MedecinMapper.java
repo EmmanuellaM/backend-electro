@@ -29,12 +29,10 @@ public class MedecinMapper {
         medecin.setGenre(dto.getGenre());
         medecin.setSpecialite(dto.getSpecialite());
 
-        // Set password - use provided or generate default
+        // Set password - use provided, otherwise leave null (service will handle
+        // generation)
         if (dto.getMotDePasse() != null && !dto.getMotDePasse().isBlank()) {
             medecin.setMotDePasse(dto.getMotDePasse());
-        } else {
-            // Default password: password123 (should be changed on first login)
-            medecin.setMotDePasse("password123");
         }
 
         // Default status
