@@ -8,6 +8,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Statut d'un dispositif IoT")
 public enum StatutDispositif {
 
+    @Schema(description = "Le dispositif est créé mais pas encore attribué à un administrateur")
+    NON_ATTRIBUE,
+
+    @Schema(description = "Le dispositif est attribué à un administrateur mais pas encore activé")
+    EN_ATTENTE,
+
     @Schema(description = "Le dispositif est opérationnel et collecte des données")
     ACTIF,
 
@@ -15,8 +21,5 @@ public enum StatutDispositif {
     INACTIF,
 
     @Schema(description = "Le dispositif est en cours de maintenance ou réparation")
-    MAINTENANCE,
-
-    @Schema(description = "Le dispositif est créé mais en attente d'activation et de déploiement")
-    EN_ATTENTE_ACTIVATION
+    MAINTENANCE
 }

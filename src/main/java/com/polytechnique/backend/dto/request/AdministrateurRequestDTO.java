@@ -25,9 +25,22 @@ public class AdministrateurRequestDTO {
     @Schema(description = "Adresse email de l'administrateur", example = "admin@hopital.cm")
     private String email;
 
-    @NotBlank(message = "Le mot de passe est obligatoire")
     @Size(min = 6, message = "Le mot de passe doit contenir au moins 6 caractères")
     private String motDePasse;
+
+    @Schema(description = "Numéro de CNI", example = "109283746")
+    private String numeroCni;
+
+    @jakarta.validation.constraints.Pattern(regexp = "^\\+[1-9]\\d{1,14}$", message = "Le format du numéro de téléphone est invalide (doit commencer par +)")
+    @Schema(description = "Téléphone principal (format international)", example = "+237600000000")
+    private String tel;
+
+    @jakarta.validation.constraints.Pattern(regexp = "^(\\+[1-9]\\d{1,14})?$", message = "Le format du numéro de téléphone secondaire est invalide")
+    @Schema(description = "Téléphone secondaire (optionnel)", example = "+237611111111")
+    private String tel2;
+
+    @Schema(description = "Genre (MASCULIN / FEMININ)", example = "MASCULIN")
+    private String genre;
 
     private String role; // Optionnel, par défaut ADMIN
 }

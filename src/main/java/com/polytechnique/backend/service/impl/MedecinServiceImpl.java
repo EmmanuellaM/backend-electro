@@ -12,6 +12,7 @@ import com.polytechnique.backend.mapper.MedecinMapper;
 import com.polytechnique.backend.repository.MedecinRepository;
 import com.polytechnique.backend.service.MedecinService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class MedecinServiceImpl implements MedecinService {
     private final MedecinMapper medecinMapper;
     private final com.polytechnique.backend.repository.AdministrateurRepository administrateurRepository;
     private final com.polytechnique.backend.service.EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public MedecinResponseDTO createMedecin(MedecinRequestDTO requestDTO) {
@@ -57,9 +59,10 @@ public class MedecinServiceImpl implements MedecinService {
             // Générer un mot de passe aléatoire (8 caractères)
             rawPassword = java.util.UUID.randomUUID().toString().substring(0, 8);
             System.out.println("DEBUG - NEW MEDECIN PASSWORD: [" + rawPassword + "]");
-            medecin.setMotDePasse(rawPassword);
             isGeneratedPassword = true;
         }
+        // Hasher le mot de passe avec BCrypt avant de le sauvegarder
+        medecin.setMotDePasse(passwordEncoder.encode(rawPassword));
 
         // Sauvegarder
         Medecin savedMedecin = medecinRepository.save(medecin);
@@ -158,9 +161,9 @@ public class MedecinServiceImpl implements MedecinService {
         Medecin medecin = medecinRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Médecin", "email", loginRequest.getEmail()));
 
-        // Check password (handling null password for created users who haven't set one
-        // yet?)
-        if (medecin.getMotDePasse() == null || !medecin.getMotDePasse().equals(loginRequest.getMotDePasse())) {
+        // Vérifier le mot de passe avec BCrypt
+        if (medecin.getMotDePasse() == null
+                || !passwordEncoder.matches(loginRequest.getMotDePasse(), medecin.getMotDePasse())) {
             throw new IllegalArgumentException("Email ou mot de passe incorrect.");
         }
 
@@ -173,14 +176,15 @@ public class MedecinServiceImpl implements MedecinService {
         Medecin medecin = medecinRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Médecin", "id", id));
 
-        // If password was never set, maybe allow setting it without "old" password?
-        // For security, if old password exists, it must match.
+        // Vérifier l'ancien mot de passe avec BCrypt
         if (medecin.getMotDePasse() != null
-                && !medecin.getMotDePasse().equals(changePasswordRequest.getAncienMotDePasse())) {
+                && !passwordEncoder.matches(changePasswordRequest.getAncienMotDePasse().trim(),
+                        medecin.getMotDePasse())) {
             throw new IllegalArgumentException("L'ancien mot de passe est incorrect.");
         }
 
-        medecin.setMotDePasse(changePasswordRequest.getNouveauMotDePasse());
+        // Hasher le nouveau mot de passe avec BCrypt
+        medecin.setMotDePasse(passwordEncoder.encode(changePasswordRequest.getNouveauMotDePasse()));
         medecinRepository.save(medecin);
     }
 

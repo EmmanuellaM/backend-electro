@@ -30,18 +30,20 @@ public class Dispositif {
     @Column(name = "id_dispositif")
     private Integer id;
 
-    /**
-     * Code unique du dispositif
-     */
-    @NotBlank(message = "Le code du dispositif est obligatoire")
-    @Size(max = 50, message = "Le code ne peut pas dépasser 50 caractères")
-    @Column(name = "code_dispositif", nullable = false, unique = true, length = 50)
-    private String codeDispositif;
-
     @NotBlank(message = "Le DevEUI est obligatoire")
     @Size(max = 50)
     @Column(name = "deveui", nullable = false, unique = true, length = 50)
     private String deveui;
+
+    @NotBlank(message = "L'AppEUI est obligatoire")
+    @Size(max = 50)
+    @Column(name = "appeui", nullable = false, length = 50)
+    private String appeui;
+
+    @NotBlank(message = "L'AppKey est obligatoire")
+    @Size(max = 50)
+    @Column(name = "appkey", nullable = false, length = 50)
+    private String appkey;
 
     @NotBlank(message = "Le nom du centre de santé est obligatoire")
     @Size(max = 150, message = "Le nom du centre ne peut pas dépasser 150 caractères")
@@ -65,7 +67,7 @@ public class Dispositif {
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "statut", length = 50)
-    private StatutDispositif statut = StatutDispositif.ACTIF;
+    private StatutDispositif statut = StatutDispositif.NON_ATTRIBUE;
 
     /**
      * Date d'installation du dispositif

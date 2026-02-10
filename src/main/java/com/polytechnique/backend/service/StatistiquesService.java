@@ -4,4 +4,6 @@ import com.polytechnique.backend.dto.response.StatistiquesResponseDTO;
 
 public interface StatistiquesService {
     StatistiquesResponseDTO getStatistiques(Integer adminId);
+
+    com.polytechnique.backend.dto.response.TrendsResponseDTO getTrends();
 }

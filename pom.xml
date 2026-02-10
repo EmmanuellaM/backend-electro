@@ -88,6 +88,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+        
+        <!-- Spring Security - Pour le hashage BCrypt des mots de passe -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        
         <!-- OkHttp for Infobip API -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

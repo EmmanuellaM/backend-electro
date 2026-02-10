@@ -14,10 +14,11 @@ public class InfirmierLocalRequestDTO {
     @NotBlank
     @Schema(description = "Prénom de l'infirmier", example = "Jean")
     private String prenom;
-    @NotBlank
+    @jakarta.validation.constraints.Pattern(regexp = "^\\+[1-9]\\d{1,14}$", message = "Le format du numéro de téléphone principal est invalide")
     @Schema(description = "Numéro de téléphone principal", example = "+237699000001")
     private String telephone1;
 
+    @jakarta.validation.constraints.Pattern(regexp = "^(\\+[1-9]\\d{1,14})?$", message = "Le format du numéro de téléphone secondaire est invalide")
     @Schema(description = "Numéro de téléphone secondaire (optionnel)", example = "+237677000002")
     private String telephone2;
     @NotBlank

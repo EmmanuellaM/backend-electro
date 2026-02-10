@@ -91,4 +91,13 @@ public class DispositifController {
         List<DispositifResponseDTO> response = dispositifService.searchByNomCentre(nomCentre);
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/{id}/attribuer")
+    @Operation(summary = "Attribuer un dispositif", description = "Assigne un dispositif à un administrateur par le superadmin.")
+    public ResponseEntity<DispositifResponseDTO> attribuerDispositif(
+            @PathVariable int id,
+            @RequestParam Integer adminId) {
+        DispositifResponseDTO response = dispositifService.attribuerDispositif(id, adminId);
+        return ResponseEntity.ok(response);
+    }
 }

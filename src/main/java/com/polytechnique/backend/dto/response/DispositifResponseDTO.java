@@ -18,8 +18,9 @@ import com.polytechnique.backend.entity.StatutDispositif;
 public class DispositifResponseDTO {
 
     private Integer id;
-    private String codeDispositif;
     private String deveui;
+    private String appeui;
+    private String appkey;
     private String nomCentreDeSante;
     private String localisation;
     private String contact;
@@ -29,6 +30,10 @@ public class DispositifResponseDTO {
 
     // Informations complètes ou partielles de l'infirmier
     private InfirmierLocalResponseDTO infirmierLocal;
+
+    // Informations sur l'administrateur
+    private String administrateurNom;
+    private Integer administrateurId;
 
     // Optionnel
     private int nombreParametres;

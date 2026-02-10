@@ -10,6 +10,7 @@ import com.polytechnique.backend.repository.MedecinRepository;
 import com.polytechnique.backend.service.AuthService;
 import com.polytechnique.backend.service.EmailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,18 +21,21 @@ public class AuthServiceImpl implements AuthService {
 
     private final AdministrateurRepository administrateurRepository;
     private final MedecinRepository medecinRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
         String email = loginRequest.getEmail();
         String motDePasse = loginRequest.getMotDePasse();
+        System.out.println("DEBUG: Tentative de connexion pour : " + email);
+        System.out.println("DEBUG: Password fourni : " + motDePasse);
 
         // 1. Chercher dans la table Administrateur
         Optional<Administrateur> adminOpt = administrateurRepository.findByEmail(email);
         if (adminOpt.isPresent()) {
             Administrateur admin = adminOpt.get();
-            // Vérifier le mot de passe
-            if (admin.getMotDePasse().equals(motDePasse)) {
+            // Vérifier le mot de passe avec BCrypt
+            if (passwordEncoder.matches(motDePasse, admin.getMotDePasse())) {
                 // Check if suspended
                 if (com.polytechnique.backend.entity.StatutAdministrateur.SUSPENDU.equals(admin.getStatut())) {
                     throw new AuthenticationException("Votre compte est suspendu. Veuillez contacter le Super Admin.");
@@ -46,6 +50,7 @@ public class AuthServiceImpl implements AuthService {
                         .specialite(null)
                         .telephone(null)
                         .statut("actif") // Statut for frontend
+                        .doitChangerMotDePasse(admin.getDoitChangerMotDePasse())
                         .build();
             } else {
                 throw new AuthenticationException("Mot de passe incorrect");
@@ -56,8 +61,8 @@ public class AuthServiceImpl implements AuthService {
         Optional<Medecin> medecinOpt = medecinRepository.findByEmail(email);
         if (medecinOpt.isPresent()) {
             Medecin medecin = medecinOpt.get();
-            // Vérifier le mot de passe
-            if (medecin.getMotDePasse().equals(motDePasse)) {
+            // Vérifier le mot de passe avec BCrypt
+            if (passwordEncoder.matches(motDePasse, medecin.getMotDePasse())) {
                 // Vérifier le statut du compte
                 if (com.polytechnique.backend.entity.StatutMedecin.INACTIF.equals(medecin.getStatut())) {
                     throw new AuthenticationException("Votre compte a été désactivé. Contactez l'administrateur.");
@@ -175,7 +180,8 @@ public class AuthServiceImpl implements AuthService {
         Optional<Medecin> medecinOpt = medecinRepository.findByEmail(email);
         if (medecinOpt.isPresent()) {
             Medecin medecin = medecinOpt.get();
-            medecin.setMotDePasse(newPassword);
+            // Hasher le nouveau mot de passe avec BCrypt
+            medecin.setMotDePasse(passwordEncoder.encode(newPassword));
             medecinRepository.save(medecin);
             passwordUpdated = true;
         }
@@ -190,7 +196,8 @@ public class AuthServiceImpl implements AuthService {
                     throw new com.polytechnique.backend.exception.AuthenticationException(
                             "Impossible de réinitialiser le mot de passe du Super Admin.");
                 }
-                admin.setMotDePasse(newPassword);
+                // Hasher le nouveau mot de passe avec BCrypt
+                admin.setMotDePasse(passwordEncoder.encode(newPassword));
                 administrateurRepository.save(admin);
                 passwordUpdated = true;
             }

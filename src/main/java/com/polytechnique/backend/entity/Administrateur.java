@@ -56,6 +56,22 @@ public class Administrateur {
     @Column(name = "statut")
     private StatutAdministrateur statut = StatutAdministrateur.ACTIF;
 
+    @Column(name = "numero_cni", length = 50)
+    private String numeroCni;
+
+    @Column(name = "tel", length = 20)
+    private String tel;
+
+    @Column(name = "tel2", length = 20)
+    private String tel2;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "genre", length = 10)
+    private Genre genre;
+
+    @Column(name = "doit_changer_mot_de_passe")
+    private Boolean doitChangerMotDePasse = true;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

@@ -21,4 +21,13 @@ public interface EmailService {
      * @param password Mot de passe généré
      */
     void sendNewAccountEmail(String to, String nom, String password);
+
+    /**
+     * Envoie un email de bienvenue à un administrateur
+     * 
+     * @param to       Adresse email
+     * @param nom      Nom de l'admin
+     * @param password Mot de passe temporaire
+     */
+    void sendAdminAccountEmail(String to, String nom, String password);
 }

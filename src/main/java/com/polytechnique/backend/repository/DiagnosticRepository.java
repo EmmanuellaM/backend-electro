@@ -42,8 +42,10 @@ public interface DiagnosticRepository extends JpaRepository<Diagnostic, Integer>
         */
        @Query(value = "SELECT AVG(EXTRACT(EPOCH FROM (d.date_diagnostic - p.date_mesure))) " +
                      "FROM diagnostic d " +
-                     "JOIN parametres p ON d.id_parametres = p.id_parametres", nativeQuery = true)
-       Double getAverageProcessingTime();
+                     "JOIN parametres p ON d.id_parametres = p.id_parametres " +
+                     "JOIN medecin m ON d.id_medecin = m.id_medecin " +
+                     "WHERE (:adminId IS NULL OR m.id_administrateur = :adminId)", nativeQuery = true)
+       Double getAverageProcessingTime(@Param("adminId") Integer adminId);
 
        /**
         * Rechercher les diagnostics par paramètres triés par ID
@@ -255,4 +257,50 @@ public interface DiagnosticRepository extends JpaRepository<Diagnostic, Integer>
        @Query("SELECT COUNT(d) FROM Diagnostic d WHERE d.medecin.administrateur.id = :adminId AND d.createdAt > :date")
        long countByAdministrateurIdAndCreatedAtAfter(@Param("adminId") Integer adminId,
                      @Param("date") java.time.LocalDateTime date);
+
+       /**
+        * Statistiques de tendance par jour
+        */
+       @Query(value = "SELECT CAST(d.date_diagnostic AS DATE) as day, COUNT(*) as count " +
+                     "FROM diagnostic d " +
+                     "WHERE d.date_diagnostic >= :startDate " +
+                     "GROUP BY day " +
+                     "ORDER BY day", nativeQuery = true)
+       List<Object[]> countDiagnosticsByDay(@Param("startDate") java.time.LocalDateTime startDate);
+
+       @Query(value = "SELECT TO_CHAR(d.date_diagnostic, 'YYYY-MM') as month, COUNT(*) as count " +
+                     "FROM diagnostic d " +
+                     "WHERE d.date_diagnostic >= :startDate " +
+                     "GROUP BY month " +
+                     "ORDER BY month", nativeQuery = true)
+       List<Object[]> countDiagnosticsByMonth(@Param("startDate") java.time.LocalDateTime startDate);
+
+       /**
+        * Répartition par niveau d'urgence
+        */
+       @Query("SELECT d.niveauUrgence, COUNT(d) FROM Diagnostic d GROUP BY d.niveauUrgence")
+       List<Object[]> countByEmergencyLevel();
+
+       /**
+        * Répartition par spécialité médicale
+        */
+       @Query("SELECT d.medecin.specialite, COUNT(d) FROM Diagnostic d GROUP BY d.medecin.specialite")
+       List<Object[]> countBySpecialty();
+
+       /**
+        * Activité par centre de santé
+        */
+       @Query("SELECT p.dispositif.nomCentreDeSante, COUNT(d) FROM Diagnostic d JOIN d.parametres p GROUP BY p.dispositif.nomCentreDeSante")
+       List<Object[]> countByCentre();
+
+       /**
+        * Compter le nombre de diagnostics par administrateur
+        */
+       @Query("SELECT m.administrateur.id, m.administrateur.nom, m.administrateur.email, COUNT(d) " +
+                     "FROM Diagnostic d " +
+                     "JOIN d.medecin m " +
+                     "WHERE m.administrateur IS NOT NULL " +
+                     "GROUP BY m.administrateur.id, m.administrateur.nom, m.administrateur.email " +
+                     "ORDER BY COUNT(d) DESC")
+       List<Object[]> countDiagnosticsPerAdministrateur();
 }

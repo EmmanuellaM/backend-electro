@@ -49,12 +49,14 @@ else
 fi
 echo ""
 
-# 3. Créer un dispositif avec code
+# 3. Créer un dispositif
 echo -e "${YELLOW}3. Création d'un dispositif...${NC}"
 DISPOSITIF=$(curl -s -X POST "$BASE_URL/dispositifs" \
   -H "Content-Type: application/json" \
   -d '{
-    "codeDispositif": "DISP-QUICK-TEST",
+    "deveui": "B123411AB22C33D1",
+    "appeui": "0000000000000000",
+    "appkey": "12345678901234567890123456789012",
     "nomCentreDeSante": "Centre de Test Rapide",
     "localisation": "Yaoundé",
     "contact": "+237699000000"
@@ -124,7 +126,7 @@ echo -e "${BLUE}======================================${NC}"
 echo -e "${BLUE}RÉSUMÉ${NC}"
 echo -e "${BLUE}======================================${NC}"
 echo "Médecin ID:     $MEDECIN_ID"
-echo "Dispositif ID:  $DISPOSITIF_ID (Code: DISP-QUICK-TEST)"
+echo "Dispositif ID:  $DISPOSITIF_ID (DevEUI: B123411AB22C33D1)"
 echo "Paramètres ID:  $PARAMETRES_ID (Tension: 120/80)"
 echo "Diagnostic ID:  $DIAGNOSTIC_ID"
 echo ""

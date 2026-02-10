@@ -2,12 +2,14 @@ package com.polytechnique.backend.config;
 
 import com.polytechnique.backend.entity.Administrateur;
 import com.polytechnique.backend.entity.Role;
+import com.polytechnique.backend.entity.StatutAdministrateur;
 import com.polytechnique.backend.repository.AdministrateurRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 public class DataInitializer {
 
     private final AdministrateurRepository administrateurRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public CommandLineRunner initData() {
@@ -28,8 +31,10 @@ public class DataInitializer {
                 Administrateur superAdmin = new Administrateur();
                 superAdmin.setNom("Super Admin");
                 superAdmin.setEmail(superAdminEmail);
-                superAdmin.setMotDePasse("SuperAdminPass1!"); // In production, this should be encoded
+                // Hasher le mot de passe avec BCrypt
+                superAdmin.setMotDePasse(passwordEncoder.encode("SuperAdminPass1!"));
                 superAdmin.setRole(Role.SUPER_ADMIN);
+                superAdmin.setStatut(StatutAdministrateur.ACTIF);
                 superAdmin.setCreatedAt(LocalDateTime.now());
                 superAdmin.setUpdatedAt(LocalDateTime.now());
 

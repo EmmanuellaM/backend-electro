@@ -28,6 +28,9 @@ public class StatistiquesResponseDTO {
     @Schema(description = "Nombre de dispositifs en attente d'activation", example = "1")
     private int dispositifsEnAttente;
 
+    @Schema(description = "Nombre de dispositifs non attribués", example = "2")
+    private int dispositifsNonAttribue;
+
     @Schema(description = "Nombre total de médecins", example = "5")
     private int totalMedecins;
 
@@ -69,9 +72,6 @@ public class StatistiquesResponseDTO {
 
     @Schema(description = "Taux de réponse en pourcentage", example = "94.5")
     private double tauxReponse;
-
-    @Schema(description = "Temps moyen de réponse", example = "1h 35min")
-    private String tempsReponseMoyen;
 
     @Schema(description = "Nombre total d'infirmiers", example = "8")
     private int totalInfirmiers;

@@ -17,15 +17,20 @@ import com.polytechnique.backend.entity.StatutDispositif;
 @Schema(description = "Modèle de création/modification d'un dispositif IoT")
 public class DispositifRequestDTO {
 
-    @NotBlank(message = "Le code du dispositif est obligatoire")
-    @Size(max = 50, message = "Le code ne peut pas dépasser 50 caractères")
-    @Schema(description = "Code unique du dispositif", example = "DISP-YDE-001")
-    private String codeDispositif;
-
     @NotBlank(message = "Le DevEUI est obligatoire")
     @Size(max = 50, message = "Le DevEUI ne peut pas dépasser 50 caractères")
     @Schema(description = "Device EUI (identifiant LoRaWAN unique)", example = "70B3D57ED005A8C1")
     private String deveui;
+
+    @NotBlank(message = "L'AppEUI est obligatoire")
+    @Size(max = 50, message = "L'AppEUI ne peut pas dépasser 50 caractères")
+    @Schema(description = "Application EUI", example = "0000000000000000")
+    private String appeui;
+
+    @NotBlank(message = "L'AppKey est obligatoire")
+    @Size(max = 50, message = "L'AppKey ne peut pas dépasser 50 caractères")
+    @Schema(description = "Application Key", example = "2B7E151628AED2A6ABF7158809CF4F3C")
+    private String appkey;
 
     @NotBlank(message = "Le nom du centre de santé est obligatoire")
     @Size(max = 150, message = "Le nom du centre ne peut pas dépasser 150 caractères")
@@ -46,7 +51,7 @@ public class DispositifRequestDTO {
     @Schema(description = "Date d'installation du dispositif", example = "2024-01-15")
     private LocalDate dateInstallation;
 
-    @Schema(description = "ID de l'infirmier local supervisé (Optionnel à la création si statut EN_ATTENTE_ACTIVATION)", example = "1")
+    @Schema(description = "ID de l'infirmier local supervisé (Optionnel à la création si statut NON_ATTRIBUE)", example = "1")
     private Integer infirmierLocalId;
 
     @Schema(description = "ID de l'administrateur créateur", example = "1")

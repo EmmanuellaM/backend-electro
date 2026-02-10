@@ -15,6 +15,12 @@ public class AdministrateurResponseDTO {
     private String email;
     private String role;
     private String statut;
+    private String numeroCni;
+    private String tel;
+    private String tel2;
+    private String genre;
+    private Boolean doitChangerMotDePasse;
+    private String tempPassword;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

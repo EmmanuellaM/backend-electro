@@ -39,4 +39,7 @@ public class LoginResponseDTO {
 
     @Schema(description = "ID de l'administrateur (si médecin)", example = "1")
     private Integer administrateurId;
+
+    @Schema(description = "Indique si l'utilisateur doit changer son mot de passe", example = "true")
+    private Boolean doitChangerMotDePasse;
 }

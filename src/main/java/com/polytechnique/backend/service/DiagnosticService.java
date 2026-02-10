@@ -51,5 +51,5 @@ public interface DiagnosticService {
     /**
      * Calculer le temps moyen de traitement en secondes
      */
-    Double getAverageProcessingTime();
+    Double getAverageProcessingTime(Integer adminId);
 }

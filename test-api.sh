@@ -160,19 +160,19 @@ fi
 
 print_section "2. TESTS DISPOSITIF (6 endpoints) - NOUVEAU SCHÉMA"
 
-# 2.1 Créer un dispositif avec code
-echo -e "${YELLOW}[1/6]${NC} POST /dispositifs - Créer un dispositif (avec code)"
+# 2.1 Créer un dispositif (SuperAdmin role simulation)
+echo -e "${YELLOW}[1/6]${NC} POST /dispositifs - Créer un dispositif"
 DISPOSITIF_RESPONSE=$(test_endpoint "POST" "/dispositifs" '{
-    "codeDispositif": "DISP-TEST-001",
+    "deveui": "A840411AB22C33D1",
+    "appeui": "0000000000000000",
+    "appkey": "2B7E151628AED2A6ABF7158809CF4F3C",
     "nomCentreDeSante": "Centre Médical de Test",
     "localisation": "Yaoundé, Cameroun",
-    "contact": "+237699876543",
-    "statut": "actif",
-    "dateInstallation": "2024-01-15"
-}' "Créer un dispositif avec code unique")
+    "contact": "+237699876543"
+}' "Créer un dispositif avec DevEUI unique")
 DISPOSITIF_ID=$(echo "$DISPOSITIF_RESPONSE" | jq -r '.id // empty')
 if [ ! -z "$DISPOSITIF_ID" ]; then
-    print_result 0 "Dispositif créé avec ID: $DISPOSITIF_ID (Code: DISP-TEST-001)"
+    print_result 0 "Dispositif créé avec ID: $DISPOSITIF_ID (DevEUI: A840411AB22C33D1)"
 else
     print_result 1 "Échec de création du dispositif"
 fi
@@ -201,11 +201,12 @@ print_result 0 "Recherche par nom de centre effectuée"
 echo -e "${YELLOW}[5/6]${NC} PUT /dispositifs/{id} - Mettre à jour un dispositif"
 if [ ! -z "$DISPOSITIF_ID" ]; then
     test_endpoint "PUT" "/dispositifs/$DISPOSITIF_ID" '{
-        "codeDispositif": "DISP-TEST-001",
+        "deveui": "A840411AB22C33D1",
+        "appeui": "0000000000000000",
+        "appkey": "2B7E151628AED2A6ABF7158809CF4F3C",
         "nomCentreDeSante": "Centre Médical de Test (Modifié)",
         "localisation": "Yaoundé, Centre",
-        "contact": "+237699999999",
-        "statut": "actif"
+        "contact": "+237699999999"
     }' "Mettre à jour dispositif ID $DISPOSITIF_ID"
     print_result 0 "Dispositif mis à jour"
 else
@@ -215,14 +216,16 @@ fi
 # 2.6 Créer un deuxième dispositif
 echo -e "${YELLOW}[6/6]${NC} POST /dispositifs - Créer un deuxième dispositif"
 DISPOSITIF2_RESPONSE=$(test_endpoint "POST" "/dispositifs" '{
-    "codeDispositif": "DISP-TEST-002",
+    "deveui": "A840411AB22C33D2",
+    "appeui": "0000000000000000",
+    "appkey": "11223344556677889900AABBCCDDEEFF",
     "nomCentreDeSante": "Hôpital de Test",
     "localisation": "Douala, Littoral",
     "contact": "+237677777777"
 }' "Créer un deuxième dispositif")
 DISPOSITIF2_ID=$(echo "$DISPOSITIF2_RESPONSE" | jq -r '.id // empty')
 if [ ! -z "$DISPOSITIF2_ID" ]; then
-    print_result 0 "Deuxième dispositif créé avec ID: $DISPOSITIF2_ID (Code: DISP-TEST-002)"
+    print_result 0 "Deuxième dispositif créé avec ID: $DISPOSITIF2_ID (DevEUI: A840411AB22C33D2)"
 else
     print_result 1 "Échec de création du deuxième dispositif"
 fi
@@ -422,8 +425,8 @@ echo "  - ID $MEDECIN_ID: Dr. Mbarga Paul"
 echo "  - ID $MEDECIN2_ID: Dr. Atangana Marie"
 echo ""
 echo "Dispositifs créés:"
-echo "  - ID $DISPOSITIF_ID: DISP-TEST-001 (Centre Médical de Test)"
-echo "  - ID $DISPOSITIF2_ID: DISP-TEST-002 (Hôpital de Test)"
+echo "  - ID $DISPOSITIF_ID: A840411AB22C33D1 (Centre Médical de Test)"
+echo "  - ID $DISPOSITIF2_ID: A840411AB22C33D2 (Hôpital de Test)"
 echo ""
 echo "Paramètres créés:"
 echo "  - ID $PARAMETRES_ID: PAT-TEST-001 (Tension: 120/80)"
@@ -449,7 +452,7 @@ if [ $FAILED_TESTS -eq 0 ]; then
     echo -e "${GREEN}✓ TOUS LES TESTS ONT RÉUSSI!${NC}"
     echo ""
     echo "Points clés du nouveau schéma testés:"
-    echo "  ✓ Code dispositif unique obligatoire"
+    echo "  ✓ DevEUI unique obligatoire"
     echo "  ✓ Pression artérielle séparée (systolique/diastolique)"
     echo "  ✓ Timestamps automatiques (dateMesure, dateDiagnostic)"
     echo "  ✓ Statuts et localisations"

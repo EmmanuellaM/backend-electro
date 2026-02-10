@@ -50,4 +50,9 @@ public interface DispositifService {
      * Activer un dispositif en assignant un infirmier
      */
     DispositifResponseDTO activerDispositif(int id, ActivationDispositifRequestDTO requestDTO);
+
+    /**
+     * Attribuer un dispositif à un administrateur
+     */
+    DispositifResponseDTO attribuerDispositif(int idDispositif, Integer idAdministrateur);
 }

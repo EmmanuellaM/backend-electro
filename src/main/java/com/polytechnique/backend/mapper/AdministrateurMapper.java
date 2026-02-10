@@ -16,6 +16,16 @@ public class AdministrateurMapper {
         admin.setNom(dto.getNom());
         admin.setEmail(dto.getEmail());
         admin.setMotDePasse(dto.getMotDePasse());
+        admin.setNumeroCni(dto.getNumeroCni());
+        admin.setTel(dto.getTel());
+        admin.setTel2(dto.getTel2());
+        if (dto.getGenre() != null) {
+            try {
+                admin.setGenre(com.polytechnique.backend.entity.Genre.valueOf(dto.getGenre()));
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid genre
+            }
+        }
         try {
             if (dto.getRole() != null) {
                 admin.setRole(com.polytechnique.backend.entity.Role.valueOf(dto.getRole()));
@@ -37,6 +47,11 @@ public class AdministrateurMapper {
         dto.setEmail(admin.getEmail());
         dto.setRole(admin.getRole().name());
         dto.setStatut(admin.getStatut() != null ? admin.getStatut().name() : "ACTIF");
+        dto.setNumeroCni(admin.getNumeroCni());
+        dto.setTel(admin.getTel());
+        dto.setTel2(admin.getTel2());
+        dto.setGenre(admin.getGenre() != null ? admin.getGenre().name() : null);
+        dto.setDoitChangerMotDePasse(admin.getDoitChangerMotDePasse());
         dto.setCreatedAt(admin.getCreatedAt());
         dto.setUpdatedAt(admin.getUpdatedAt());
 
@@ -51,8 +66,21 @@ public class AdministrateurMapper {
             admin.setNom(dto.getNom());
         if (dto.getEmail() != null)
             admin.setEmail(dto.getEmail());
-        if (dto.getMotDePasse() != null)
+        if (dto.getMotDePasse() != null && !dto.getMotDePasse().isEmpty())
             admin.setMotDePasse(dto.getMotDePasse());
+        if (dto.getNumeroCni() != null)
+            admin.setNumeroCni(dto.getNumeroCni());
+        if (dto.getTel() != null)
+            admin.setTel(dto.getTel());
+        if (dto.getTel2() != null)
+            admin.setTel2(dto.getTel2());
+        if (dto.getGenre() != null) {
+            try {
+                admin.setGenre(com.polytechnique.backend.entity.Genre.valueOf(dto.getGenre()));
+            } catch (IllegalArgumentException e) {
+                // Ignore
+            }
+        }
         if (dto.getRole() != null) {
             try {
                 admin.setRole(com.polytechnique.backend.entity.Role.valueOf(dto.getRole()));

@@ -64,4 +64,13 @@ public class AdministrateurController {
             @RequestParam @Parameter(description = "ACTIF ou SUSPENDU") String statut) {
         return ResponseEntity.ok(administrateurService.updateStatut(id, statut));
     }
+
+    @PatchMapping("/{id}/password")
+    @Operation(summary = "Changer le mot de passe", description = "Permet à l'administrateur de changer son mot de passe (notamment lors de la première connexion).")
+    public ResponseEntity<Void> updatePassword(
+            @PathVariable int id,
+            @Valid @RequestBody com.polytechnique.backend.dto.request.ChangePasswordRequestDTO changePasswordRequest) {
+        administrateurService.updatePassword(id, changePasswordRequest);
+        return ResponseEntity.ok().build();
+    }
 }

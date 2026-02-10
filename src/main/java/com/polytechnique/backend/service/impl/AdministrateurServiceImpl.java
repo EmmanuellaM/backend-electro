@@ -10,6 +10,7 @@ import com.polytechnique.backend.repository.AdministrateurRepository;
 import com.polytechnique.backend.service.AdministrateurService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,8 @@ public class AdministrateurServiceImpl implements AdministrateurService {
 
     private final AdministrateurRepository administrateurRepository;
     private final AdministrateurMapper administrateurMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final com.polytechnique.backend.service.EmailService emailService;
 
     @Override
     @Transactional
@@ -31,12 +34,19 @@ public class AdministrateurServiceImpl implements AdministrateurService {
         }
 
         Administrateur admin = administrateurMapper.toEntity(requestDTO);
-        // Note: Password encoding should be handled here if Security is active (e.g.
-        // BCrypt)
-        // admin.setMotDePasse(passwordEncoder.encode(dto.getMotDePasse()));
+
+        // Générer un mot de passe temporaire à usage unique
+        String tempPassword = java.util.UUID.randomUUID().toString().substring(0, 8);
+        admin.setMotDePasse(passwordEncoder.encode(tempPassword));
+        admin.setDoitChangerMotDePasse(true);
+
+        // Envoi du mail de bienvenue avec les identifiants
+        emailService.sendAdminAccountEmail(admin.getEmail(), admin.getNom(), tempPassword);
 
         Administrateur savedAdmin = administrateurRepository.save(admin);
-        return administrateurMapper.toResponseDTO(savedAdmin);
+        AdministrateurResponseDTO response = administrateurMapper.toResponseDTO(savedAdmin);
+        response.setTempPassword(tempPassword);
+        return response;
     }
 
     @Override
@@ -68,6 +78,12 @@ public class AdministrateurServiceImpl implements AdministrateurService {
         }
 
         administrateurMapper.updateEntity(requestDTO, admin);
+
+        // Si un nouveau mot de passe est fourni, le hasher
+        if (requestDTO.getMotDePasse() != null && !requestDTO.getMotDePasse().isEmpty()) {
+            admin.setMotDePasse(passwordEncoder.encode(requestDTO.getMotDePasse()));
+        }
+
         Administrateur updatedAdmin = administrateurRepository.save(admin);
         return administrateurMapper.toResponseDTO(updatedAdmin);
     }
@@ -87,9 +103,8 @@ public class AdministrateurServiceImpl implements AdministrateurService {
         Administrateur admin = administrateurRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("Email ou mot de passe incorrect."));
 
-        // Simple string comparison (In production, use BCrypt:
-        // passwordEncoder.matches(...))
-        if (!admin.getMotDePasse().equals(loginRequest.getMotDePasse())) {
+        // Vérification du mot de passe avec BCrypt
+        if (!passwordEncoder.matches(loginRequest.getMotDePasse(), admin.getMotDePasse())) {
             throw new IllegalArgumentException("Email ou mot de passe incorrect.");
         }
 
@@ -102,11 +117,14 @@ public class AdministrateurServiceImpl implements AdministrateurService {
         Administrateur admin = administrateurRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Administrateur non trouvé avec l'ID : " + id));
 
-        if (!admin.getMotDePasse().equals(changePasswordRequest.getAncienMotDePasse())) {
+        // Vérification de l'ancien mot de passe avec BCrypt
+        if (!passwordEncoder.matches(changePasswordRequest.getAncienMotDePasse().trim(), admin.getMotDePasse())) {
             throw new IllegalArgumentException("L'ancien mot de passe est incorrect.");
         }
 
-        admin.setMotDePasse(changePasswordRequest.getNouveauMotDePasse());
+        // Hasher le nouveau mot de passe
+        admin.setMotDePasse(passwordEncoder.encode(changePasswordRequest.getNouveauMotDePasse()));
+        admin.setDoitChangerMotDePasse(false); // L'admin a changé son MDP
         administrateurRepository.save(admin);
     }
 

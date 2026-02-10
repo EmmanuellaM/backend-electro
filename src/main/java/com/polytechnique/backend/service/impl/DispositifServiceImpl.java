@@ -35,27 +35,11 @@ public class DispositifServiceImpl implements DispositifService {
         // Convertir DTO → Entité
         Dispositif dispositif = dispositifMapper.toEntity(requestDTO);
 
-        // Associer l'administrateur
-        if (requestDTO.getAdministrateurId() != null) {
-            com.polytechnique.backend.entity.Administrateur admin = administrateurRepository
-                    .findById(requestDTO.getAdministrateurId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Administrateur", "id",
-                            requestDTO.getAdministrateurId()));
-            dispositif.setAdministrateur(admin);
-        }
-
-        // Associer l'infirmier si présent
-        if (requestDTO.getInfirmierLocalId() != null) {
-            InfirmierLocal infirmier = infirmierLocalRepository.findById(requestDTO.getInfirmierLocalId())
-                    .orElseThrow(() -> new ResourceNotFoundException("InfirmierLocal", "id",
-                            requestDTO.getInfirmierLocalId()));
-            dispositif.setInfirmierLocal(infirmier);
-            // Si un infirmier est assigné, le dispositif est directement ACTIF
-            dispositif.setStatut(StatutDispositif.ACTIF);
-        } else {
-            // Sans infirmier, le dispositif reste EN_ATTENTE_ACTIVATION
-            dispositif.setStatut(StatutDispositif.EN_ATTENTE_ACTIVATION);
-        }
+        // Par défaut lors de la création par le SuperAdmin, le dispositif est
+        // NON_ATTRIBUE
+        dispositif.setStatut(StatutDispositif.NON_ATTRIBUE);
+        dispositif.setAdministrateur(null);
+        dispositif.setInfirmierLocal(null);
 
         // Sauvegarder
         Dispositif savedDispositif = dispositifRepository.save(dispositif);
@@ -175,6 +159,21 @@ public class DispositifServiceImpl implements DispositifService {
 
         dispositif.setInfirmierLocal(infirmier);
         dispositif.setStatut(StatutDispositif.ACTIF); // Passage à ACTIF
+
+        Dispositif savedDispositif = dispositifRepository.save(dispositif);
+        return dispositifMapper.toResponseDTO(savedDispositif);
+    }
+
+    @Override
+    public DispositifResponseDTO attribuerDispositif(int idDispositif, Integer idAdministrateur) {
+        Dispositif dispositif = dispositifRepository.findById(idDispositif)
+                .orElseThrow(() -> new ResourceNotFoundException("Dispositif", "id", idDispositif));
+
+        com.polytechnique.backend.entity.Administrateur admin = administrateurRepository.findById(idAdministrateur)
+                .orElseThrow(() -> new ResourceNotFoundException("Administrateur", "id", idAdministrateur));
+
+        dispositif.setAdministrateur(admin);
+        dispositif.setStatut(StatutDispositif.EN_ATTENTE); // Arrive chez l'admin avec l'état EN_ATTENTE
 
         Dispositif savedDispositif = dispositifRepository.save(dispositif);
         return dispositifMapper.toResponseDTO(savedDispositif);

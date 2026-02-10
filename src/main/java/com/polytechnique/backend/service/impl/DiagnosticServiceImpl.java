@@ -166,7 +166,7 @@ public class DiagnosticServiceImpl implements DiagnosticService {
 
     @Override
     @Transactional(readOnly = true)
-    public Double getAverageProcessingTime() {
-        return diagnosticRepository.getAverageProcessingTime();
+    public Double getAverageProcessingTime(Integer adminId) {
+        return diagnosticRepository.getAverageProcessingTime(adminId);
     }
 }

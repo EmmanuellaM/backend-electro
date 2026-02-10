@@ -74,7 +74,7 @@ public class ParametresMapper {
         if (parametres.getDispositif() != null) {
             dto.setDispositifId(parametres.getDispositif().getId());
             dto.setNomCentreDeSante(parametres.getDispositif().getNomCentreDeSante());
-            dto.setCodeDispositif(parametres.getDispositif().getCodeDispositif());
+            dto.setDeveui(parametres.getDispositif().getDeveui());
             dto.setLocalisation(parametres.getDispositif().getLocalisation());
             dto.setContact(parametres.getDispositif().getContact());
         }

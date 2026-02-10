@@ -27,12 +27,13 @@ public class DispositifMapper {
         }
 
         Dispositif dispositif = new Dispositif();
-        dispositif.setCodeDispositif(dto.getCodeDispositif());
         dispositif.setDeveui(dto.getDeveui());
+        dispositif.setAppeui(dto.getAppeui());
+        dispositif.setAppkey(dto.getAppkey());
         dispositif.setNomCentreDeSante(dto.getNomCentreDeSante());
         dispositif.setLocalisation(dto.getLocalisation());
         dispositif.setContact(dto.getContact());
-        dispositif.setStatut(dto.getStatut() != null ? dto.getStatut() : StatutDispositif.EN_ATTENTE_ACTIVATION);
+        dispositif.setStatut(dto.getStatut() != null ? dto.getStatut() : StatutDispositif.NON_ATTRIBUE);
         dispositif.setDateInstallation(dto.getDateInstallation());
 
         return dispositif;
@@ -46,8 +47,9 @@ public class DispositifMapper {
             return;
         }
 
-        dispositif.setCodeDispositif(dto.getCodeDispositif());
         dispositif.setDeveui(dto.getDeveui());
+        dispositif.setAppeui(dto.getAppeui());
+        dispositif.setAppkey(dto.getAppkey());
         dispositif.setNomCentreDeSante(dto.getNomCentreDeSante());
         dispositif.setLocalisation(dto.getLocalisation());
         dispositif.setContact(dto.getContact());
@@ -67,8 +69,9 @@ public class DispositifMapper {
 
         DispositifResponseDTO dto = new DispositifResponseDTO();
         dto.setId(dispositif.getId());
-        dto.setCodeDispositif(dispositif.getCodeDispositif());
         dto.setDeveui(dispositif.getDeveui());
+        dto.setAppeui(dispositif.getAppeui());
+        dto.setAppkey(dispositif.getAppkey());
         dto.setNomCentreDeSante(dispositif.getNomCentreDeSante());
         dto.setLocalisation(dispositif.getLocalisation());
         dto.setContact(dispositif.getContact());
@@ -78,6 +81,11 @@ public class DispositifMapper {
 
         if (dispositif.getInfirmierLocal() != null) {
             dto.setInfirmierLocal(infirmierLocalMapper.toResponseDTO(dispositif.getInfirmierLocal()));
+        }
+
+        if (dispositif.getAdministrateur() != null) {
+            dto.setAdministrateurId(dispositif.getAdministrateur().getId());
+            dto.setAdministrateurNom(dispositif.getAdministrateur().getNom());
         }
 
         // Ajouter le nombre de paramètres si la collection est chargée

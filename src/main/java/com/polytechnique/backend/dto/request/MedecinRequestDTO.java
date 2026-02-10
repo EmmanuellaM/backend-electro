@@ -34,7 +34,7 @@ public class MedecinRequestDTO {
     @Schema(description = "Adresse email professionnelle", example = "dr.kamga@hopital.cm")
     private String email;
 
-    @Size(max = 20, message = "Le téléphone ne peut pas dépasser 20 caractères")
+    @jakarta.validation.constraints.Pattern(regexp = "^\\+[1-9]\\d{1,14}$", message = "Le format du numéro de téléphone est invalide (doit commencer par +)")
     @Schema(description = "Numéro de téléphone", example = "+237677123456")
     private String tel;
 
