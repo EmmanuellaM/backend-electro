@@ -5,6 +5,7 @@ import com.polytechnique.backend.dto.response.ParametresResponseDTO;
 import com.polytechnique.backend.entity.Parametres;
 import com.polytechnique.backend.repository.ParametresRepository;
 import com.polytechnique.backend.service.ParametresService;
+import com.polytechnique.backend.status.StatutParametre;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +33,8 @@ public class PatientController {
 
                 List<Parametres> allParametres;
 
-                if ("en_attente".equalsIgnoreCase(statut)) {
+                // Utilisation de getValue() pour la comparaison avec les paramètres de requête
+                if (StatutParametre.EN_ATTENTE.getValue().equalsIgnoreCase(statut)) {
                         if (adminId != null) {
                                 allParametres = parametresRepository.findParametresSansDiagnosticsByAdminId(adminId);
                         } else {
@@ -57,7 +59,7 @@ public class PatientController {
                                 .forEach(p -> oldestByPatient.putIfAbsent(p.getIdentifiantPatient(), p));
 
                 List<PatientResponseDTO> patients = oldestByPatient.values().stream()
-                                .filter(p -> statut == null || statut.equalsIgnoreCase(p.getStatut()))
+                                .filter(p -> statut == null || p.getStatut().getValue().equalsIgnoreCase(statut))
                                 .map(this::mapToPatientDTO)
                                 .collect(Collectors.toList());
 
@@ -103,7 +105,9 @@ public class PatientController {
                                 .pressionArterielleSystolique(p.getPressionArterielleSystolique())
                                 .pressionArterielleDiastolique(p.getPressionArterielleDiastolique())
                                 .frequenceFoetale(p.getFrequenceFoetale())
-                                .glycemie(p.getGlycemie());
+                                .glycemie(p.getGlycemie())
+                                .saturationOxygene(p.getSaturationOxygene())
+                                .dateDernieresRegles(p.getDateDernieresRegles());
 
                 // Ajouter les infos du dispositif si disponible
                 if (p.getDispositif() != null) {

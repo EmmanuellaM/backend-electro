@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.polytechnique.backend.entity.StatutMedecin;
+import com.polytechnique.backend.status.StatutMedecin;
 import com.polytechnique.backend.entity.SpecialiteMedecin;
 import com.polytechnique.backend.entity.Genre;
 

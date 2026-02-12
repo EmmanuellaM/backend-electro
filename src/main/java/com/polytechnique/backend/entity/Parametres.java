@@ -1,5 +1,6 @@
 package com.polytechnique.backend.entity;
 
+import com.polytechnique.backend.status.StatutParametre;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
@@ -102,6 +103,22 @@ public class Parametres {
     private BigDecimal glycemie;
 
     /**
+     * Saturation en oxygène (SpO2) en pourcentage
+     * CHECK: BETWEEN 50 AND 100
+     */
+    @Min(value = 50, message = "La saturation en oxygène doit être >= 50%")
+    @Max(value = 100, message = "La saturation en oxygène doit être <= 100%")
+    @Column(name = "saturation_oxygene")
+    private Integer saturationOxygene;
+
+    /**
+     * Date des dernières règles (DDR)
+     * Utilisée pour calculer l'âge gestationnel
+     */
+    @Column(name = "date_dernieres_regles")
+    private java.time.LocalDate dateDernieresRegles;
+
+    /**
      * Date et heure de la mesure
      */
     @CreationTimestamp
@@ -115,7 +132,7 @@ public class Parametres {
      * (trigger)
      */
     @Column(name = "statut", length = 20)
-    private String statut = "en_attente";
+    private StatutParametre statut = StatutParametre.EN_ATTENTE;
 
     /**
      * ID du médecin qui a verrouillé ces paramètres pour consultation

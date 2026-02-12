@@ -1,6 +1,6 @@
 package com.polytechnique.backend.dto.response;
 
-import com.polytechnique.backend.entity.SmsStatus;
+import com.polytechnique.backend.status.SmsStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

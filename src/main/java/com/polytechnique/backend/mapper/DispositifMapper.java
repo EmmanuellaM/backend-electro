@@ -5,7 +5,7 @@ import com.polytechnique.backend.dto.response.DispositifResponseDTO;
 import com.polytechnique.backend.dto.response.InfirmierLocalResponseDTO;
 import com.polytechnique.backend.entity.Dispositif;
 import com.polytechnique.backend.entity.InfirmierLocal;
-import com.polytechnique.backend.entity.StatutDispositif;
+import com.polytechnique.backend.status.StatutDispositif;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,6 @@ public class DispositifMapper {
         dispositif.setAppkey(dto.getAppkey());
         dispositif.setNomCentreDeSante(dto.getNomCentreDeSante());
         dispositif.setLocalisation(dto.getLocalisation());
-        dispositif.setContact(dto.getContact());
         dispositif.setStatut(dto.getStatut() != null ? dto.getStatut() : StatutDispositif.NON_ATTRIBUE);
         dispositif.setDateInstallation(dto.getDateInstallation());
 
@@ -52,7 +51,6 @@ public class DispositifMapper {
         dispositif.setAppkey(dto.getAppkey());
         dispositif.setNomCentreDeSante(dto.getNomCentreDeSante());
         dispositif.setLocalisation(dto.getLocalisation());
-        dispositif.setContact(dto.getContact());
         if (dto.getStatut() != null) {
             dispositif.setStatut(dto.getStatut());
         }

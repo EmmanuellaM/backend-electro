@@ -1,6 +1,7 @@
 package com.polytechnique.backend.service.impl;
 
 import com.polytechnique.backend.dto.request.ParametresRequestDTO;
+import com.polytechnique.backend.status.StatutParametre;
 import com.polytechnique.backend.dto.response.ParametresResponseDTO;
 import com.polytechnique.backend.entity.Dispositif;
 import com.polytechnique.backend.entity.Parametres;
@@ -34,9 +35,22 @@ public class ParametresServiceImpl implements ParametresService {
         Dispositif dispositif = dispositifRepository.findById(requestDTO.getDispositifId())
                 .orElseThrow(() -> new ResourceNotFoundException("Dispositif", "id", requestDTO.getDispositifId()));
 
+        // ARCHIVAGE AUTOMATIQUE : Si le patient a déjà des mesures "en_attente", on les
+        // passe en "archive"
+        // Cela garantit qu'il n'y a qu'une seule mesure active (la plus récente) dans
+        // la file d'attente
+        List<Parametres> mesuresEnAttente = parametresRepository.findByIdentifiantPatientAndStatut(
+                requestDTO.getIdentifiantPatient(),
+                StatutParametre.EN_ATTENTE);
+        if (!mesuresEnAttente.isEmpty()) {
+            mesuresEnAttente.forEach(p -> p.setStatut(StatutParametre.ARCHIVE));
+            parametresRepository.saveAll(mesuresEnAttente);
+        }
+
         // Convertir DTO → Entité
         Parametres parametres = parametresMapper.toEntity(requestDTO);
         parametres.setDispositif(dispositif);
+        parametres.setStatut(StatutParametre.EN_ATTENTE);
 
         // Sauvegarder
         Parametres savedParametres = parametresRepository.save(parametres);
@@ -99,7 +113,7 @@ public class ParametresServiceImpl implements ParametresService {
     @Override
     @Transactional(readOnly = true)
     public List<ParametresResponseDTO> getParametresByPatient(String identifiantPatient) {
-        return parametresRepository.findByIdentifiantPatient(identifiantPatient)
+        return parametresRepository.findByIdentifiantPatientOrderByIdDesc(identifiantPatient)
                 .stream()
                 .map(parametresMapper::toResponseDTO)
                 .collect(Collectors.toList());

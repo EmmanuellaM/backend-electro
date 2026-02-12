@@ -1,4 +1,4 @@
-package com.polytechnique.backend.entity;
+package com.polytechnique.backend.status;
 
 public enum StatutAdministrateur {
     ACTIF,

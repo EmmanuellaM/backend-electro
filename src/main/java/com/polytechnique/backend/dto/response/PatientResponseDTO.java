@@ -1,5 +1,6 @@
 package com.polytechnique.backend.dto.response;
 
+import com.polytechnique.backend.status.StatutParametre;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -32,7 +34,7 @@ public class PatientResponseDTO {
     private String telephone;
 
     @Schema(description = "Statut du patient", example = "en_attente")
-    private String statut;
+    private StatutParametre statut;
 
     @Schema(description = "Date de la dernière mesure")
     private LocalDateTime dateDerniereMesure;
@@ -55,6 +57,12 @@ public class PatientResponseDTO {
 
     @Schema(description = "Dernière glycémie en mmol/L", example = "5.2")
     private BigDecimal glycemie;
+
+    @Schema(description = "Dernière saturation en oxygène en %", example = "97")
+    private Integer saturationOxygene;
+
+    @Schema(description = "Date des dernières règles", example = "2025-09-15")
+    private LocalDate dateDernieresRegles;
 
     // Informations sur le dispositif
     @Schema(description = "ID du dispositif")

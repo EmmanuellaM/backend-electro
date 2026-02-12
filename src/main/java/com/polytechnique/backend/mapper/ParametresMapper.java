@@ -4,6 +4,7 @@ import com.polytechnique.backend.dto.request.ParametresRequestDTO;
 import com.polytechnique.backend.dto.response.ParametresResponseDTO;
 import com.polytechnique.backend.entity.Diagnostic;
 import com.polytechnique.backend.entity.Parametres;
+import com.polytechnique.backend.status.StatutParametre;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,6 +29,10 @@ public class ParametresMapper {
         parametres.setPressionArterielleSystolique(dto.getPressionArterielleSystolique());
         parametres.setPressionArterielleDiastolique(dto.getPressionArterielleDiastolique());
         parametres.setFrequenceFoetale(dto.getFrequenceFoetale());
+        parametres.setAgePatient(dto.getAgePatient());
+        parametres.setGlycemie(dto.getGlycemie());
+        parametres.setSaturationOxygene(dto.getSaturationOxygene());
+        parametres.setDateDernieresRegles(dto.getDateDernieresRegles());
 
         return parametres;
     }
@@ -46,6 +51,10 @@ public class ParametresMapper {
         parametres.setPressionArterielleSystolique(dto.getPressionArterielleSystolique());
         parametres.setPressionArterielleDiastolique(dto.getPressionArterielleDiastolique());
         parametres.setFrequenceFoetale(dto.getFrequenceFoetale());
+        parametres.setAgePatient(dto.getAgePatient());
+        parametres.setGlycemie(dto.getGlycemie());
+        parametres.setSaturationOxygene(dto.getSaturationOxygene());
+        parametres.setDateDernieresRegles(dto.getDateDernieresRegles());
         // Note: Le dispositif doit être mis à jour par le service si nécessaire
     }
 
@@ -67,6 +76,8 @@ public class ParametresMapper {
         dto.setPressionArterielleDiastolique(parametres.getPressionArterielleDiastolique());
         dto.setFrequenceFoetale(parametres.getFrequenceFoetale());
         dto.setGlycemie(parametres.getGlycemie());
+        dto.setSaturationOxygene(parametres.getSaturationOxygene());
+        dto.setDateDernieresRegles(parametres.getDateDernieresRegles());
         dto.setDateMesure(parametres.getDateMesure());
         dto.setStatut(parametres.getStatut());
 

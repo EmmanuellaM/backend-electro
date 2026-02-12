@@ -135,7 +135,7 @@ public class AdministrateurServiceImpl implements AdministrateurService {
                 .orElseThrow(() -> new EntityNotFoundException("Administrateur non trouvé avec l'ID : " + id));
 
         try {
-            com.polytechnique.backend.entity.StatutAdministrateur newStatut = com.polytechnique.backend.entity.StatutAdministrateur
+            com.polytechnique.backend.status.StatutAdministrateur newStatut = com.polytechnique.backend.status.StatutAdministrateur
                     .valueOf(statut.toUpperCase());
             admin.setStatut(newStatut);
         } catch (IllegalArgumentException e) {

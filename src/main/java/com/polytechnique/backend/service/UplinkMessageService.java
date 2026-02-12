@@ -6,6 +6,7 @@ import com.polytechnique.backend.entity.UplinkMessage;
 import com.polytechnique.backend.repository.DispositifRepository;
 import com.polytechnique.backend.repository.ParametresRepository;
 import com.polytechnique.backend.repository.UplinkMessageRepository;
+import com.polytechnique.backend.status.StatutParametre;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -102,6 +105,27 @@ public class UplinkMessageService {
         BigDecimal glycemie = new BigDecimal(parts[6].trim());
         int age = Integer.parseInt(parts[7].trim());
 
+        // Champs optionnels : SpO2 et DDR
+        Integer spo2 = null;
+        LocalDate ddr = null;
+
+        if (parts.length >= 9 && !parts[8].trim().isEmpty()) {
+            try {
+                spo2 = Integer.parseInt(parts[8].trim());
+            } catch (NumberFormatException e) {
+                log.warn("Format SpO2 invalide: {}", parts[8]);
+            }
+        }
+
+        if (parts.length >= 10 && !parts[9].trim().isEmpty()) {
+            try {
+                // Essayer plusieurs formats si nécessaire, ici on attend yyyy-MM-dd
+                ddr = LocalDate.parse(parts[9].trim());
+            } catch (Exception e) {
+                log.warn("Format DDR invalide: {}", parts[9]);
+            }
+        }
+
         // 4. Générer le codePatientUnique = DevEUI + "-" + ID_LOCAL
         String codePatientUnique = message.getDevEui() + "-" + idLocal;
         log.info("Code patient unique généré: {}", codePatientUnique);
@@ -117,8 +141,21 @@ public class UplinkMessageService {
         parametres.setFrequenceFoetale(fcf);
         parametres.setGlycemie(glycemie);
         parametres.setAgePatient(age);
+        parametres.setSaturationOxygene(spo2);
+        parametres.setDateDernieresRegles(ddr);
         parametres.setDateMesure(message.getCreatedAt() != null ? message.getCreatedAt() : LocalDateTime.now());
-        parametres.setStatut("en_attente");
+
+        // ARCHIVAGE AUTOMATIQUE : Si le patient a déjà des mesures "en_attente", on les
+        // passe en "archive"
+        List<Parametres> mesuresEnAttente = parametresRepository.findByIdentifiantPatientAndStatut(
+                codePatientUnique,
+                StatutParametre.EN_ATTENTE);
+        if (!mesuresEnAttente.isEmpty()) {
+            mesuresEnAttente.forEach(p -> p.setStatut(StatutParametre.ARCHIVE));
+            parametresRepository.saveAll(mesuresEnAttente);
+        }
+
+        parametres.setStatut(StatutParametre.EN_ATTENTE);
 
         // 6. Sauvegarder
         Parametres saved = parametresRepository.save(parametres);

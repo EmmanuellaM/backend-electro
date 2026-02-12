@@ -5,7 +5,7 @@ import com.polytechnique.backend.dto.request.LoginRequestDTO;
 import com.polytechnique.backend.dto.request.MedecinRequestDTO;
 import com.polytechnique.backend.dto.response.MedecinResponseDTO;
 import com.polytechnique.backend.entity.Medecin;
-import com.polytechnique.backend.entity.StatutMedecin;
+import com.polytechnique.backend.status.StatutMedecin;
 import com.polytechnique.backend.exception.EmailAlreadyExistsException;
 import com.polytechnique.backend.exception.ResourceNotFoundException;
 import com.polytechnique.backend.mapper.MedecinMapper;

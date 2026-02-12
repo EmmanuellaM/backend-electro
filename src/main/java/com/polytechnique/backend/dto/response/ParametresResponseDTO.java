@@ -1,10 +1,12 @@
 package com.polytechnique.backend.dto.response;
 
+import com.polytechnique.backend.status.StatutParametre;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -24,9 +26,11 @@ public class ParametresResponseDTO {
     private Integer pressionArterielleDiastolique;
     private Integer frequenceFoetale;
     private BigDecimal glycemie;
+    private Integer saturationOxygene;
+    private LocalDate dateDernieresRegles;
     private Integer semaineGrossesse;
     private LocalDateTime dateMesure;
-    private String statut; // en_attente, diagnostique, archive
+    private StatutParametre statut; // en_attente, diagnostique, archive
 
     // Informations du dispositif
     private Integer dispositifId;

@@ -37,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
             // Vérifier le mot de passe avec BCrypt
             if (passwordEncoder.matches(motDePasse, admin.getMotDePasse())) {
                 // Check if suspended
-                if (com.polytechnique.backend.entity.StatutAdministrateur.SUSPENDU.equals(admin.getStatut())) {
+                if (com.polytechnique.backend.status.StatutAdministrateur.SUSPENDU.equals(admin.getStatut())) {
                     throw new AuthenticationException("Votre compte est suspendu. Veuillez contacter le Super Admin.");
                 }
 
@@ -64,17 +64,17 @@ public class AuthServiceImpl implements AuthService {
             // Vérifier le mot de passe avec BCrypt
             if (passwordEncoder.matches(motDePasse, medecin.getMotDePasse())) {
                 // Vérifier le statut du compte
-                if (com.polytechnique.backend.entity.StatutMedecin.INACTIF.equals(medecin.getStatut())) {
+                if (com.polytechnique.backend.status.StatutMedecin.INACTIF.equals(medecin.getStatut())) {
                     throw new AuthenticationException("Votre compte a été désactivé. Contactez l'administrateur.");
                 }
-                if (com.polytechnique.backend.entity.StatutMedecin.SUSPENDU.equals(medecin.getStatut())) {
+                if (com.polytechnique.backend.status.StatutMedecin.SUSPENDU.equals(medecin.getStatut())) {
                     throw new AuthenticationException(
                             "Votre compte est temporairement suspendu. Contactez l'administrateur.");
                 }
 
                 // Check if associated Admin is suspended
                 if (medecin.getAdministrateur() != null
-                        && com.polytechnique.backend.entity.StatutAdministrateur.SUSPENDU
+                        && com.polytechnique.backend.status.StatutAdministrateur.SUSPENDU
                                 .equals(medecin.getAdministrateur().getStatut())) {
                     throw new AuthenticationException(
                             "Votre administrateur est suspendu. Veuillez le contacter pour plus d'informations.");

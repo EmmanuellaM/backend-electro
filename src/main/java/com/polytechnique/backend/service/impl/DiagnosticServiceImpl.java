@@ -10,6 +10,7 @@ import com.polytechnique.backend.mapper.DiagnosticMapper;
 import com.polytechnique.backend.repository.DiagnosticRepository;
 import com.polytechnique.backend.repository.MedecinRepository;
 import com.polytechnique.backend.repository.ParametresRepository;
+import com.polytechnique.backend.status.StatutParametre;
 import com.polytechnique.backend.service.DiagnosticService;
 import com.polytechnique.backend.service.NotificationSMSService;
 import lombok.RequiredArgsConstructor;
@@ -61,8 +62,20 @@ public class DiagnosticServiceImpl implements DiagnosticService {
         Diagnostic savedDiagnostic = diagnosticRepository.save(diagnostic);
 
         // Mettre à jour le statut des paramètres à "diagnostique"
-        parametres.setStatut("diagnostique");
+        parametres.setStatut(StatutParametre.DIAGNOSTIQUE);
         parametresRepository.save(parametres);
+
+        // Archiver les anciennes mesures non traitées du même patient
+        List<Parametres> otherPending = parametresRepository.findByIdentifiantPatientAndStatut(
+                parametres.getIdentifiantPatient(), StatutParametre.EN_ATTENTE);
+        if (!otherPending.isEmpty()) {
+            for (Parametres p : otherPending) {
+                if (!p.getId().equals(parametres.getId())) {
+                    p.setStatut(StatutParametre.ARCHIVE);
+                }
+            }
+            parametresRepository.saveAll(otherPending);
+        }
 
         // Convertir Entité → DTO de réponse
         DiagnosticResponseDTO response = diagnosticMapper.toResponseDTO(savedDiagnostic);

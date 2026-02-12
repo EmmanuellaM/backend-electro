@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * DTO pour créer ou modifier des paramètres médicaux
@@ -38,6 +39,17 @@ public class ParametresRequestDTO {
     @Min(value = 50, message = "La fréquence fœtale doit être >= 50")
     @Max(value = 220, message = "La fréquence fœtale doit être <= 220")
     private Integer frequenceFoetale;
+
+    private BigDecimal glycemie;
+
+    private Integer saturationOxygene;
+
+    private LocalDate dateDernieresRegles;
+
+    @NotNull(message = "L'âge du patient est obligatoire")
+    @Min(value = 10, message = "L'âge doit être valide")
+    @Max(value = 100, message = "L'âge doit être valide")
+    private Integer agePatient;
 
     @NotNull(message = "L'ID du dispositif est obligatoire")
     private Integer dispositifId;

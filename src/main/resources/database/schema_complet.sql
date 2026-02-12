@@ -11,6 +11,7 @@
 -- ============================================================================
 -- DROP DES TABLES ET TYPES (Ordre respectant les contraintes)
 -- ============================================================================
+DROP TABLE IF EXISTS seuil_maintenance CASCADE;
 DROP TABLE IF EXISTS notification_sms CASCADE;
 DROP TABLE IF EXISTS sms_messages CASCADE;
 DROP TABLE IF EXISTS feedback_ia CASCADE;
@@ -238,6 +239,8 @@ CREATE TABLE parametres (
     pression_arterielle_diastolique INTEGER,
     frequence_foetale INTEGER,
     glycemie NUMERIC(4,2),
+    saturation_oxygene INTEGER,
+    date_dernieres_regles DATE,
     date_mesure TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     statut VARCHAR(20) DEFAULT 'en_attente',
     verrouille_par_medecin_id INTEGER,
@@ -257,6 +260,7 @@ CREATE TABLE parametres (
     CONSTRAINT chk_pression_sys CHECK (pression_arterielle_systolique IS NULL OR (pression_arterielle_systolique BETWEEN 40 AND 300)),
     CONSTRAINT chk_pression_dia CHECK (pression_arterielle_diastolique IS NULL OR (pression_arterielle_diastolique BETWEEN 20 AND 200)),
     CONSTRAINT chk_freq_foetale CHECK (frequence_foetale IS NULL OR (frequence_foetale BETWEEN 50 AND 220)),
+    CONSTRAINT chk_saturation_oxygene CHECK (saturation_oxygene IS NULL OR (saturation_oxygene BETWEEN 50 AND 100)),
     CONSTRAINT chk_statut_param CHECK (statut IN ('en_attente', 'diagnostique', 'archive'))
 );
 
@@ -499,6 +503,42 @@ CREATE INDEX idx_reset_token ON password_reset_token(token);
 CREATE INDEX idx_reset_expiry ON password_reset_token(expiry_date);
 
 -- ============================================================================
+-- TABLE : seuil_maintenance
+-- Seuils configurables pour la détection de maintenance des dispositifs
+-- Un seul enregistrement (singleton, id=1)
+-- ============================================================================
+CREATE TABLE seuil_maintenance (
+    id INTEGER PRIMARY KEY DEFAULT 1,
+    temperature_min NUMERIC(4,1) NOT NULL DEFAULT 35.5,
+    temperature_max NUMERIC(4,1) NOT NULL DEFAULT 38.5,
+    frequence_foetale_min INTEGER NOT NULL DEFAULT 110,
+    frequence_foetale_max INTEGER NOT NULL DEFAULT 160,
+    pression_systolique_max INTEGER NOT NULL DEFAULT 140,
+    pression_diastolique_max INTEGER NOT NULL DEFAULT 90,
+    glycemie_max NUMERIC(4,1) NOT NULL DEFAULT 7.0,
+    saturation_oxygene_min INTEGER NOT NULL DEFAULT 95,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT chk_seuil_singleton CHECK (id = 1),
+    CONSTRAINT chk_seuil_temp_min CHECK (temperature_min >= 30.0 AND temperature_min <= 42.0),
+    CONSTRAINT chk_seuil_temp_max CHECK (temperature_max >= 30.0 AND temperature_max <= 42.0),
+    CONSTRAINT chk_seuil_fcf_min CHECK (frequence_foetale_min >= 50 AND frequence_foetale_min <= 220),
+    CONSTRAINT chk_seuil_fcf_max CHECK (frequence_foetale_max >= 50 AND frequence_foetale_max <= 220),
+    CONSTRAINT chk_seuil_sys_max CHECK (pression_systolique_max >= 40 AND pression_systolique_max <= 300),
+    CONSTRAINT chk_seuil_dia_max CHECK (pression_diastolique_max >= 20 AND pression_diastolique_max <= 200),
+    CONSTRAINT chk_seuil_glyc_max CHECK (glycemie_max >= 1.0 AND glycemie_max <= 30.0),
+    CONSTRAINT chk_seuil_spo2_min CHECK (saturation_oxygene_min >= 50 AND saturation_oxygene_min <= 100)
+);
+
+-- Insérer l'enregistrement par défaut
+INSERT INTO seuil_maintenance (id) VALUES (1) ON CONFLICT DO NOTHING;
+
+-- Trigger updated_at pour seuil_maintenance
+CREATE TRIGGER update_seuil_maintenance_updated_at
+    BEFORE UPDATE ON seuil_maintenance
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
 -- TRIGGERS
 -- ============================================================================
 
@@ -568,9 +608,12 @@ DECLARE
     v_fcf INTEGER;
     v_glycemie DECIMAL(10,2);
     v_age INTEGER;
+    v_spo2 INTEGER;
+    v_ddr DATE;
     v_code_patient TEXT;
     v_dispositif_id INTEGER;
     v_parts TEXT[];
+    v_nb_parts INTEGER;
 BEGIN
     -- Vérifier que le payload n'est pas vide
     IF NEW.text_payload IS NULL OR NEW.text_payload = '' THEN
@@ -580,13 +623,14 @@ BEGIN
     END IF;
 
     -- Séparer le payload par le délimiteur ';'
-    -- Format attendu: ID_LOCAL;POIDS;TEMP;SYS;DIA;FCF;GLYC;AGE
+    -- Format attendu: ID_LOCAL;POIDS;TEMP;SYS;DIA;FCF;GLYC;AGE[;SPO2;DDR]
     v_parts := string_to_array(NEW.text_payload, ';');
+    v_nb_parts := array_length(v_parts, 1);
 
-    -- Vérifier le nombre de champs
-    IF array_length(v_parts, 1) < 8 THEN
-        RAISE NOTICE 'Format payload invalide. Attendu 8 champs, reçu %. Payload: %', 
-                     array_length(v_parts, 1), NEW.text_payload;
+    -- Vérifier le nombre de champs (minimum 8, max 10)
+    IF v_nb_parts < 8 THEN
+        RAISE NOTICE 'Format payload invalide. Attendu >= 8 champs, reçu %. Payload: %', 
+                     v_nb_parts, NEW.text_payload;
         NEW.processed := TRUE;
         RETURN NEW;
     END IF;
@@ -601,6 +645,14 @@ BEGIN
         v_fcf := CAST(TRIM(v_parts[6]) AS INTEGER);
         v_glycemie := CAST(TRIM(v_parts[7]) AS DECIMAL(10,2));
         v_age := CAST(TRIM(v_parts[8]) AS INTEGER);
+
+        -- Champs optionnels (SpO2 et DDR)
+        IF v_nb_parts >= 9 AND TRIM(v_parts[9]) != '' THEN
+            v_spo2 := CAST(TRIM(v_parts[9]) AS INTEGER);
+        END IF;
+        IF v_nb_parts >= 10 AND TRIM(v_parts[10]) != '' THEN
+            v_ddr := CAST(TRIM(v_parts[10]) AS DATE);
+        END IF;
     EXCEPTION WHEN OTHERS THEN
         RAISE NOTICE 'Erreur de parsing du payload: %. Payload: %', SQLERRM, NEW.text_payload;
         NEW.processed := TRUE;
@@ -621,6 +673,13 @@ BEGIN
         RETURN NEW;
     END IF;
 
+    -- ARCHIVAGE AUTOMATIQUE : Passer les anciennes mesures "en_attente" en "archive"
+    -- pour ce patient spécifique avant d'insérer la nouvelle
+    UPDATE parametres 
+    SET statut = 'archive' 
+    WHERE identifiant_patient = v_code_patient 
+    AND statut = 'en_attente';
+
     -- Insérer dans la table parametres
     INSERT INTO parametres (
         identifiant_patient,
@@ -632,6 +691,8 @@ BEGIN
         frequence_foetale,
         glycemie,
         age_patient,
+        saturation_oxygene,
+        date_dernieres_regles,
         date_mesure,
         statut,
         created_at
@@ -645,6 +706,8 @@ BEGIN
         v_fcf,
         v_glycemie,
         v_age,
+        v_spo2,
+        v_ddr,
         COALESCE(NEW.created_at, NOW()),
         'en_attente',
         NOW()
@@ -667,7 +730,7 @@ CREATE TRIGGER trg_process_uplink_message
 
 -- Commentaires descriptifs
 COMMENT ON FUNCTION fn_process_uplink_message() IS 
-'Fonction trigger qui parse automatiquement les messages uplink LoRaWAN et crée les entrées Parametres correspondantes. Format payload: ID_LOCAL;POIDS;TEMP;SYS;DIA;FCF;GLYC;AGE';
+'Fonction trigger qui parse automatiquement les messages uplink LoRaWAN et crée les entrées Parametres correspondantes. Format payload: ID_LOCAL;POIDS;TEMP;SYS;DIA;FCF;GLYC;AGE[;SPO2;DDR]';
 
 COMMENT ON TRIGGER trg_process_uplink_message ON uplink_messages IS 
 'Trigger déclenché à chaque insertion dans uplink_messages pour créer automatiquement les Parametres';

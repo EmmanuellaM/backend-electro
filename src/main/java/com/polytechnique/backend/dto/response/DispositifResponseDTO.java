@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.polytechnique.backend.entity.StatutDispositif;
+import com.polytechnique.backend.status.StatutDispositif;
 
 /**
  * DTO pour renvoyer les informations d'un dispositif

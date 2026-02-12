@@ -4,7 +4,7 @@ import com.polytechnique.backend.dto.request.DispositifRequestDTO;
 import com.polytechnique.backend.dto.response.DispositifResponseDTO;
 import com.polytechnique.backend.entity.Dispositif;
 import com.polytechnique.backend.entity.InfirmierLocal;
-import com.polytechnique.backend.entity.StatutDispositif;
+import com.polytechnique.backend.status.StatutDispositif;
 import com.polytechnique.backend.exception.ResourceNotFoundException;
 import com.polytechnique.backend.mapper.DispositifMapper;
 import com.polytechnique.backend.repository.DispositifRepository;

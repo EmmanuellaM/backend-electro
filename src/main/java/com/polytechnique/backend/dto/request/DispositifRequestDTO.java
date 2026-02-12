@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-import com.polytechnique.backend.entity.StatutDispositif;
+import com.polytechnique.backend.status.StatutDispositif;
 
 @Data
 @NoArgsConstructor

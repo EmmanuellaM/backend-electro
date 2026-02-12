@@ -6,8 +6,9 @@ import com.polytechnique.backend.entity.InfirmierLocal;
 import com.polytechnique.backend.entity.Medecin;
 import com.polytechnique.backend.repository.*;
 import com.polytechnique.backend.service.StatistiquesService;
-import com.polytechnique.backend.entity.StatutDispositif;
-import com.polytechnique.backend.entity.StatutMedecin;
+import com.polytechnique.backend.status.StatutDispositif;
+import com.polytechnique.backend.status.StatutMedecin;
+import com.polytechnique.backend.status.StatutParametre;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -97,19 +98,19 @@ public class StatistiquesServiceImpl implements StatistiquesService {
                 }
 
                 int patientsEnAttente = (int) allParametres.stream()
-                                .filter(p -> "en_attente".equalsIgnoreCase(p.getStatut()))
+                                .filter(p -> StatutParametre.EN_ATTENTE.equals(p.getStatut()))
                                 .map(p -> p.getIdentifiantPatient())
                                 .distinct()
                                 .count();
                 int patientsDiagnostiques = (int) allParametres.stream()
-                                .filter(p -> "diagnostique".equalsIgnoreCase(p.getStatut()))
+                                .filter(p -> StatutParametre.DIAGNOSTIQUE.equals(p.getStatut()))
                                 .map(p -> p.getIdentifiantPatient())
                                 .distinct()
                                 .count();
 
                 int totalParametres = allParametres.size();
                 int parametresEnAttente = (int) allParametres.stream()
-                                .filter(p -> "en_attente".equalsIgnoreCase(p.getStatut()))
+                                .filter(p -> StatutParametre.EN_ATTENTE.equals(p.getStatut()))
                                 .count();
 
                 // Diagnostics

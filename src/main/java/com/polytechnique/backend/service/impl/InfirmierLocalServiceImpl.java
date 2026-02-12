@@ -66,7 +66,18 @@ public class InfirmierLocalServiceImpl implements InfirmierLocalService {
         InfirmierLocal infirmier = infirmierLocalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Infirmier", "id", id));
 
+        String oldPhone = infirmier.getTelephone1();
         infirmierLocalMapper.updateEntity(requestDTO, infirmier);
+        String newPhone = infirmier.getTelephone1();
+
+        // Si le téléphone a changé, mettre à jour le contact des dispositifs associés
+        if (oldPhone != null && !oldPhone.equals(newPhone)) {
+            if (infirmier.getDispositifs() != null) {
+                for (com.polytechnique.backend.entity.Dispositif d : infirmier.getDispositifs()) {
+                    d.setContact(newPhone);
+                }
+            }
+        }
 
         if (requestDTO.getAdministrateurId() != null) {
             com.polytechnique.backend.entity.Administrateur admin = administrateurRepository

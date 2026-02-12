@@ -4,7 +4,7 @@ import com.polytechnique.backend.dto.request.SmsMessageRequestDTO;
 import com.polytechnique.backend.dto.response.SmsMessageResponseDTO;
 import com.polytechnique.backend.entity.InfirmierLocal;
 import com.polytechnique.backend.entity.SmsMessage;
-import com.polytechnique.backend.entity.SmsStatus;
+import com.polytechnique.backend.status.SmsStatus;
 import com.polytechnique.backend.exception.ResourceNotFoundException;
 import com.polytechnique.backend.repository.InfirmierLocalRepository;
 import com.polytechnique.backend.repository.SmsMessageRepository;

@@ -1,6 +1,6 @@
 package com.polytechnique.backend.dto.request;
 
-import com.polytechnique.backend.entity.StatutDispositif;
+import com.polytechnique.backend.status.StatutDispositif;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

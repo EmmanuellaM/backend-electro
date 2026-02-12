@@ -1,4 +1,4 @@
-package com.polytechnique.backend.entity;
+package com.polytechnique.backend.status;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

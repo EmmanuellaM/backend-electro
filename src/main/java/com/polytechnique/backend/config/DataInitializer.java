@@ -2,7 +2,7 @@ package com.polytechnique.backend.config;
 
 import com.polytechnique.backend.entity.Administrateur;
 import com.polytechnique.backend.entity.Role;
-import com.polytechnique.backend.entity.StatutAdministrateur;
+import com.polytechnique.backend.status.StatutAdministrateur;
 import com.polytechnique.backend.repository.AdministrateurRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

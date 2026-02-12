@@ -1,5 +1,7 @@
 package com.polytechnique.backend.entity;
 
+import com.polytechnique.backend.status.StatutDispositif;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -59,7 +61,19 @@ public class Dispositif {
 
     @Size(max = 50, message = "Le contact ne peut pas dépasser 50 caractères")
     @Column(name = "contact", length = 50)
-    private String contact;
+    private String contact = "non defini";
+
+    /**
+     * Mise à jour automatique du contact lors de l'assignation d'un infirmier
+     */
+    public void setInfirmierLocal(InfirmierLocal infirmierLocal) {
+        this.infirmierLocal = infirmierLocal;
+        if (infirmierLocal != null && infirmierLocal.getTelephone1() != null) {
+            this.contact = infirmierLocal.getTelephone1();
+        } else if (infirmierLocal == null) {
+            this.contact = "non defini";
+        }
+    }
 
     /**
      * Statut du dispositif
@@ -121,7 +135,7 @@ public class Dispositif {
     private InfirmierLocal infirmierLocal;
 
     /**
-     * Administrateur ayant créé ce dispositif
+     * Administrateur a qui on a attribué le dispositif
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_administrateur")

@@ -1,5 +1,7 @@
 package com.polytechnique.backend.entity;
 
+import com.polytechnique.backend.status.StatutMedecin;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

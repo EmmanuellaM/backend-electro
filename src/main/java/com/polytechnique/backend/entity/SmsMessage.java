@@ -1,5 +1,7 @@
 package com.polytechnique.backend.entity;
 
+import com.polytechnique.backend.status.SmsStatus;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

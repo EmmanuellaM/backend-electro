@@ -1,6 +1,7 @@
 package com.polytechnique.backend.repository;
 
 import com.polytechnique.backend.entity.Parametres;
+import com.polytechnique.backend.status.StatutParametre;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,6 +26,11 @@ public interface ParametresRepository extends JpaRepository<Parametres, Integer>
         * Génère: SELECT * FROM parametres WHERE identifiant_patient = ?
         */
        List<Parametres> findByIdentifiantPatient(String identifiantPatient);
+
+       /**
+        * Rechercher les paramètres d'un patient par statut
+        */
+       List<Parametres> findByIdentifiantPatientAndStatut(String identifiantPatient, StatutParametre statut);
 
        /**
         * Rechercher les paramètres par dispositif
