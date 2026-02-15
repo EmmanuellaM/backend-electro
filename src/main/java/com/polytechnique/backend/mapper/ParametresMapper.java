@@ -25,6 +25,7 @@ public class ParametresMapper {
         Parametres parametres = new Parametres();
         parametres.setIdentifiantPatient(dto.getIdentifiantPatient());
         parametres.setPoidsPatient(dto.getPoidsPatient());
+        parametres.setTaillePatient(dto.getTaillePatient());
         parametres.setTemperature(dto.getTemperature());
         parametres.setPressionArterielleSystolique(dto.getPressionArterielleSystolique());
         parametres.setPressionArterielleDiastolique(dto.getPressionArterielleDiastolique());
@@ -47,6 +48,7 @@ public class ParametresMapper {
 
         parametres.setIdentifiantPatient(dto.getIdentifiantPatient());
         parametres.setPoidsPatient(dto.getPoidsPatient());
+        parametres.setTaillePatient(dto.getTaillePatient());
         parametres.setTemperature(dto.getTemperature());
         parametres.setPressionArterielleSystolique(dto.getPressionArterielleSystolique());
         parametres.setPressionArterielleDiastolique(dto.getPressionArterielleDiastolique());
@@ -71,6 +73,7 @@ public class ParametresMapper {
         dto.setIdentifiantPatient(parametres.getIdentifiantPatient());
         dto.setAgePatient(parametres.getAgePatient());
         dto.setPoidsPatient(parametres.getPoidsPatient());
+        dto.setTaillePatient(parametres.getTaillePatient());
         dto.setTemperature(parametres.getTemperature());
         dto.setPressionArterielleSystolique(parametres.getPressionArterielleSystolique());
         dto.setPressionArterielleDiastolique(parametres.getPressionArterielleDiastolique());
@@ -122,6 +125,10 @@ public class ParametresMapper {
         // Ajouter les informations de verrouillage
         dto.setVerrouilleParMedecinId(parametres.getVerrouilleParMedecinId());
         dto.setVerrouilleAt(parametres.getVerrouilleAt());
+
+        if (parametres.getVerrouilleParMedecin() != null) {
+            dto.setVerrouilleParMedecinNom("Dr. " + parametres.getVerrouilleParMedecin().getNom());
+        }
 
         return dto;
     }

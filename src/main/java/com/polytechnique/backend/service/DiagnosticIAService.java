@@ -61,6 +61,7 @@ public class DiagnosticIAService {
                 Map<String, Object> aiResponse = aiClientService.predictDiagnosis(
                                 parametres.getAgePatient(),
                                 parametres.getPoidsPatient().doubleValue(),
+                                parametres.getTaillePatient().doubleValue(),
                                 parametres.getTemperature().doubleValue(),
                                 parametres.getPressionArterielleSystolique(),
                                 parametres.getPressionArterielleDiastolique(),

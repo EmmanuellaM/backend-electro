@@ -16,5 +16,6 @@ public class SmsMessageRequestDTO {
     @NotBlank(message = "Le message est obligatoire")
     private String message;
 
-    private String sentBy;
+    @NotNull(message = "L'ID de l'administrateur est obligatoire")
+    private Integer administrateurId;
 }

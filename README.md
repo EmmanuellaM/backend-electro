@@ -1,29 +1,77 @@
-# 🚀 Guide Complet de l'API REST
+# 🚀 Backend MaterniCare - Guide de Compilation et d'Installation
 
-Documentation complète de tous les endpoints de l'API médicale.
-
-**Base URL:** `http://localhost:8080/api`
+Ce projet est le backend de l'application MaterniCare, une solution IoT pour le suivi médical des femmes enceintes. Il est construit avec **Spring Boot 3.4**, **Java 17** et **PostgreSQL**.
 
 ---
 
-## 📋 Table des Matières
+## 🛠️ Guide d'Installation Rapide
 
-1. [Médecins](#médecins)
+### 1. Prérequis
+
+Assurez-vous d'avoir installé sur votre machine :
+
+- **JDK 17** (indispensable)
+- **PostgreSQL** (v14 ou supérieure recommandée)
+- **Git** (pour cloner le projet)
+
+### 2. Configuration de la Base de Données
+
+1. Lancez PostgreSQL et créez une base de données nommée `bd_electro` :
+
+   ```sql
+   CREATE DATABASE bd_electro;
+   ```
+
+2. Créez un utilisateur ou utilisez `postgres`. Par défaut, le projet cherche l'utilisateur `admin` avec le mot de passe `admin123`. Vous pouvez modifier cela dans le fichier `src/main/resources/application.properties`.
+
+### 3. Compilation et Build
+
+Utilisez le wrapper Maven (`mvnw`) inclus dans le projet pour compiler :
+
+```bash
+# Donner les permissions d'exécution (Linux/macOS)
+chmod +x mvnw
+
+# Compiler et installer les dépendances
+./mvnw clean install
+```
+
+### 4. Lancement de l'Application
+
+Pour lancer le serveur en mode développement :
+
+```bash
+./mvnw spring-boot:run
+```
+
+L'API sera accessible sur `http://localhost:8080/api`.
+
+### 5. Documentation API (Swagger/OpenAPI)
+
+Une fois l'application lancée, vous pouvez visualiser et tester l'API via Swagger UI :
+👉 [http://localhost:8080/api/swagger-ui/index.html](http://localhost:8080/api/swagger-ui/index.html)
+
+---
+
+## 📋 Table des Matières (Documentation API)
+
+1. [Medecins](#medecins)
 2. [Dispositifs](#dispositifs)
-3. [Paramètres](#paramètres)
+3. [Parametres](#parametres)
 4. [Diagnostics](#diagnostics)
-5. [Codes de Réponse HTTP](#codes-de-réponse-http)
+5. [Codes de Reponse HTTP](#codes-de-reponse-http)
 6. [Gestion des Erreurs](#gestion-des-erreurs)
 
 ---
 
-## 👨‍⚕️ Médecins
+## Medecins
 
 ### Créer un médecin
 
 **Endpoint:** `POST /api/medecins`
 
 **Body:**
+
 ```json
 {
   "nom": "Mbarga",
@@ -34,6 +82,7 @@ Documentation complète de tous les endpoints de l'API médicale.
 ```
 
 **Réponse:** `201 Created`
+
 ```json
 {
   "id": 1,
@@ -46,6 +95,7 @@ Documentation complète de tous les endpoints de l'API médicale.
 ```
 
 **Curl:**
+
 ```bash
 curl -X POST http://localhost:8080/api/medecins \
   -H "Content-Type: application/json" \
@@ -64,6 +114,7 @@ curl -X POST http://localhost:8080/api/medecins \
 **Endpoint:** `GET /api/medecins`
 
 **Réponse:** `200 OK`
+
 ```json
 [
   {
@@ -86,6 +137,7 @@ curl -X POST http://localhost:8080/api/medecins \
 ```
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/medecins
 ```
@@ -97,6 +149,7 @@ curl http://localhost:8080/api/medecins
 **Endpoint:** `GET /api/medecins/{id}`
 
 **Réponse:** `200 OK`
+
 ```json
 {
   "id": 1,
@@ -109,6 +162,7 @@ curl http://localhost:8080/api/medecins
 ```
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/medecins/1
 ```
@@ -122,6 +176,7 @@ curl http://localhost:8080/api/medecins/1
 **Endpoint:** `GET /api/medecins/email/{email}`
 
 **Réponse:** `200 OK`
+
 ```json
 {
   "id": 1,
@@ -134,6 +189,7 @@ curl http://localhost:8080/api/medecins/1
 ```
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/medecins/email/paul.mbarga@hopital.cm
 ```
@@ -145,6 +201,7 @@ curl http://localhost:8080/api/medecins/email/paul.mbarga@hopital.cm
 **Endpoint:** `PUT /api/medecins/{id}`
 
 **Body:**
+
 ```json
 {
   "nom": "Mbarga",
@@ -155,6 +212,7 @@ curl http://localhost:8080/api/medecins/email/paul.mbarga@hopital.cm
 ```
 
 **Réponse:** `200 OK`
+
 ```json
 {
   "id": 1,
@@ -167,6 +225,7 @@ curl http://localhost:8080/api/medecins/email/paul.mbarga@hopital.cm
 ```
 
 **Curl:**
+
 ```bash
 curl -X PUT http://localhost:8080/api/medecins/1 \
   -H "Content-Type: application/json" \
@@ -187,19 +246,21 @@ curl -X PUT http://localhost:8080/api/medecins/1 \
 **Réponse:** `204 No Content`
 
 **Curl:**
+
 ```bash
 curl -X DELETE http://localhost:8080/api/medecins/1
 ```
 
 ---
 
-## 🏥 Dispositifs
+## Dispositifs
 
 ### Créer un dispositif
 
 **Endpoint:** `POST /api/dispositifs`
 
 **Body:**
+
 ```json
 {
   "nomCentreDeSante": "Centre Médical de Yaoundé",
@@ -208,6 +269,7 @@ curl -X DELETE http://localhost:8080/api/medecins/1
 ```
 
 **Réponse:** `201 Created`
+
 ```json
 {
   "id": 1,
@@ -218,6 +280,7 @@ curl -X DELETE http://localhost:8080/api/medecins/1
 ```
 
 **Curl:**
+
 ```bash
 curl -X POST http://localhost:8080/api/dispositifs \
   -H "Content-Type: application/json" \
@@ -236,6 +299,7 @@ curl -X POST http://localhost:8080/api/dispositifs \
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/dispositifs
 ```
@@ -249,6 +313,7 @@ curl http://localhost:8080/api/dispositifs
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/dispositifs/1
 ```
@@ -260,6 +325,7 @@ curl http://localhost:8080/api/dispositifs/1
 **Endpoint:** `GET /api/dispositifs/search?nomCentre=Yaoundé`
 
 **Réponse:** `200 OK`
+
 ```json
 [
   {
@@ -272,6 +338,7 @@ curl http://localhost:8080/api/dispositifs/1
 ```
 
 **Curl:**
+
 ```bash
 curl "http://localhost:8080/api/dispositifs/search?nomCentre=Yaoundé"
 ```
@@ -283,6 +350,7 @@ curl "http://localhost:8080/api/dispositifs/search?nomCentre=Yaoundé"
 **Endpoint:** `PUT /api/dispositifs/{id}`
 
 **Body:**
+
 ```json
 {
   "nomCentreDeSante": "Centre de Santé Mvog-Ada",
@@ -293,6 +361,7 @@ curl "http://localhost:8080/api/dispositifs/search?nomCentre=Yaoundé"
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl -X PUT http://localhost:8080/api/dispositifs/1 \
   -H "Content-Type: application/json" \
@@ -311,19 +380,21 @@ curl -X PUT http://localhost:8080/api/dispositifs/1 \
 **Réponse:** `204 No Content`
 
 **Curl:**
+
 ```bash
 curl -X DELETE http://localhost:8080/api/dispositifs/1
 ```
 
 ---
 
-## 📊 Paramètres
+## Parametres
 
 ### Créer des paramètres
 
 **Endpoint:** `POST /api/parametres`
 
 **Body:**
+
 ```json
 {
   "identifiantPatient": "PAT-2024-001",
@@ -336,6 +407,7 @@ curl -X DELETE http://localhost:8080/api/dispositifs/1
 ```
 
 **Réponse:** `201 Created`
+
 ```json
 {
   "id": 1,
@@ -351,6 +423,7 @@ curl -X DELETE http://localhost:8080/api/dispositifs/1
 ```
 
 **Curl:**
+
 ```bash
 curl -X POST http://localhost:8080/api/parametres \
   -H "Content-Type: application/json" \
@@ -373,6 +446,7 @@ curl -X POST http://localhost:8080/api/parametres \
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/parametres
 ```
@@ -386,6 +460,7 @@ curl http://localhost:8080/api/parametres
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/parametres/1
 ```
@@ -397,6 +472,7 @@ curl http://localhost:8080/api/parametres/1
 **Endpoint:** `GET /api/parametres/patient/{identifiantPatient}`
 
 **Réponse:** `200 OK`
+
 ```json
 [
   {
@@ -414,6 +490,7 @@ curl http://localhost:8080/api/parametres/1
 ```
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/parametres/patient/PAT-2024-001
 ```
@@ -427,6 +504,7 @@ curl http://localhost:8080/api/parametres/patient/PAT-2024-001
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/parametres/dispositif/1
 ```
@@ -438,6 +516,7 @@ curl http://localhost:8080/api/parametres/dispositif/1
 **Endpoint:** `PUT /api/parametres/{id}`
 
 **Body:**
+
 ```json
 {
   "identifiantPatient": "PAT-2024-001",
@@ -452,6 +531,7 @@ curl http://localhost:8080/api/parametres/dispositif/1
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl -X PUT http://localhost:8080/api/parametres/1 \
   -H "Content-Type: application/json" \
@@ -474,19 +554,21 @@ curl -X PUT http://localhost:8080/api/parametres/1 \
 **Réponse:** `204 No Content`
 
 **Curl:**
+
 ```bash
 curl -X DELETE http://localhost:8080/api/parametres/1
 ```
 
 ---
 
-## 🩺 Diagnostics
+## Diagnostics
 
 ### Créer un diagnostic
 
 **Endpoint:** `POST /api/diagnostics`
 
 **Body:**
+
 ```json
 {
   "contenu": "Patient en bonne santé générale. Poids: 68.5 kg - Dans la norme. Température: 37.1°C - Normale. Pression artérielle: 118 - Optimale. Fréquence fœtale: 145 bpm - Normale. Recommandation: Continuer le suivi prénatal régulier.",
@@ -496,10 +578,11 @@ curl -X DELETE http://localhost:8080/api/parametres/1
 ```
 
 **Réponse:** `201 Created`
+
 ```json
 {
   "id": 1,
-  "contenu": "Patient en bonne santé générale...",
+  "contenu": "Patient en bonne santé...",
   "medecinId": 1,
   "medecinNom": "Mbarga",
   "medecinPrenom": "Paul",
@@ -514,6 +597,7 @@ curl -X DELETE http://localhost:8080/api/parametres/1
 ```
 
 **Curl:**
+
 ```bash
 curl -X POST http://localhost:8080/api/diagnostics \
   -H "Content-Type: application/json" \
@@ -533,6 +617,7 @@ curl -X POST http://localhost:8080/api/diagnostics \
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/diagnostics
 ```
@@ -546,6 +631,7 @@ curl http://localhost:8080/api/diagnostics
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/diagnostics/1
 ```
@@ -559,6 +645,7 @@ curl http://localhost:8080/api/diagnostics/1
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/diagnostics/medecin/1
 ```
@@ -572,6 +659,7 @@ curl http://localhost:8080/api/diagnostics/medecin/1
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl http://localhost:8080/api/diagnostics/parametres/1
 ```
@@ -583,6 +671,7 @@ curl http://localhost:8080/api/diagnostics/parametres/1
 **Endpoint:** `PUT /api/diagnostics/{id}`
 
 **Body:**
+
 ```json
 {
   "contenu": "Diagnostic mis à jour...",
@@ -594,6 +683,7 @@ curl http://localhost:8080/api/diagnostics/parametres/1
 **Réponse:** `200 OK`
 
 **Curl:**
+
 ```bash
 curl -X PUT http://localhost:8080/api/diagnostics/1 \
   -H "Content-Type: application/json" \
@@ -613,16 +703,17 @@ curl -X PUT http://localhost:8080/api/diagnostics/1 \
 **Réponse:** `204 No Content`
 
 **Curl:**
+
 ```bash
 curl -X DELETE http://localhost:8080/api/diagnostics/1
 ```
 
 ---
 
-## 📊 Codes de Réponse HTTP
+## Codes de Reponse HTTP
 
 | Code | Signification | Description |
-|------|--------------|-------------|
+| :--- | :--- | :--- |
 | **200** | OK | Requête réussie |
 | **201** | Created | Ressource créée avec succès |
 | **204** | No Content | Suppression réussie (pas de contenu) |
@@ -633,18 +724,20 @@ curl -X DELETE http://localhost:8080/api/diagnostics/1
 
 ---
 
-## ⚠️ Gestion des Erreurs
+## Gestion des Erreurs
 
 Toutes les erreurs retournent une structure JSON uniforme:
 
 ### Ressource non trouvée (404)
 
 **Requête:**
+
 ```bash
 curl http://localhost:8080/api/medecins/999
 ```
 
 **Réponse:** `404 Not Found`
+
 ```json
 {
   "timestamp": "2024-12-03T10:30:00",
@@ -659,6 +752,7 @@ curl http://localhost:8080/api/medecins/999
 ### Email déjà existant (409)
 
 **Requête:**
+
 ```bash
 curl -X POST http://localhost:8080/api/medecins \
   -H "Content-Type: application/json" \
@@ -671,6 +765,7 @@ curl -X POST http://localhost:8080/api/medecins \
 ```
 
 **Réponse:** `409 Conflict`
+
 ```json
 {
   "timestamp": "2024-12-03T10:31:00",
@@ -685,6 +780,7 @@ curl -X POST http://localhost:8080/api/medecins \
 ### Erreur de validation (400)
 
 **Requête:**
+
 ```bash
 curl -X POST http://localhost:8080/api/medecins \
   -H "Content-Type: application/json" \
@@ -697,6 +793,7 @@ curl -X POST http://localhost:8080/api/medecins \
 ```
 
 **Réponse:** `400 Bad Request`
+
 ```json
 {
   "timestamp": "2024-12-03T10:32:00",
@@ -764,7 +861,8 @@ curl -X POST http://localhost:8080/api/diagnostics \
 
 ## 📚 Résumé des Endpoints
 
-### Médecins
+### Liste des Endpoints Médecins
+
 - `POST /api/medecins` - Créer
 - `GET /api/medecins` - Liste tous
 - `GET /api/medecins/{id}` - Un par ID
@@ -772,7 +870,8 @@ curl -X POST http://localhost:8080/api/diagnostics \
 - `PUT /api/medecins/{id}` - Modifier
 - `DELETE /api/medecins/{id}` - Supprimer
 
-### Dispositifs
+### Liste des Endpoints Dispositifs
+
 - `POST /api/dispositifs` - Créer
 - `GET /api/dispositifs` - Liste tous
 - `GET /api/dispositifs/{id}` - Un par ID
@@ -780,7 +879,8 @@ curl -X POST http://localhost:8080/api/diagnostics \
 - `PUT /api/dispositifs/{id}` - Modifier
 - `DELETE /api/dispositifs/{id}` - Supprimer
 
-### Paramètres
+### Liste des Endpoints Paramètres
+
 - `POST /api/parametres` - Créer
 - `GET /api/parametres` - Liste tous
 - `GET /api/parametres/{id}` - Un par ID
@@ -789,7 +889,8 @@ curl -X POST http://localhost:8080/api/diagnostics \
 - `PUT /api/parametres/{id}` - Modifier
 - `DELETE /api/parametres/{id}` - Supprimer
 
-### Diagnostics
+### Liste des Endpoints Diagnostics
+
 - `POST /api/diagnostics` - Créer
 - `GET /api/diagnostics` - Liste tous
 - `GET /api/diagnostics/{id}` - Un par ID

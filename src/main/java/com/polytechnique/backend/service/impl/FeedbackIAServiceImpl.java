@@ -41,6 +41,7 @@ public class FeedbackIAServiceImpl implements FeedbackIAService {
         // Paramètres
         feedback.setAgePatient(requestDTO.getAgePatient());
         feedback.setPoidsPatient(requestDTO.getPoidsPatient());
+        feedback.setTaillePatient(requestDTO.getTaillePatient());
         feedback.setTemperature(requestDTO.getTemperature());
         feedback.setPressionSystolique(requestDTO.getPressionSystolique());
         feedback.setPressionDiastolique(requestDTO.getPressionDiastolique());
@@ -109,6 +110,7 @@ public class FeedbackIAServiceImpl implements FeedbackIAService {
         // Paramètres
         dto.setAgePatient(feedback.getAgePatient());
         dto.setPoidsPatient(feedback.getPoidsPatient());
+        dto.setTaillePatient(feedback.getTaillePatient());
         dto.setTemperature(feedback.getTemperature());
         dto.setPressionSystolique(feedback.getPressionSystolique());
         dto.setPressionDiastolique(feedback.getPressionDiastolique());

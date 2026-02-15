@@ -21,6 +21,7 @@ public class ParametresResponseDTO {
     private String identifiantPatient;
     private Integer agePatient;
     private BigDecimal poidsPatient;
+    private BigDecimal taillePatient;
     private BigDecimal temperature;
     private Integer pressionArterielleSystolique;
     private Integer pressionArterielleDiastolique;
@@ -44,6 +45,7 @@ public class ParametresResponseDTO {
 
     // Informations de verrouillage
     private Integer verrouilleParMedecinId;
+    private String verrouilleParMedecinNom;
     private LocalDateTime verrouilleAt;
 
     // Diagnostic associé (le plus récent)

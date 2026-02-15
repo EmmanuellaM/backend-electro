@@ -49,6 +49,15 @@ public class Parametres {
     private BigDecimal poidsPatient;
 
     /**
+     * Taille du patient en centimètres
+     * NUMERIC(5,2) - CHECK: > 0 AND < 300
+     */
+    @NotNull(message = "La taille du patient est obligatoire")
+    @DecimalMin(value = "1.0", message = "La taille doit être positive")
+    @Column(name = "taille_patient", nullable = false, precision = 5, scale = 2)
+    private BigDecimal taillePatient;
+
+    /**
      * Âge du patient en années
      * CHECK: > 0 AND < 120
      */
@@ -147,6 +156,13 @@ public class Parametres {
      */
     @Column(name = "verrouille_at")
     private LocalDateTime verrouilleAt;
+
+    /**
+     * Relation Many-to-One optionnelle avec le médecin qui verrouille
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "verrouille_par_medecin_id", insertable = false, updatable = false)
+    private Medecin verrouilleParMedecin;
 
     /**
      * Date de création automatique

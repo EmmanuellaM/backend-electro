@@ -36,8 +36,9 @@ public class SmsMessage {
     @Column(nullable = false)
     private LocalDateTime sentAt;
 
-    @Column(nullable = false)
-    private String sentBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_administrateur", nullable = false)
+    private Administrateur administrateur;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

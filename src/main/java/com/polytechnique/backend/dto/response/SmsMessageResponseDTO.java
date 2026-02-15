@@ -22,5 +22,7 @@ public class SmsMessageResponseDTO {
     private String message;
     private LocalDateTime sentAt;
     private String sentBy;
+    private Integer administrateurId;
+    private String administrateurNom;
     private SmsStatus status;
 }

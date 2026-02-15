@@ -19,6 +19,7 @@ public class FeedbackIAResponseDTO {
     // Paramètres
     private Integer agePatient;
     private Double poidsPatient;
+    private Double taillePatient;
     private Double temperature;
     private Integer pressionSystolique;
     private Integer pressionDiastolique;

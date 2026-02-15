@@ -57,6 +57,7 @@ public class InfirmierLocalServiceImpl implements InfirmierLocalService {
             infirmiers = infirmierLocalRepository.findAll();
         }
         return infirmiers.stream()
+                .filter(i -> i.getStatut() != com.polytechnique.backend.status.StatutInfirmier.SUPPRIME)
                 .map(infirmierLocalMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -94,17 +95,21 @@ public class InfirmierLocalServiceImpl implements InfirmierLocalService {
 
     @Override
     public void deleteInfirmier(int id) {
-        if (!infirmierLocalRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Infirmier", "id", id);
-        }
-        infirmierLocalRepository.deleteById(id);
+        InfirmierLocal infirmier = infirmierLocalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Infirmier", "id", id));
+        infirmier.setStatut(com.polytechnique.backend.status.StatutInfirmier.SUPPRIME);
+        infirmierLocalRepository.save(infirmier);
     }
 
     @Override
     public InfirmierLocalResponseDTO updateStatut(int id, String statut) {
         InfirmierLocal infirmier = infirmierLocalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Infirmier", "id", id));
-        infirmier.setStatut(statut != null ? statut.toLowerCase() : "actif");
+        try {
+            infirmier.setStatut(com.polytechnique.backend.status.StatutInfirmier.valueOf(statut.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            infirmier.setStatut(com.polytechnique.backend.status.StatutInfirmier.ACTIF);
+        }
         InfirmierLocal updatedInfirmier = infirmierLocalRepository.save(infirmier);
         return infirmierLocalMapper.toResponseDTO(updatedInfirmier);
     }

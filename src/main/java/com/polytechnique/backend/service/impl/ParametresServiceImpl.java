@@ -28,6 +28,10 @@ public class ParametresServiceImpl implements ParametresService {
     private final ParametresRepository parametresRepository;
     private final DispositifRepository dispositifRepository;
     private final ParametresMapper parametresMapper;
+    private final com.polytechnique.backend.service.SseService sseService;
+
+    @org.springframework.beans.factory.annotation.Value("${app.lock.timeout-minutes:30}")
+    private int lockTimeoutMinutes;
 
     @Override
     public ParametresResponseDTO createParametres(ParametresRequestDTO requestDTO) {
@@ -54,6 +58,25 @@ public class ParametresServiceImpl implements ParametresService {
 
         // Sauvegarder
         Parametres savedParametres = parametresRepository.save(parametres);
+
+        // ACTIVER LE DISPOSITIF
+        if (dispositif.getStatut() != com.polytechnique.backend.status.StatutDispositif.ACTIF &&
+                dispositif.getStatut() != com.polytechnique.backend.status.StatutDispositif.SUPPRIME) {
+            dispositif.setStatut(com.polytechnique.backend.status.StatutDispositif.ACTIF);
+        }
+
+        // ACTIVER L'INFIRMIER : S'il y a un infirmier associé au dispositif, on le
+        // passe en "actif"
+        if (dispositif.getInfirmierLocal() != null) {
+            com.polytechnique.backend.entity.InfirmierLocal infirmier = dispositif.getInfirmierLocal();
+            if (infirmier.getStatut() != com.polytechnique.backend.status.StatutInfirmier.ACTIF) {
+                infirmier.setStatut(com.polytechnique.backend.status.StatutInfirmier.ACTIF);
+                // On pourrait utiliser le repository ici mais on est dans une transaction
+            }
+        }
+
+        // Envoyer une notification temps réel
+        sseService.broadcast("NEW_PATIENT_DATA", savedParametres.getIdentifiantPatient());
 
         // Convertir Entité → DTO de réponse
         return parametresMapper.toResponseDTO(savedParametres);
@@ -141,9 +164,10 @@ public class ParametresServiceImpl implements ParametresService {
         // Vérifier si déjà verrouillé par un autre médecin
         if (parametres.getVerrouilleParMedecinId() != null
                 && !parametres.getVerrouilleParMedecinId().equals(medecinId)) {
-            // Vérifier le timeout (30 minutes)
+            // Vérifier le timeout
             if (parametres.getVerrouilleAt() != null
-                    && parametres.getVerrouilleAt().plusMinutes(30).isAfter(java.time.LocalDateTime.now())) {
+                    && parametres.getVerrouilleAt().plusMinutes(lockTimeoutMinutes)
+                            .isAfter(java.time.LocalDateTime.now())) {
                 throw new IllegalStateException(
                         "Ces paramètres sont actuellement consultés par un autre médecin (ID: "
                                 + parametres.getVerrouilleParMedecinId() + ")");
@@ -156,7 +180,12 @@ public class ParametresServiceImpl implements ParametresService {
         parametres.setVerrouilleAt(java.time.LocalDateTime.now());
 
         Parametres saved = parametresRepository.save(parametres);
-        return parametresMapper.toResponseDTO(saved);
+        ParametresResponseDTO responseDTO = parametresMapper.toResponseDTO(saved);
+
+        // Notification temps réel
+        sseService.broadcast("LOCK_UPDATE", responseDTO);
+
+        return responseDTO;
     }
 
     @Override
@@ -169,7 +198,12 @@ public class ParametresServiceImpl implements ParametresService {
         parametres.setVerrouilleAt(null);
 
         Parametres saved = parametresRepository.save(parametres);
-        return parametresMapper.toResponseDTO(saved);
+        ParametresResponseDTO responseDTO = parametresMapper.toResponseDTO(saved);
+
+        // Notification temps réel
+        sseService.broadcast("LOCK_UPDATE", responseDTO);
+
+        return responseDTO;
     }
 
     @Override
@@ -188,9 +222,10 @@ public class ParametresServiceImpl implements ParametresService {
             return false;
         }
 
-        // Vérifier le timeout (30 minutes)
+        // Vérifier le timeout
         if (parametres.getVerrouilleAt() != null
-                && parametres.getVerrouilleAt().plusMinutes(30).isBefore(java.time.LocalDateTime.now())) {
+                && parametres.getVerrouilleAt().plusMinutes(lockTimeoutMinutes)
+                        .isBefore(java.time.LocalDateTime.now())) {
             return false; // Timeout expiré
         }
 

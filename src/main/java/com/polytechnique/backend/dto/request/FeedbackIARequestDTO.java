@@ -27,6 +27,9 @@ public class FeedbackIARequestDTO {
     @Schema(description = "Poids en kg", example = "68.5")
     private Double poidsPatient;
 
+    @Schema(description = "Taille en cm", example = "165.0")
+    private Double taillePatient;
+
     @NotNull(message = "La température est obligatoire")
     @Schema(description = "Température en °C", example = "37.0")
     private Double temperature;

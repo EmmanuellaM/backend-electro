@@ -21,5 +21,8 @@ public enum StatutDispositif {
     INACTIF,
 
     @Schema(description = "Le dispositif est en cours de maintenance ou réparation")
-    MAINTENANCE
+    MAINTENANCE,
+
+    @Schema(description = "Le dispositif est supprimé (Soft Delete)")
+    SUPPRIME
 }

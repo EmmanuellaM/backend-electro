@@ -38,6 +38,10 @@ public class FeedbackIA {
     private Double poidsPatient;
 
     @NotNull
+    @Column(name = "taille_patient", nullable = false)
+    private Double taillePatient;
+
+    @NotNull
     @Column(name = "temperature")
     private Double temperature;
 

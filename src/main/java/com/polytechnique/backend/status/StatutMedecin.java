@@ -15,5 +15,8 @@ public enum StatutMedecin {
     INACTIF,
 
     @Schema(description = "Compte temporairement suspendu - connexion impossible")
-    SUSPENDU
+    SUSPENDU,
+
+    @Schema(description = "Compte supprimé (Soft Delete)")
+    SUPPRIME
 }

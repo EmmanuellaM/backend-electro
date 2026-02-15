@@ -67,6 +67,7 @@ public class DispositifServiceImpl implements DispositifService {
             dispositifs = dispositifRepository.findAll();
         }
         return dispositifs.stream()
+                .filter(d -> d.getStatut() != StatutDispositif.SUPPRIME)
                 .map(dispositifMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -119,12 +120,10 @@ public class DispositifServiceImpl implements DispositifService {
 
     @Override
     public void deleteDispositif(int id) {
-        // Vérifier que le dispositif existe
-        if (!dispositifRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Dispositif", "id", id);
-        }
-
-        dispositifRepository.deleteById(id);
+        Dispositif dispositif = dispositifRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dispositif", "id", id));
+        dispositif.setStatut(StatutDispositif.SUPPRIME);
+        dispositifRepository.save(dispositif);
     }
 
     @Override

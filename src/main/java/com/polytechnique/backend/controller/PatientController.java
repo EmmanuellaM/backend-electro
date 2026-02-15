@@ -55,7 +55,7 @@ public class PatientController {
 
                 // Trier par id croissant (plus ancien en premier)
                 allParametres.stream()
-                                .sorted(Comparator.comparingInt(Parametres::getId))
+                                .sorted(Comparator.comparingInt(Parametres::getId).reversed())
                                 .forEach(p -> oldestByPatient.putIfAbsent(p.getIdentifiantPatient(), p));
 
                 List<PatientResponseDTO> patients = oldestByPatient.values().stream()
@@ -101,13 +101,20 @@ public class PatientController {
                                 .statut(p.getStatut())
                                 .dateDerniereMesure(p.getDateMesure())
                                 .poidsPatient(p.getPoidsPatient())
+                                .taillePatient(p.getTaillePatient())
                                 .temperature(p.getTemperature())
                                 .pressionArterielleSystolique(p.getPressionArterielleSystolique())
                                 .pressionArterielleDiastolique(p.getPressionArterielleDiastolique())
                                 .frequenceFoetale(p.getFrequenceFoetale())
                                 .glycemie(p.getGlycemie())
                                 .saturationOxygene(p.getSaturationOxygene())
-                                .dateDernieresRegles(p.getDateDernieresRegles());
+                                .dateDernieresRegles(p.getDateDernieresRegles())
+                                .telephone(p.getDispositif() != null ? p.getDispositif().getContact() : "")
+                                .verrouilleParMedecinId(p.getVerrouilleParMedecinId())
+                                .verrouilleParMedecinNom(p.getVerrouilleParMedecin() != null
+                                                ? "Dr. " + p.getVerrouilleParMedecin().getNom()
+                                                : null)
+                                .verrouilleAt(p.getVerrouilleAt());
 
                 // Ajouter les infos du dispositif si disponible
                 if (p.getDispositif() != null) {

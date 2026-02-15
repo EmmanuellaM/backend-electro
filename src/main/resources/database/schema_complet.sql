@@ -233,6 +233,7 @@ CREATE TABLE parametres (
     id_parametres SERIAL PRIMARY KEY,
     identifiant_patient VARCHAR(50) NOT NULL,
     poids_patient NUMERIC(5,2) NOT NULL,
+    taille_patient NUMERIC(5,2) NOT NULL DEFAULT 0,
     age_patient INTEGER,
     temperature NUMERIC(4,2) NOT NULL,
     pression_arterielle_systolique INTEGER,
@@ -255,6 +256,7 @@ CREATE TABLE parametres (
         ON UPDATE CASCADE,
     
     CONSTRAINT chk_poids CHECK (poids_patient > 0 AND poids_patient < 300),
+    CONSTRAINT chk_taille CHECK (taille_patient >= 0 AND taille_patient < 300),
     CONSTRAINT chk_age CHECK (age_patient IS NULL OR (age_patient >= 10 AND age_patient <= 100)),
     CONSTRAINT chk_temperature CHECK (temperature >= 30 AND temperature <= 45),
     CONSTRAINT chk_pression_sys CHECK (pression_arterielle_systolique IS NULL OR (pression_arterielle_systolique BETWEEN 40 AND 300)),
@@ -398,12 +400,18 @@ CREATE TABLE sms_messages (
     telephone VARCHAR(20) NOT NULL,
     message VARCHAR(1000) NOT NULL,
     sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    sent_by VARCHAR(100) NOT NULL,
+    id_administrateur INTEGER NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'SIMULATED',
     
     CONSTRAINT fk_sms_infirmier
         FOREIGN KEY (infirmier_local_id)
         REFERENCES infirmier_local(id_infirmier)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_sms_admin
+        FOREIGN KEY (id_administrateur)
+        REFERENCES administrateur(id_admin)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
     
@@ -602,6 +610,7 @@ RETURNS TRIGGER AS $$
 DECLARE
     v_id_local TEXT;
     v_poids DECIMAL(10,2);
+    v_taille DECIMAL(10,2);
     v_temperature DECIMAL(5,2);
     v_sys INTEGER;
     v_dia INTEGER;
@@ -623,13 +632,13 @@ BEGIN
     END IF;
 
     -- Séparer le payload par le délimiteur ';'
-    -- Format attendu: ID_LOCAL;POIDS;TEMP;SYS;DIA;FCF;GLYC;AGE[;SPO2;DDR]
+    -- Format attendu: ID_LOCAL;POIDS;TAILLE;TEMP;SYS;DIA;FCF;GLYC;AGE[;SPO2;DDR]
     v_parts := string_to_array(NEW.text_payload, ';');
     v_nb_parts := array_length(v_parts, 1);
 
-    -- Vérifier le nombre de champs (minimum 8, max 10)
-    IF v_nb_parts < 8 THEN
-        RAISE NOTICE 'Format payload invalide. Attendu >= 8 champs, reçu %. Payload: %', 
+    -- Vérifier le nombre de champs (minimum 9, max 11)
+    IF v_nb_parts < 9 THEN
+        RAISE NOTICE 'Format payload invalide. Attendu >= 9 champs, reçu %. Payload: %', 
                      v_nb_parts, NEW.text_payload;
         NEW.processed := TRUE;
         RETURN NEW;
@@ -639,19 +648,20 @@ BEGIN
     BEGIN
         v_id_local := TRIM(v_parts[1]);
         v_poids := CAST(TRIM(v_parts[2]) AS DECIMAL(10,2));
-        v_temperature := CAST(TRIM(v_parts[3]) AS DECIMAL(5,2));
-        v_sys := CAST(TRIM(v_parts[4]) AS INTEGER);
-        v_dia := CAST(TRIM(v_parts[5]) AS INTEGER);
-        v_fcf := CAST(TRIM(v_parts[6]) AS INTEGER);
-        v_glycemie := CAST(TRIM(v_parts[7]) AS DECIMAL(10,2));
-        v_age := CAST(TRIM(v_parts[8]) AS INTEGER);
+        v_taille := CAST(TRIM(v_parts[3]) AS DECIMAL(10,2));
+        v_temperature := CAST(TRIM(v_parts[4]) AS DECIMAL(5,2));
+        v_sys := CAST(TRIM(v_parts[5]) AS INTEGER);
+        v_dia := CAST(TRIM(v_parts[6]) AS INTEGER);
+        v_fcf := CAST(TRIM(v_parts[7]) AS INTEGER);
+        v_glycemie := CAST(TRIM(v_parts[8]) AS DECIMAL(10,2));
+        v_age := CAST(TRIM(v_parts[9]) AS INTEGER);
 
         -- Champs optionnels (SpO2 et DDR)
-        IF v_nb_parts >= 9 AND TRIM(v_parts[9]) != '' THEN
-            v_spo2 := CAST(TRIM(v_parts[9]) AS INTEGER);
-        END IF;
         IF v_nb_parts >= 10 AND TRIM(v_parts[10]) != '' THEN
-            v_ddr := CAST(TRIM(v_parts[10]) AS DATE);
+            v_spo2 := CAST(TRIM(v_parts[10]) AS INTEGER);
+        END IF;
+        IF v_nb_parts >= 11 AND TRIM(v_parts[11]) != '' THEN
+            v_ddr := CAST(TRIM(v_parts[11]) AS DATE);
         END IF;
     EXCEPTION WHEN OTHERS THEN
         RAISE NOTICE 'Erreur de parsing du payload: %. Payload: %', SQLERRM, NEW.text_payload;
@@ -685,6 +695,7 @@ BEGIN
         identifiant_patient,
         id_dispositif,
         poids_patient,
+        taille_patient,
         temperature,
         pression_arterielle_systolique,
         pression_arterielle_diastolique,
@@ -700,6 +711,7 @@ BEGIN
         v_code_patient,
         v_dispositif_id,
         v_poids,
+        v_taille,
         v_temperature,
         v_sys,
         v_dia,
@@ -730,7 +742,7 @@ CREATE TRIGGER trg_process_uplink_message
 
 -- Commentaires descriptifs
 COMMENT ON FUNCTION fn_process_uplink_message() IS 
-'Fonction trigger qui parse automatiquement les messages uplink LoRaWAN et crée les entrées Parametres correspondantes. Format payload: ID_LOCAL;POIDS;TEMP;SYS;DIA;FCF;GLYC;AGE[;SPO2;DDR]';
+'Fonction trigger qui parse automatiquement les messages uplink LoRaWAN et crée les entrées Parametres correspondantes. Format payload: ID_LOCAL;POIDS;TAILLE;TEMP;SYS;DIA;FCF;GLYC;AGE[;SPO2;DDR]';
 
 COMMENT ON TRIGGER trg_process_uplink_message ON uplink_messages IS 
 'Trigger déclenché à chaque insertion dans uplink_messages pour créer automatiquement les Parametres';

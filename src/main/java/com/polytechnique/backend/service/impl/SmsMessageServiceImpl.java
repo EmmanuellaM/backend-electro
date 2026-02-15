@@ -7,6 +7,7 @@ import com.polytechnique.backend.entity.SmsMessage;
 import com.polytechnique.backend.status.SmsStatus;
 import com.polytechnique.backend.exception.ResourceNotFoundException;
 import com.polytechnique.backend.repository.InfirmierLocalRepository;
+import com.polytechnique.backend.repository.AdministrateurRepository;
 import com.polytechnique.backend.repository.SmsMessageRepository;
 import com.polytechnique.backend.service.SmsMessageService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class SmsMessageServiceImpl implements SmsMessageService {
 
     private final SmsMessageRepository smsMessageRepository;
     private final InfirmierLocalRepository infirmierLocalRepository;
+    private final AdministrateurRepository administrateurRepository;
     private final com.polytechnique.backend.service.InfobipSmsService infobipSmsService;
 
     @Override
@@ -37,9 +39,16 @@ public class SmsMessageServiceImpl implements SmsMessageService {
         InfirmierLocal infirmier = infirmierLocalRepository.findById(requestDTO.getInfirmierId())
                 .orElseThrow(() -> new ResourceNotFoundException("Infirmier", "id", requestDTO.getInfirmierId()));
 
+        // Récupérer l'administrateur
+        com.polytechnique.backend.entity.Administrateur administrateur = administrateurRepository
+                .findById(requestDTO.getAdministrateurId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Administrateur", "id", requestDTO.getAdministrateurId()));
+
         // Créer le message SMS
         SmsMessage smsMessage = new SmsMessage();
         smsMessage.setInfirmierLocal(infirmier);
+        smsMessage.setAdministrateur(administrateur);
         smsMessage.setTelephone(infirmier.getTelephone1());
 
         // Préfixer le message
@@ -47,7 +56,6 @@ public class SmsMessageServiceImpl implements SmsMessageService {
         smsMessage.setMessage(fullMessage);
 
         smsMessage.setSentAt(LocalDateTime.now());
-        smsMessage.setSentBy(requestDTO.getSentBy() != null ? requestDTO.getSentBy() : "Admin");
 
         try {
             // Envoyer le SMS via Infobip
@@ -93,7 +101,9 @@ public class SmsMessageServiceImpl implements SmsMessageService {
         dto.setTelephone(sms.getTelephone());
         dto.setMessage(sms.getMessage());
         dto.setSentAt(sms.getSentAt());
-        dto.setSentBy(sms.getSentBy());
+        dto.setAdministrateurId(sms.getAdministrateur().getId());
+        dto.setAdministrateurNom(sms.getAdministrateur().getNom());
+        dto.setSentBy(sms.getAdministrateur().getNom());
         dto.setStatus(sms.getStatus());
         return dto;
     }

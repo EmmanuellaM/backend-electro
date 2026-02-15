@@ -132,13 +132,13 @@ public interface ParametresRepository extends JpaRepository<Parametres, Integer>
        /**
         * Rechercher les paramètres sans diagnostics
         */
-       @Query("SELECT p FROM Parametres p WHERE SIZE(p.diagnostics) = 0")
+       @Query("SELECT p FROM Parametres p WHERE SIZE(p.diagnostics) = 0 AND p.statut = com.polytechnique.backend.status.StatutParametre.EN_ATTENTE")
        List<Parametres> findParametresSansDiagnostics();
 
        /**
         * Rechercher les paramètres sans diagnostics pour un administrateur donné
         */
-       @Query("SELECT p FROM Parametres p WHERE SIZE(p.diagnostics) = 0 AND p.dispositif.administrateur.id = :adminId")
+       @Query("SELECT p FROM Parametres p WHERE SIZE(p.diagnostics) = 0 AND p.statut = com.polytechnique.backend.status.StatutParametre.EN_ATTENTE AND p.dispositif.administrateur.id = :adminId")
        List<Parametres> findParametresSansDiagnosticsByAdminId(@Param("adminId") Integer adminId);
 
        /**

@@ -36,6 +36,7 @@ public class AIController {
             Map<String, Object> rawResponse = aiClientService.predictDiagnosis(
                     request.getAgePatient(),
                     request.getPoidsPatient(),
+                    request.getTaillePatient(),
                     request.getTemperature(),
                     request.getPressionArterielleSystolique(),
                     request.getPressionArterielleDiastolique(),

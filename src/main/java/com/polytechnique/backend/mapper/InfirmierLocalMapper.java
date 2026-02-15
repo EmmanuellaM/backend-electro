@@ -18,7 +18,16 @@ public class InfirmierLocalMapper {
         infirmier.setTelephone1(dto.getTelephone1());
         infirmier.setTelephone2(dto.getTelephone2());
         infirmier.setZoneAffectation(dto.getZoneAffectation());
-        infirmier.setStatut(dto.getStatut() != null ? dto.getStatut() : "actif");
+        if (dto.getStatut() != null) {
+            try {
+                infirmier.setStatut(
+                        com.polytechnique.backend.status.StatutInfirmier.valueOf(dto.getStatut().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                infirmier.setStatut(com.polytechnique.backend.status.StatutInfirmier.ACTIF);
+            }
+        } else {
+            infirmier.setStatut(com.polytechnique.backend.status.StatutInfirmier.ACTIF);
+        }
         infirmier.setGenre(dto.getGenre());
         return infirmier;
     }
@@ -33,7 +42,12 @@ public class InfirmierLocalMapper {
         infirmier.setTelephone2(dto.getTelephone2());
         infirmier.setZoneAffectation(dto.getZoneAffectation());
         if (dto.getStatut() != null) {
-            infirmier.setStatut(dto.getStatut());
+            try {
+                infirmier.setStatut(
+                        com.polytechnique.backend.status.StatutInfirmier.valueOf(dto.getStatut().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid status in update
+            }
         }
         if (dto.getGenre() != null) {
             infirmier.setGenre(dto.getGenre());
@@ -51,7 +65,7 @@ public class InfirmierLocalMapper {
         dto.setTelephone1(infirmier.getTelephone1());
         dto.setTelephone2(infirmier.getTelephone2());
         dto.setZoneAffectation(infirmier.getZoneAffectation());
-        dto.setStatut(infirmier.getStatut());
+        dto.setStatut(infirmier.getStatut() != null ? infirmier.getStatut().name().toLowerCase() : null);
         dto.setGenre(infirmier.getGenre());
         return dto;
     }

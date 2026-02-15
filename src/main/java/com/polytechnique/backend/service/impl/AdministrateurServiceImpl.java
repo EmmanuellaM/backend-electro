@@ -61,6 +61,7 @@ public class AdministrateurServiceImpl implements AdministrateurService {
     @Transactional(readOnly = true)
     public List<AdministrateurResponseDTO> getAllAdministrateurs() {
         return administrateurRepository.findAll().stream()
+                .filter(a -> a.getStatut() != com.polytechnique.backend.status.StatutAdministrateur.SUPPRIME)
                 .map(administrateurMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -91,10 +92,11 @@ public class AdministrateurServiceImpl implements AdministrateurService {
     @Override
     @Transactional
     public void deleteAdministrateur(int id) {
-        if (!administrateurRepository.existsById(id)) {
-            throw new EntityNotFoundException("Administrateur non trouvé avec l'ID : " + id);
-        }
-        administrateurRepository.deleteById(id);
+        Administrateur admin = administrateurRepository.findById(id)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+                        "Administrateur non trouvé avec l'ID : " + id));
+        admin.setStatut(com.polytechnique.backend.status.StatutAdministrateur.SUPPRIME);
+        administrateurRepository.save(admin);
     }
 
     @Override
@@ -106,6 +108,11 @@ public class AdministrateurServiceImpl implements AdministrateurService {
         // Vérification du mot de passe avec BCrypt
         if (!passwordEncoder.matches(loginRequest.getMotDePasse(), admin.getMotDePasse())) {
             throw new IllegalArgumentException("Email ou mot de passe incorrect.");
+        }
+
+        // Vérifier si le compte est supprimé
+        if (admin.getStatut() == com.polytechnique.backend.status.StatutAdministrateur.SUPPRIME) {
+            throw new IllegalArgumentException("Ce compte a été supprimé.");
         }
 
         return administrateurMapper.toResponseDTO(admin);

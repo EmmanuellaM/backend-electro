@@ -1,5 +1,6 @@
 package com.polytechnique.backend.entity;
 
+import com.polytechnique.backend.status.StatutInfirmier;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -47,8 +48,9 @@ public class InfirmierLocal {
     @Column(name = "zone_affectation")
     private String zoneAffectation;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "statut")
-    private String statut = "actif";
+    private StatutInfirmier statut = StatutInfirmier.ACTIF;
 
     /**
      * Genre de l'infirmier

@@ -102,6 +102,7 @@ public class MedecinServiceImpl implements MedecinService {
             medecins = medecinRepository.findAll();
         }
         return medecins.stream()
+                .filter(m -> m.getStatut() != StatutMedecin.SUPPRIME)
                 .map(medecinMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -138,12 +139,10 @@ public class MedecinServiceImpl implements MedecinService {
 
     @Override
     public void deleteMedecin(int id) {
-        // Vérifier que le médecin existe
-        if (!medecinRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Médecin", "id", id);
-        }
-
-        medecinRepository.deleteById(id);
+        Medecin medecin = medecinRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Médecin", "id", id));
+        medecin.setStatut(StatutMedecin.SUPPRIME);
+        medecinRepository.save(medecin);
     }
 
     @Override
@@ -165,6 +164,11 @@ public class MedecinServiceImpl implements MedecinService {
         if (medecin.getMotDePasse() == null
                 || !passwordEncoder.matches(loginRequest.getMotDePasse(), medecin.getMotDePasse())) {
             throw new IllegalArgumentException("Email ou mot de passe incorrect.");
+        }
+
+        // Vérifier si le compte est supprimé
+        if (medecin.getStatut() == StatutMedecin.SUPPRIME) {
+            throw new IllegalArgumentException("Ce compte a été supprimé.");
         }
 
         return medecinMapper.toResponseDTO(medecin);

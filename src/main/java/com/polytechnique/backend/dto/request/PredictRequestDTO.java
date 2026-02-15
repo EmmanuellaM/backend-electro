@@ -25,6 +25,11 @@ public class PredictRequestDTO {
     @Schema(description = "Poids de la patiente en kg", example = "68.5")
     private Double poidsPatient;
 
+    @NotNull(message = "La taille est obligatoire")
+    @Min(value = 50, message = "La taille doit être supérieure à 50 cm")
+    @Schema(description = "Taille de la patiente en cm", example = "165.0")
+    private Double taillePatient;
+
     @NotNull(message = "La température est obligatoire")
     @Schema(description = "Température corporelle en °C", example = "37.0")
     private Double temperature;

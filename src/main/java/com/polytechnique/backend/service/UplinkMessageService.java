@@ -32,14 +32,15 @@ public class UplinkMessageService {
     private final UplinkMessageRepository uplinkMessageRepository;
     private final ParametresRepository parametresRepository;
     private final DispositifRepository dispositifRepository;
+    private final SseService sseService;
 
     /**
      * Format du payload attendu:
-     * "ID_LOCAL;POIDS;TEMP;SYS;DIA;FCF;GLYC;AGE"
-     * Exemple: "P05;65.5;36.8;120;80;142;5.2;28"
+     * "ID_LOCAL;POIDS;TAILLE;TEMP;SYS;DIA;FCF;GLYC;AGE"
+     * Exemple: "P05;65.5;165.0;36.8;120;80;142;5.2;28"
      */
     private static final String PAYLOAD_DELIMITER = ";";
-    private static final int EXPECTED_FIELDS = 8;
+    private static final int EXPECTED_FIELDS = 9;
 
     /**
      * Traite tous les messages non encore traités
@@ -98,31 +99,32 @@ public class UplinkMessageService {
         // 3. Extraire les valeurs
         String idLocal = parts[0].trim();
         BigDecimal poids = new BigDecimal(parts[1].trim());
-        BigDecimal temperature = new BigDecimal(parts[2].trim());
-        int sys = Integer.parseInt(parts[3].trim());
-        int dia = Integer.parseInt(parts[4].trim());
-        int fcf = Integer.parseInt(parts[5].trim());
-        BigDecimal glycemie = new BigDecimal(parts[6].trim());
-        int age = Integer.parseInt(parts[7].trim());
+        BigDecimal taille = new BigDecimal(parts[2].trim());
+        BigDecimal temperature = new BigDecimal(parts[3].trim());
+        int sys = Integer.parseInt(parts[4].trim());
+        int dia = Integer.parseInt(parts[5].trim());
+        int fcf = Integer.parseInt(parts[6].trim());
+        BigDecimal glycemie = new BigDecimal(parts[7].trim());
+        int age = Integer.parseInt(parts[8].trim());
 
         // Champs optionnels : SpO2 et DDR
         Integer spo2 = null;
         LocalDate ddr = null;
 
-        if (parts.length >= 9 && !parts[8].trim().isEmpty()) {
+        if (parts.length >= 10 && !parts[9].trim().isEmpty()) {
             try {
-                spo2 = Integer.parseInt(parts[8].trim());
+                spo2 = Integer.parseInt(parts[9].trim());
             } catch (NumberFormatException e) {
-                log.warn("Format SpO2 invalide: {}", parts[8]);
+                log.warn("Format SpO2 invalide: {}", parts[9]);
             }
         }
 
-        if (parts.length >= 10 && !parts[9].trim().isEmpty()) {
+        if (parts.length >= 11 && !parts[10].trim().isEmpty()) {
             try {
                 // Essayer plusieurs formats si nécessaire, ici on attend yyyy-MM-dd
-                ddr = LocalDate.parse(parts[9].trim());
+                ddr = LocalDate.parse(parts[10].trim());
             } catch (Exception e) {
-                log.warn("Format DDR invalide: {}", parts[9]);
+                log.warn("Format DDR invalide: {}", parts[10]);
             }
         }
 
@@ -135,6 +137,7 @@ public class UplinkMessageService {
         parametres.setIdentifiantPatient(codePatientUnique);
         parametres.setDispositif(dispositif);
         parametres.setPoidsPatient(poids);
+        parametres.setTaillePatient(taille);
         parametres.setTemperature(temperature);
         parametres.setPressionArterielleSystolique(sys);
         parametres.setPressionArterielleDiastolique(dia);
@@ -157,9 +160,26 @@ public class UplinkMessageService {
 
         parametres.setStatut(StatutParametre.EN_ATTENTE);
 
+        // 6. ACTIVER LE DISPOSITIF ET L'INFIRMIER
+        if (dispositif.getStatut() != com.polytechnique.backend.status.StatutDispositif.ACTIF &&
+                dispositif.getStatut() != com.polytechnique.backend.status.StatutDispositif.SUPPRIME) {
+            dispositif.setStatut(com.polytechnique.backend.status.StatutDispositif.ACTIF);
+        }
+
+        if (dispositif.getInfirmierLocal() != null) {
+            com.polytechnique.backend.entity.InfirmierLocal inf = dispositif.getInfirmierLocal();
+            if (inf.getStatut() != com.polytechnique.backend.status.StatutInfirmier.ACTIF &&
+                    inf.getStatut() != com.polytechnique.backend.status.StatutInfirmier.SUPPRIME) {
+                inf.setStatut(com.polytechnique.backend.status.StatutInfirmier.ACTIF);
+            }
+        }
+
         // 6. Sauvegarder
         Parametres saved = parametresRepository.save(parametres);
         log.info("Parametres créés: ID={}, Patient={}", saved.getId(), codePatientUnique);
+
+        // Envoyer une notification temps réel
+        sseService.broadcast("NEW_PATIENT_DATA", saved.getIdentifiantPatient());
 
         return saved;
     }

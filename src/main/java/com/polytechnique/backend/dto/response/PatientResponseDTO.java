@@ -43,6 +43,9 @@ public class PatientResponseDTO {
     @Schema(description = "Dernier poids mesuré en kg", example = "62.5")
     private BigDecimal poidsPatient;
 
+    @Schema(description = "Dernière taille mesurée en cm", example = "165.0")
+    private BigDecimal taillePatient;
+
     @Schema(description = "Dernière température en °C", example = "36.8")
     private BigDecimal temperature;
 
@@ -73,4 +76,13 @@ public class PatientResponseDTO {
 
     @Schema(description = "Localisation du centre", example = "Yaoundé, Mfoundi")
     private String localisation;
+
+    @Schema(description = "ID du médecin qui a verrouillé le patient", example = "1")
+    private Integer verrouilleParMedecinId;
+
+    @Schema(description = "Nom du médecin qui a verrouillé le patient", example = "Dr. Mbarga")
+    private String verrouilleParMedecinNom;
+
+    @Schema(description = "Date et heure du verrouillage")
+    private LocalDateTime verrouilleAt;
 }

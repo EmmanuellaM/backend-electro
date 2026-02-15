@@ -34,20 +34,24 @@ public class StatistiquesServiceImpl implements StatistiquesService {
                         allDispositifs = dispositifRepository.findAll();
                 }
 
-                int totalDispositifs = allDispositifs.size();
-                int dispositifsActifs = (int) allDispositifs.stream()
+                List<Dispositif> filteredDispositifs = allDispositifs.stream()
+                                .filter(d -> d.getStatut() != StatutDispositif.SUPPRIME)
+                                .toList();
+
+                int totalDispositifs = filteredDispositifs.size();
+                int dispositifsActifs = (int) filteredDispositifs.stream()
                                 .filter(d -> StatutDispositif.ACTIF.equals(d.getStatut()))
                                 .count();
-                int dispositifsInactifs = (int) allDispositifs.stream()
+                int dispositifsInactifs = (int) filteredDispositifs.stream()
                                 .filter(d -> StatutDispositif.INACTIF.equals(d.getStatut()))
                                 .count();
-                int dispositifsMaintenance = (int) allDispositifs.stream()
+                int dispositifsMaintenance = (int) filteredDispositifs.stream()
                                 .filter(d -> StatutDispositif.MAINTENANCE.equals(d.getStatut()))
                                 .count();
-                int dispositifsNonAttribue = (int) allDispositifs.stream()
+                int dispositifsNonAttribue = (int) filteredDispositifs.stream()
                                 .filter(d -> StatutDispositif.NON_ATTRIBUE.equals(d.getStatut()))
                                 .count();
-                int dispositifsEnAttente = (int) allDispositifs.stream()
+                int dispositifsEnAttente = (int) filteredDispositifs.stream()
                                 .filter(d -> StatutDispositif.EN_ATTENTE.equals(d.getStatut()))
                                 .count();
 
@@ -59,14 +63,18 @@ public class StatistiquesServiceImpl implements StatistiquesService {
                         allMedecins = medecinRepository.findAll();
                 }
 
-                int totalMedecins = allMedecins.size();
+                int totalMedecins = (int) allMedecins.stream()
+                                .filter(m -> m.getStatut() != StatutMedecin.SUPPRIME)
+                                .count();
                 int medecinsActifs = (int) allMedecins.stream()
                                 .filter(m -> StatutMedecin.ACTIF.equals(m.getStatut()))
                                 .count();
                 int medecinsSuspendus = (int) allMedecins.stream()
                                 .filter(m -> StatutMedecin.SUSPENDU.equals(m.getStatut()))
                                 .count();
-                int medecinsInactifs = totalMedecins - medecinsActifs - medecinsSuspendus;
+                int medecinsInactifs = (int) allMedecins.stream()
+                                .filter(m -> StatutMedecin.INACTIF.equals(m.getStatut()))
+                                .count();
 
                 // Infirmiers
                 List<InfirmierLocal> allInfirmiers;
@@ -76,9 +84,12 @@ public class StatistiquesServiceImpl implements StatistiquesService {
                         allInfirmiers = infirmierLocalRepository.findAll();
                 }
 
-                int totalInfirmiers = allInfirmiers.size();
+                int totalInfirmiers = (int) allInfirmiers.stream()
+                                .filter(i -> i.getStatut() != com.polytechnique.backend.status.StatutInfirmier.SUPPRIME)
+                                .count();
                 int infirmiersActifs = (int) allInfirmiers.stream()
-                                .filter(i -> "actif".equalsIgnoreCase(i.getStatut()))
+                                .filter(i -> com.polytechnique.backend.status.StatutInfirmier.ACTIF
+                                                .equals(i.getStatut()))
                                 .count();
 
                 // Patients

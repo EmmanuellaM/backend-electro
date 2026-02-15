@@ -42,6 +42,7 @@ public class AIClientService {
     public Map<String, Object> predictDiagnosis(
             int agePatient,
             double poids,
+            double taille,
             double temperature,
             int systolique,
             int diastolique,
@@ -49,12 +50,13 @@ public class AIClientService {
             double glycemie,
             boolean includeExplanation) {
 
-        log.info("Appel au service IA pour diagnostic - Age: {}, Poids: {}", agePatient, poids);
+        log.info("Appel au service IA pour diagnostic - Age: {}, Poids: {}, Taille: {}", agePatient, poids, taille);
 
         try {
             Map<String, Object> parametres = new HashMap<>();
             parametres.put("age_patient", agePatient);
             parametres.put("poids_patient", poids);
+            parametres.put("taille_patient", taille);
             parametres.put("temperature", temperature);
             parametres.put("pression_arterielle_systolique", systolique);
             parametres.put("pression_arterielle_diastolique", diastolique);

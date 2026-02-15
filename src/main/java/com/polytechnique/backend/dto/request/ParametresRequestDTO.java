@@ -24,6 +24,10 @@ public class ParametresRequestDTO {
     @DecimalMin(value = "0.01", message = "Le poids doit être positif")
     private BigDecimal poidsPatient;
 
+    @NotNull(message = "La taille du patient est obligatoire")
+    @DecimalMin(value = "1.0", message = "La taille doit être positive")
+    private BigDecimal taillePatient;
+
     @NotNull(message = "La température est obligatoire")
     @DecimalMin(value = "30.0", message = "La température doit être >= 30°C")
     private BigDecimal temperature;
