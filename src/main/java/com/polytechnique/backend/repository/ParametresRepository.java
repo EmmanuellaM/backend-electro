@@ -227,4 +227,19 @@ public interface ParametresRepository extends JpaRepository<Parametres, Integer>
         */
        @Query("SELECT COUNT(DISTINCT p.identifiantPatient) FROM Parametres p WHERE p.dispositif.administrateur.id = :adminId")
        long countDistinctPatientsByAdministrateurId(@Param("adminId") Integer adminId);
+
+       /**
+        * Trouver tous les paramètres actuellement verrouillés
+        * (verrouilleParMedecinId non null)
+        */
+       @Query("SELECT p FROM Parametres p JOIN FETCH p.dispositif d LEFT JOIN FETCH d.administrateur WHERE p.verrouilleParMedecinId IS NOT NULL")
+       List<Parametres> findAllLocked();
+
+       /**
+        * Libérer directement tous les verrous expirés en base via JPQL
+        */
+       @org.springframework.data.jpa.repository.Modifying
+       @Query("UPDATE Parametres p SET p.verrouilleParMedecinId = NULL, p.verrouilleAt = NULL " +
+                     "WHERE p.verrouilleAt IS NOT NULL AND p.verrouilleAt < :expiryTime")
+       int releaseExpiredLocks(@Param("expiryTime") java.time.LocalDateTime expiryTime);
 }

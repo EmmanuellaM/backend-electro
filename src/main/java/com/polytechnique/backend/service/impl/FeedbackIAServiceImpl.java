@@ -35,8 +35,15 @@ public class FeedbackIAServiceImpl implements FeedbackIAService {
         Medecin medecin = medecinRepository.findById(requestDTO.getMedecinId())
                 .orElseThrow(() -> new ResourceNotFoundException("Médecin", "id", requestDTO.getMedecinId()));
 
-        // Créer l'entité feedback
-        FeedbackIA feedback = new FeedbackIA();
+        // Vérifier si un feedback existe déjà pour ce médecin et ces paramètres
+        FeedbackIA feedback;
+        if (requestDTO.getParametresId() != null) {
+            feedback = feedbackIARepository
+                    .findByMedecinIdAndParametresId(requestDTO.getMedecinId(), requestDTO.getParametresId())
+                    .orElse(new FeedbackIA());
+        } else {
+            feedback = new FeedbackIA();
+        }
 
         // Paramètres
         feedback.setAgePatient(requestDTO.getAgePatient());
@@ -46,6 +53,7 @@ public class FeedbackIAServiceImpl implements FeedbackIAService {
         feedback.setPressionSystolique(requestDTO.getPressionSystolique());
         feedback.setPressionDiastolique(requestDTO.getPressionDiastolique());
         feedback.setFrequenceFoetale(requestDTO.getFrequenceFoetale());
+        feedback.setFrequenceCardiaqueMere(requestDTO.getFrequenceCardiaqueMere());
         feedback.setGlycemie(requestDTO.getGlycemie());
 
         // Résultat IA
@@ -61,7 +69,7 @@ public class FeedbackIAServiceImpl implements FeedbackIAService {
         feedback.setMedecin(medecin);
 
         // Paramètres optionnels
-        if (requestDTO.getParametresId() != null) {
+        if (requestDTO.getParametresId() != null && feedback.getParametres() == null) {
             Parametres parametres = parametresRepository.findById(requestDTO.getParametresId())
                     .orElse(null);
             feedback.setParametres(parametres);
@@ -103,6 +111,42 @@ public class FeedbackIAServiceImpl implements FeedbackIAService {
         feedbackIARepository.deleteById(id);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public String generateCsv() {
+        List<FeedbackIA> feedbacks = feedbackIARepository.findAll();
+        StringBuilder csv = new StringBuilder();
+
+        // Header
+        csv.append(
+                "id;date;medecin;age;poids;taille;temp;sys;dia;fcf;fcm;glycemie;classe_predite;score_confiance;note_medecin;commentaire\n");
+
+        for (FeedbackIA f : feedbacks) {
+            csv.append(f.getId()).append(";");
+            csv.append(f.getCreatedAt()).append(";");
+            csv.append(f.getMedecin() != null ? f.getMedecin().getPrenom() + " " + f.getMedecin().getNom() : "N/A")
+                    .append(";");
+            csv.append(f.getAgePatient()).append(";");
+            csv.append(f.getPoidsPatient()).append(";");
+            csv.append(f.getTaillePatient()).append(";");
+            csv.append(f.getTemperature()).append(";");
+            csv.append(f.getPressionSystolique()).append(";");
+            csv.append(f.getPressionDiastolique()).append(";");
+            csv.append(f.getFrequenceFoetale()).append(";");
+            csv.append(f.getFrequenceCardiaqueMere()).append(";");
+            csv.append(f.getGlycemie() != null ? f.getGlycemie() : "").append(";");
+            csv.append(f.getClassePredite()).append(";");
+            csv.append(f.getScoreConfiance()).append(";");
+            csv.append(f.getNoteMedecin()).append(";");
+            csv.append(
+                    f.getCommentaireMedecin() != null ? f.getCommentaireMedecin().replace("\n", " ").replace(";", ",")
+                            : "");
+            csv.append("\n");
+        }
+
+        return csv.toString();
+    }
+
     private FeedbackIAResponseDTO toResponseDTO(FeedbackIA feedback) {
         FeedbackIAResponseDTO dto = new FeedbackIAResponseDTO();
         dto.setId(feedback.getId());
@@ -115,6 +159,7 @@ public class FeedbackIAServiceImpl implements FeedbackIAService {
         dto.setPressionSystolique(feedback.getPressionSystolique());
         dto.setPressionDiastolique(feedback.getPressionDiastolique());
         dto.setFrequenceFoetale(feedback.getFrequenceFoetale());
+        dto.setFrequenceCardiaqueMere(feedback.getFrequenceCardiaqueMere());
         dto.setGlycemie(feedback.getGlycemie());
 
         // Résultat IA

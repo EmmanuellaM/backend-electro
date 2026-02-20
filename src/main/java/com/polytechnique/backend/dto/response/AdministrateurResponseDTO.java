@@ -21,6 +21,7 @@ public class AdministrateurResponseDTO {
     private String genre;
     private Boolean doitChangerMotDePasse;
     private String tempPassword;
+    private Integer patientLockTimeout;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

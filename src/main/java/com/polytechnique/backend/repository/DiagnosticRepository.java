@@ -263,35 +263,48 @@ public interface DiagnosticRepository extends JpaRepository<Diagnostic, Integer>
         */
        @Query(value = "SELECT CAST(d.date_diagnostic AS DATE) as day, COUNT(*) as count " +
                      "FROM diagnostic d " +
+                     "JOIN medecin m ON d.id_medecin = m.id_medecin " +
                      "WHERE d.date_diagnostic >= :startDate " +
+                     "AND (:adminId IS NULL OR m.id_administrateur = :adminId) " +
                      "GROUP BY day " +
                      "ORDER BY day", nativeQuery = true)
-       List<Object[]> countDiagnosticsByDay(@Param("startDate") java.time.LocalDateTime startDate);
+       List<Object[]> countDiagnosticsByDayFiltered(@Param("startDate") java.time.LocalDateTime startDate,
+                     @Param("adminId") Integer adminId);
 
        @Query(value = "SELECT TO_CHAR(d.date_diagnostic, 'YYYY-MM') as month, COUNT(*) as count " +
                      "FROM diagnostic d " +
+                     "JOIN medecin m ON d.id_medecin = m.id_medecin " +
                      "WHERE d.date_diagnostic >= :startDate " +
+                     "AND (:adminId IS NULL OR m.id_administrateur = :adminId) " +
                      "GROUP BY month " +
                      "ORDER BY month", nativeQuery = true)
-       List<Object[]> countDiagnosticsByMonth(@Param("startDate") java.time.LocalDateTime startDate);
+       List<Object[]> countDiagnosticsByMonthFiltered(@Param("startDate") java.time.LocalDateTime startDate,
+                     @Param("adminId") Integer adminId);
 
        /**
         * Répartition par niveau d'urgence
         */
-       @Query("SELECT d.niveauUrgence, COUNT(d) FROM Diagnostic d GROUP BY d.niveauUrgence")
-       List<Object[]> countByEmergencyLevel();
+       @Query("SELECT d.niveauUrgence, COUNT(d) FROM Diagnostic d " +
+                     "WHERE (:adminId IS NULL OR d.medecin.administrateur.id = :adminId) " +
+                     "GROUP BY d.niveauUrgence")
+       List<Object[]> countByEmergencyLevelFiltered(@Param("adminId") Integer adminId);
 
        /**
         * Répartition par spécialité médicale
         */
-       @Query("SELECT d.medecin.specialite, COUNT(d) FROM Diagnostic d GROUP BY d.medecin.specialite")
-       List<Object[]> countBySpecialty();
+       @Query("SELECT d.medecin.specialite, COUNT(d) FROM Diagnostic d " +
+                     "WHERE (:adminId IS NULL OR d.medecin.administrateur.id = :adminId) " +
+                     "GROUP BY d.medecin.specialite")
+       List<Object[]> countBySpecialtyFiltered(@Param("adminId") Integer adminId);
 
        /**
         * Activité par centre de santé
         */
-       @Query("SELECT p.dispositif.nomCentreDeSante, COUNT(d) FROM Diagnostic d JOIN d.parametres p GROUP BY p.dispositif.nomCentreDeSante")
-       List<Object[]> countByCentre();
+       @Query("SELECT p.dispositif.nomCentreDeSante, COUNT(d) FROM Diagnostic d " +
+                     "JOIN d.parametres p " +
+                     "WHERE (:adminId IS NULL OR d.medecin.administrateur.id = :adminId) " +
+                     "GROUP BY p.dispositif.nomCentreDeSante")
+       List<Object[]> countByCentreFiltered(@Param("adminId") Integer adminId);
 
        /**
         * Compter le nombre de diagnostics par administrateur

@@ -65,4 +65,9 @@ public interface ParametresService {
      * filtrés par admin
      */
     List<ParametresResponseDTO> getParametresSansDiagnostic(Integer adminId);
+
+    /**
+     * Renouveler le verrouillage si possible
+     */
+    ParametresResponseDTO renewLock(int id, int medecinId);
 }

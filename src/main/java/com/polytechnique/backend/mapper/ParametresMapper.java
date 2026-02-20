@@ -30,6 +30,7 @@ public class ParametresMapper {
         parametres.setPressionArterielleSystolique(dto.getPressionArterielleSystolique());
         parametres.setPressionArterielleDiastolique(dto.getPressionArterielleDiastolique());
         parametres.setFrequenceFoetale(dto.getFrequenceFoetale());
+        parametres.setFrequenceCardiaqueMere(dto.getFrequenceCardiaqueMere());
         parametres.setAgePatient(dto.getAgePatient());
         parametres.setGlycemie(dto.getGlycemie());
         parametres.setSaturationOxygene(dto.getSaturationOxygene());
@@ -53,6 +54,7 @@ public class ParametresMapper {
         parametres.setPressionArterielleSystolique(dto.getPressionArterielleSystolique());
         parametres.setPressionArterielleDiastolique(dto.getPressionArterielleDiastolique());
         parametres.setFrequenceFoetale(dto.getFrequenceFoetale());
+        parametres.setFrequenceCardiaqueMere(dto.getFrequenceCardiaqueMere());
         parametres.setAgePatient(dto.getAgePatient());
         parametres.setGlycemie(dto.getGlycemie());
         parametres.setSaturationOxygene(dto.getSaturationOxygene());
@@ -78,6 +80,7 @@ public class ParametresMapper {
         dto.setPressionArterielleSystolique(parametres.getPressionArterielleSystolique());
         dto.setPressionArterielleDiastolique(parametres.getPressionArterielleDiastolique());
         dto.setFrequenceFoetale(parametres.getFrequenceFoetale());
+        dto.setFrequenceCardiaqueMere(parametres.getFrequenceCardiaqueMere());
         dto.setGlycemie(parametres.getGlycemie());
         dto.setSaturationOxygene(parametres.getSaturationOxygene());
         dto.setDateDernieresRegles(parametres.getDateDernieresRegles());
@@ -128,6 +131,12 @@ public class ParametresMapper {
 
         if (parametres.getVerrouilleParMedecin() != null) {
             dto.setVerrouilleParMedecinNom("Dr. " + parametres.getVerrouilleParMedecin().getNom());
+        }
+
+        if (parametres.getDispositif() != null && parametres.getDispositif().getAdministrateur() != null) {
+            dto.setLockTimeoutMinutes(parametres.getDispositif().getAdministrateur().getPatientLockTimeout());
+        } else {
+            dto.setLockTimeoutMinutes(30); // Default fallback
         }
 
         return dto;

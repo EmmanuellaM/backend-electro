@@ -47,6 +47,7 @@ public class AIClientService {
             int systolique,
             int diastolique,
             int frequenceFoetale,
+            int frequenceCardiaqueMere,
             double glycemie,
             boolean includeExplanation) {
 
@@ -61,6 +62,7 @@ public class AIClientService {
             parametres.put("pression_arterielle_systolique", systolique);
             parametres.put("pression_arterielle_diastolique", diastolique);
             parametres.put("frequence_foetale", frequenceFoetale);
+            parametres.put("frequence_cardiaque_mere", frequenceCardiaqueMere);
             parametres.put("glycemie", glycemie);
 
             Map<String, Object> requestBody = new HashMap<>();

@@ -44,6 +44,10 @@ public class ParametresRequestDTO {
     @Max(value = 220, message = "La fréquence fœtale doit être <= 220")
     private Integer frequenceFoetale;
 
+    @Min(value = 40, message = "La fréquence cardiaque maternelle doit être >= 40")
+    @Max(value = 200, message = "La fréquence cardiaque maternelle doit être <= 200")
+    private Integer frequenceCardiaqueMere;
+
     private BigDecimal glycemie;
 
     private Integer saturationOxygene;

@@ -57,6 +57,10 @@ public class FeedbackIA {
     @Column(name = "frequence_foetale")
     private Integer frequenceFoetale;
 
+    @NotNull
+    @Column(name = "frequence_cardiaque_mere")
+    private Integer frequenceCardiaqueMere;
+
     @Column(name = "glycemie")
     private Double glycemie;
 

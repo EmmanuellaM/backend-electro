@@ -89,11 +89,12 @@ CREATE TABLE administrateur (
     tel2 VARCHAR(20),
     genre VARCHAR(10),
     doit_changer_mot_de_passe BOOLEAN DEFAULT TRUE,
+    patient_lock_timeout INTEGER NOT NULL DEFAULT 30,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     CONSTRAINT chk_admin_role CHECK (role IN ('ADMIN', 'SUPER_ADMIN')),
-    CONSTRAINT chk_admin_statut CHECK (statut IN ('ACTIF', 'SUSPENDU', 'INACTIF')),
+    CONSTRAINT chk_admin_statut CHECK (statut IN ('ACTIF', 'SUSPENDU', 'INACTIF', 'SUPPRIME')),
     CONSTRAINT chk_admin_genre CHECK (genre IN ('MASCULIN', 'FEMININ'))
 );
 
@@ -124,7 +125,8 @@ CREATE TABLE infirmier_local (
         ON DELETE SET NULL
         ON UPDATE CASCADE,
     
-    CONSTRAINT chk_infirmier_genre CHECK (genre IN ('MASCULIN', 'FEMININ'))
+    CONSTRAINT chk_infirmier_genre CHECK (genre IN ('MASCULIN', 'FEMININ')),
+    CONSTRAINT chk_infirmier_statut CHECK (statut IN ('ACTIF', 'INACTIF', 'SUPPRIME', 'actif', 'inactif', 'supprime'))
 );
 
 -- Index
@@ -159,7 +161,7 @@ CREATE TABLE medecin (
         ON DELETE SET NULL
         ON UPDATE CASCADE,
     
-    CONSTRAINT chk_medecin_statut CHECK (statut IN ('ACTIF', 'INACTIF', 'SUSPENDU')),
+    CONSTRAINT chk_medecin_statut CHECK (statut IN ('ACTIF', 'INACTIF', 'SUSPENDU', 'SUPPRIME')),
     CONSTRAINT chk_medecin_genre CHECK (genre IN ('MASCULIN', 'FEMININ')),
     CONSTRAINT chk_medecin_specialite CHECK (specialite IN (
         'GYNECOLOGIE_OBSTETRIQUE',
@@ -216,7 +218,7 @@ CREATE TABLE dispositif (
         ON DELETE SET NULL
         ON UPDATE CASCADE,
     
-    CONSTRAINT chk_dispositif_statut CHECK (statut IN ('ACTIF', 'INACTIF', 'MAINTENANCE', 'EN_ATTENTE', 'NON_ATTRIBUE'))
+    CONSTRAINT chk_dispositif_statut CHECK (statut IN ('ACTIF', 'INACTIF', 'MAINTENANCE', 'EN_ATTENTE', 'NON_ATTRIBUE', 'SUPPRIME'))
 );
 
 -- Index
@@ -239,6 +241,7 @@ CREATE TABLE parametres (
     pression_arterielle_systolique INTEGER,
     pression_arterielle_diastolique INTEGER,
     frequence_foetale INTEGER,
+    frequence_cardiaque_mere INTEGER,
     glycemie NUMERIC(4,2),
     saturation_oxygene INTEGER,
     date_dernieres_regles DATE,
@@ -262,6 +265,7 @@ CREATE TABLE parametres (
     CONSTRAINT chk_pression_sys CHECK (pression_arterielle_systolique IS NULL OR (pression_arterielle_systolique BETWEEN 40 AND 300)),
     CONSTRAINT chk_pression_dia CHECK (pression_arterielle_diastolique IS NULL OR (pression_arterielle_diastolique BETWEEN 20 AND 200)),
     CONSTRAINT chk_freq_foetale CHECK (frequence_foetale IS NULL OR (frequence_foetale BETWEEN 50 AND 220)),
+    CONSTRAINT chk_freq_mere CHECK (frequence_cardiaque_mere IS NULL OR (frequence_cardiaque_mere BETWEEN 30 AND 250)),
     CONSTRAINT chk_saturation_oxygene CHECK (saturation_oxygene IS NULL OR (saturation_oxygene BETWEEN 50 AND 100)),
     CONSTRAINT chk_statut_param CHECK (statut IN ('en_attente', 'diagnostique', 'archive'))
 );
@@ -435,6 +439,7 @@ CREATE TABLE feedback_ia (
     pression_systolique INTEGER NOT NULL,
     pression_diastolique INTEGER NOT NULL,
     frequence_foetale INTEGER NOT NULL,
+    frequence_cardiaque_mere INTEGER,
     glycemie DOUBLE PRECISION,
     classe_predite VARCHAR(100) NOT NULL,
     score_confiance DOUBLE PRECISION NOT NULL,
@@ -521,6 +526,8 @@ CREATE TABLE seuil_maintenance (
     temperature_max NUMERIC(4,1) NOT NULL DEFAULT 38.5,
     frequence_foetale_min INTEGER NOT NULL DEFAULT 110,
     frequence_foetale_max INTEGER NOT NULL DEFAULT 160,
+    frequence_cardiaque_mere_min INTEGER NOT NULL DEFAULT 60,
+    frequence_cardiaque_mere_max INTEGER NOT NULL DEFAULT 100,
     pression_systolique_max INTEGER NOT NULL DEFAULT 140,
     pression_diastolique_max INTEGER NOT NULL DEFAULT 90,
     glycemie_max NUMERIC(4,1) NOT NULL DEFAULT 7.0,
@@ -532,6 +539,8 @@ CREATE TABLE seuil_maintenance (
     CONSTRAINT chk_seuil_temp_max CHECK (temperature_max >= 30.0 AND temperature_max <= 42.0),
     CONSTRAINT chk_seuil_fcf_min CHECK (frequence_foetale_min >= 50 AND frequence_foetale_min <= 220),
     CONSTRAINT chk_seuil_fcf_max CHECK (frequence_foetale_max >= 50 AND frequence_foetale_max <= 220),
+    CONSTRAINT chk_seuil_fcm_min CHECK (frequence_cardiaque_mere_min >= 30 AND frequence_cardiaque_mere_min <= 200),
+    CONSTRAINT chk_seuil_fcm_max CHECK (frequence_cardiaque_mere_max >= 30 AND frequence_cardiaque_mere_max <= 200),
     CONSTRAINT chk_seuil_sys_max CHECK (pression_systolique_max >= 40 AND pression_systolique_max <= 300),
     CONSTRAINT chk_seuil_dia_max CHECK (pression_diastolique_max >= 20 AND pression_diastolique_max <= 200),
     CONSTRAINT chk_seuil_glyc_max CHECK (glycemie_max >= 1.0 AND glycemie_max <= 30.0),
@@ -617,6 +626,7 @@ DECLARE
     v_fcf INTEGER;
     v_glycemie DECIMAL(10,2);
     v_age INTEGER;
+    v_fcm INTEGER;
     v_spo2 INTEGER;
     v_ddr DATE;
     v_code_patient TEXT;
@@ -636,9 +646,9 @@ BEGIN
     v_parts := string_to_array(NEW.text_payload, ';');
     v_nb_parts := array_length(v_parts, 1);
 
-    -- Vérifier le nombre de champs (minimum 9, max 11)
-    IF v_nb_parts < 9 THEN
-        RAISE NOTICE 'Format payload invalide. Attendu >= 9 champs, reçu %. Payload: %', 
+    -- Vérifier le nombre de champs (minimum 10, max 12)
+    IF v_nb_parts < 10 THEN
+        RAISE NOTICE 'Format payload invalide. Attendu >= 10 champs, reçu %. Payload: %', 
                      v_nb_parts, NEW.text_payload;
         NEW.processed := TRUE;
         RETURN NEW;
@@ -655,13 +665,14 @@ BEGIN
         v_fcf := CAST(TRIM(v_parts[7]) AS INTEGER);
         v_glycemie := CAST(TRIM(v_parts[8]) AS DECIMAL(10,2));
         v_age := CAST(TRIM(v_parts[9]) AS INTEGER);
+        v_fcm := CAST(TRIM(v_parts[10]) AS INTEGER);
 
         -- Champs optionnels (SpO2 et DDR)
-        IF v_nb_parts >= 10 AND TRIM(v_parts[10]) != '' THEN
-            v_spo2 := CAST(TRIM(v_parts[10]) AS INTEGER);
-        END IF;
         IF v_nb_parts >= 11 AND TRIM(v_parts[11]) != '' THEN
-            v_ddr := CAST(TRIM(v_parts[11]) AS DATE);
+            v_spo2 := CAST(TRIM(v_parts[11]) AS INTEGER);
+        END IF;
+        IF v_nb_parts >= 12 AND TRIM(v_parts[12]) != '' THEN
+            v_ddr := CAST(TRIM(v_parts[12]) AS DATE);
         END IF;
     EXCEPTION WHEN OTHERS THEN
         RAISE NOTICE 'Erreur de parsing du payload: %. Payload: %', SQLERRM, NEW.text_payload;
@@ -700,6 +711,7 @@ BEGIN
         pression_arterielle_systolique,
         pression_arterielle_diastolique,
         frequence_foetale,
+        frequence_cardiaque_mere,
         glycemie,
         age_patient,
         saturation_oxygene,
@@ -716,6 +728,7 @@ BEGIN
         v_sys,
         v_dia,
         v_fcf,
+        v_fcm,
         v_glycemie,
         v_age,
         v_spo2,

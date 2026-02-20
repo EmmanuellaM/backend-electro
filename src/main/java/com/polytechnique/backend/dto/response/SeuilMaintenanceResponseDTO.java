@@ -26,6 +26,12 @@ public class SeuilMaintenanceResponseDTO {
     @Schema(description = "Fréquence fœtale maximale acceptable (bpm)", example = "160")
     private Integer frequenceFoetaleMax;
 
+    @Schema(description = "Fréquence cardiaque maternelle minimale acceptable (bpm)", example = "60")
+    private Integer frequenceCardiaqueMereMin;
+
+    @Schema(description = "Fréquence cardiaque maternelle maximale acceptable (bpm)", example = "100")
+    private Integer frequenceCardiaqueMereMax;
+
     @Schema(description = "Pression systolique maximale acceptable (mmHg)", example = "140")
     private Integer pressionSystoliqueMax;
 

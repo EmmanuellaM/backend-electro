@@ -104,6 +104,15 @@ public class Parametres {
     private Integer frequenceFoetale;
 
     /**
+     * Fréquence cardiaque de la mère en battements par minute (bpm)
+     * CHECK: BETWEEN 40 AND 200
+     */
+    @Min(value = 40, message = "La fréquence cardiaque maternelle doit être >= 40")
+    @Max(value = 200, message = "La fréquence cardiaque maternelle doit être <= 200")
+    @Column(name = "frequence_cardiaque_mere")
+    private Integer frequenceCardiaqueMere;
+
+    /**
      * Glycémie (Blood Sugar) en mmol/L (ou mg/dL selon contexte, ici on stocke la
      * valeur brute)
      * NUMERIC(4,2)

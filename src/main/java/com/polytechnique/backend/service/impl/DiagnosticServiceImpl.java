@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,35 @@ public class DiagnosticServiceImpl implements DiagnosticService {
         // Récupérer les paramètres
         Parametres parametres = parametresRepository.findById(requestDTO.getParametresId())
                 .orElseThrow(() -> new ResourceNotFoundException("Paramètres", "id", requestDTO.getParametresId()));
+
+        // Vérifier le verrouillage du dossier (Timeout)
+        LocalDateTime now = java.time.LocalDateTime.now();
+        Integer lockOwnerId = parametres.getVerrouilleParMedecinId();
+        java.time.LocalDateTime lockTime = parametres.getVerrouilleAt();
+
+        // Délai défini par l'administrateur (ou 30min par défaut)
+        int timeoutMinutes = 30;
+        if (parametres.getDispositif() != null && parametres.getDispositif().getAdministrateur() != null) {
+            timeoutMinutes = parametres.getDispositif().getAdministrateur().getPatientLockTimeout();
+        }
+
+        if (lockOwnerId != null) {
+            boolean isLockedByMe = lockOwnerId.equals(medecin.getId());
+            boolean isLockExpired = lockTime == null || lockTime.plusMinutes(timeoutMinutes).isBefore(now);
+
+            if (!isLockedByMe && !isLockExpired) {
+                // Verrouillé par un autre et encore valide
+                throw new IllegalStateException(
+                        "Ce dossier est actuellement verrouillé par un autre médecin. Veuillez attendre qu'il se libère.");
+            }
+
+            if (isLockedByMe && isLockExpired) {
+                // Mon verrou a expiré
+                throw new IllegalStateException(
+                        "Délai de consultation dépassé (" + timeoutMinutes + " min). " +
+                                "Le dossier a été déverrouillé automatiquement. Veuillez rafraîchir la page pour reprendre le dossier.");
+            }
+        }
 
         // Vérifier qu'un diagnostic n'existe pas déjà pour ces paramètres
         if (diagnosticRepository.countByParametresId(requestDTO.getParametresId()) > 0) {

@@ -161,4 +161,17 @@ public class ParametresController {
                 boolean isLocked = parametresService.isLocked(id, medecinId);
                 return ResponseEntity.ok(isLocked);
         }
+
+        @PostMapping("/{id}/lock-renew")
+        @Operation(summary = "Renouveler le verrouillage", description = "Tente de renouveler le verrou sur un dossier si celui-ci est expiré ou toujours possédé par le même médecin.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Verrou renouvelé"),
+                        @ApiResponse(responseCode = "409", description = "Un autre médecin a déjà pris le relais")
+        })
+        public ResponseEntity<ParametresResponseDTO> renewLock(
+                        @Parameter(description = "ID des paramètres", example = "1") @PathVariable int id,
+                        @Parameter(description = "ID du médecin", example = "1") @RequestParam int medecinId) {
+                ParametresResponseDTO response = parametresService.renewLock(id, medecinId);
+                return ResponseEntity.ok(response);
+        }
 }

@@ -22,17 +22,18 @@ public class DiagnosticIAResponseDTO {
     private Map<String, Double> probabilites;
     private ExplicationDTO explication;
     private List<RecommandationDTO> recommandations;
-    
+
     // Informations sur les paramètres
     private Integer parametresId;
     private String identifiantPatient;
-    
+
     // Validation
     private Boolean valideParMedecin;
     private String commentaireMedecin;
+    private Integer noteIa;
     private Integer medecinValidateurId;
     private String medecinValidateurNom;
-    
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -58,7 +59,7 @@ public class DiagnosticIAResponseDTO {
         private String nom;
         private Double valeur;
         private Double shapValue;
-        private String impact;  // "positif" ou "negatif"
+        private String impact; // "positif" ou "negatif"
     }
 
     /**
@@ -70,6 +71,6 @@ public class DiagnosticIAResponseDTO {
     public static class RecommandationDTO {
         private String categorie;
         private String description;
-        private String priorite;  // "haute", "moyenne", "basse"
+        private String priorite; // "haute", "moyenne", "basse"
     }
 }

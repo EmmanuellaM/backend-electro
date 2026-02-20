@@ -18,5 +18,7 @@ public interface FeedbackIARepository extends JpaRepository<FeedbackIA, Integer>
 
     List<FeedbackIA> findByClassePredite(String classePredite);
 
+    java.util.Optional<FeedbackIA> findByMedecinIdAndParametresId(Integer medecinId, Integer parametresId);
+
     long countByNoteMedecinGreaterThanEqual(Integer note);
 }

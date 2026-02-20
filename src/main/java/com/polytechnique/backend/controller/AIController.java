@@ -41,6 +41,7 @@ public class AIController {
                     request.getPressionArterielleSystolique(),
                     request.getPressionArterielleDiastolique(),
                     request.getFrequenceFoetale(),
+                    request.getFrequenceCardiaqueMere(),
                     request.getGlycemie(),
                     request.getIncludeExplanation() != null ? request.getIncludeExplanation() : true);
 

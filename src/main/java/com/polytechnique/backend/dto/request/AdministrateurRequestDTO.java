@@ -43,4 +43,7 @@ public class AdministrateurRequestDTO {
     private String genre;
 
     private String role; // Optionnel, par défaut ADMIN
+
+    @Schema(description = "Durée de verrouillage des dossiers patients (en minutes)", example = "30")
+    private Integer patientLockTimeout;
 }

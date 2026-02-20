@@ -152,4 +152,15 @@ public class AdministrateurServiceImpl implements AdministrateurService {
         Administrateur updatedAdmin = administrateurRepository.save(admin);
         return administrateurMapper.toResponseDTO(updatedAdmin);
     }
+
+    @Override
+    @Transactional
+    public AdministrateurResponseDTO updateLockTimeout(int id, int timeout) {
+        Administrateur admin = administrateurRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Administrateur non trouvé avec l'ID : " + id));
+
+        admin.setPatientLockTimeout(timeout);
+        Administrateur updatedAdmin = administrateurRepository.save(admin);
+        return administrateurMapper.toResponseDTO(updatedAdmin);
+    }
 }

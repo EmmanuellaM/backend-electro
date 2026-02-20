@@ -36,6 +36,16 @@ public class SeuilMaintenanceRequestDTO {
     @Schema(description = "Fréquence fœtale maximale acceptable (bpm)", example = "160")
     private Integer frequenceFoetaleMax;
 
+    @NotNull(message = "La fréquence cardiaque maternelle minimale est obligatoire")
+    @Min(value = 40, message = "La fréquence cardiaque maternelle minimale doit être >= 40 bpm")
+    @Schema(description = "Fréquence cardiaque maternelle minimale acceptable (bpm)", example = "60")
+    private Integer frequenceCardiaqueMereMin;
+
+    @NotNull(message = "La fréquence cardiaque maternelle maximale est obligatoire")
+    @Min(value = 40, message = "La fréquence cardiaque maternelle maximale doit être >= 40 bpm")
+    @Schema(description = "Fréquence cardiaque maternelle maximale acceptable (bpm)", example = "100")
+    private Integer frequenceCardiaqueMereMax;
+
     @NotNull(message = "La pression systolique maximale est obligatoire")
     @Min(value = 40, message = "La pression systolique maximale doit être >= 40 mmHg")
     @Schema(description = "Pression systolique maximale acceptable (mmHg)", example = "140")

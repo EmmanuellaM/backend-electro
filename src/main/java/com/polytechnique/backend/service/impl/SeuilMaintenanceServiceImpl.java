@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 public class SeuilMaintenanceServiceImpl implements SeuilMaintenanceService {
 
     private final SeuilMaintenanceRepository seuilMaintenanceRepository;
+    private final com.polytechnique.backend.repository.DispositifRepository dispositifRepository;
 
     /**
      * Récupère l'unique enregistrement de seuils (id=1).
@@ -36,6 +37,8 @@ public class SeuilMaintenanceServiceImpl implements SeuilMaintenanceService {
         dto.setTemperatureMax(entity.getTemperatureMax());
         dto.setFrequenceFoetaleMin(entity.getFrequenceFoetaleMin());
         dto.setFrequenceFoetaleMax(entity.getFrequenceFoetaleMax());
+        dto.setFrequenceCardiaqueMereMin(entity.getFrequenceCardiaqueMereMin());
+        dto.setFrequenceCardiaqueMereMax(entity.getFrequenceCardiaqueMereMax());
         dto.setPressionSystoliqueMax(entity.getPressionSystoliqueMax());
         dto.setPressionDiastoliqueMax(entity.getPressionDiastoliqueMax());
         dto.setGlycemieMax(entity.getGlycemieMax());
@@ -58,6 +61,8 @@ public class SeuilMaintenanceServiceImpl implements SeuilMaintenanceService {
         seuil.setTemperatureMax(requestDTO.getTemperatureMax());
         seuil.setFrequenceFoetaleMin(requestDTO.getFrequenceFoetaleMin());
         seuil.setFrequenceFoetaleMax(requestDTO.getFrequenceFoetaleMax());
+        seuil.setFrequenceCardiaqueMereMin(requestDTO.getFrequenceCardiaqueMereMin());
+        seuil.setFrequenceCardiaqueMereMax(requestDTO.getFrequenceCardiaqueMereMax());
         seuil.setPressionSystoliqueMax(requestDTO.getPressionSystoliqueMax());
         seuil.setPressionDiastoliqueMax(requestDTO.getPressionDiastoliqueMax());
         seuil.setGlycemieMax(requestDTO.getGlycemieMax());
@@ -73,10 +78,77 @@ public class SeuilMaintenanceServiceImpl implements SeuilMaintenanceService {
         seuil.setTemperatureMax(new BigDecimal("38.5"));
         seuil.setFrequenceFoetaleMin(110);
         seuil.setFrequenceFoetaleMax(160);
+        seuil.setFrequenceCardiaqueMereMin(60);
+        seuil.setFrequenceCardiaqueMereMax(100);
         seuil.setPressionSystoliqueMax(140);
         seuil.setPressionDiastoliqueMax(90);
         seuil.setGlycemieMax(new BigDecimal("7.0"));
         seuil.setSaturationOxygeneMin(95);
         return toDTO(seuilMaintenanceRepository.save(seuil));
+    }
+
+    @Override
+    @Transactional
+    public void checkMaintenance(com.polytechnique.backend.entity.Parametres p) {
+        if (p == null || p.getDispositif() == null)
+            return;
+
+        SeuilMaintenance s = getOrCreateSeuil();
+        boolean maintenanceRequise = false;
+
+        // Temperature
+        if (p.getTemperature() != null) {
+            if (p.getTemperature().compareTo(s.getTemperatureMin()) < 0 ||
+                    p.getTemperature().compareTo(s.getTemperatureMax()) > 0) {
+                maintenanceRequise = true;
+            }
+        }
+
+        // FCF
+        if (p.getFrequenceFoetale() != null) {
+            if (p.getFrequenceFoetale() < s.getFrequenceFoetaleMin() ||
+                    p.getFrequenceFoetale() > s.getFrequenceFoetaleMax()) {
+                maintenanceRequise = true;
+            }
+        }
+
+        // FCM (Mère)
+        if (p.getFrequenceCardiaqueMere() != null) {
+            if (p.getFrequenceCardiaqueMere() < s.getFrequenceCardiaqueMereMin() ||
+                    p.getFrequenceCardiaqueMere() > s.getFrequenceCardiaqueMereMax()) {
+                maintenanceRequise = true;
+            }
+        }
+
+        // Pression
+        if (p.getPressionArterielleSystolique() != null &&
+                p.getPressionArterielleSystolique() > s.getPressionSystoliqueMax()) {
+            maintenanceRequise = true;
+        }
+        if (p.getPressionArterielleDiastolique() != null &&
+                p.getPressionArterielleDiastolique() > s.getPressionDiastoliqueMax()) {
+            maintenanceRequise = true;
+        }
+
+        // Glycémie
+        if (p.getGlycemie() != null && s.getGlycemieMax() != null &&
+                p.getGlycemie().compareTo(s.getGlycemieMax()) > 0) {
+            maintenanceRequise = true;
+        }
+
+        // SpO2
+        if (p.getSaturationOxygene() != null &&
+                p.getSaturationOxygene() < s.getSaturationOxygeneMin()) {
+            maintenanceRequise = true;
+        }
+
+        if (maintenanceRequise) {
+            com.polytechnique.backend.entity.Dispositif d = p.getDispositif();
+            // Eviter les mises à jour inutiles si déjà en maintenance
+            if (d.getStatut() != com.polytechnique.backend.status.StatutDispositif.MAINTENANCE) {
+                d.setStatut(com.polytechnique.backend.status.StatutDispositif.MAINTENANCE);
+                dispositifRepository.save(d);
+            }
+        }
     }
 }

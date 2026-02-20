@@ -73,6 +73,7 @@ public class DiagnosticMapper {
             dto.setPressionArterielleSystolique(diagnostic.getParametres().getPressionArterielleSystolique());
             dto.setPressionArterielleDiastolique(diagnostic.getParametres().getPressionArterielleDiastolique());
             dto.setFrequenceFoetale(diagnostic.getParametres().getFrequenceFoetale());
+            dto.setFrequenceCardiaqueMere(diagnostic.getParametres().getFrequenceCardiaqueMere());
             dto.setDateMesure(diagnostic.getParametres().getDateMesure());
             dto.setGlycemie(diagnostic.getParametres().getGlycemie());
         }

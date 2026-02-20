@@ -28,7 +28,8 @@ public class StatistiquesController {
 
     @GetMapping("/trends")
     @Operation(summary = "Obtenir les tendances", description = "Retourne les données pour les graphiques (évolution temporelle, répartition)")
-    public ResponseEntity<com.polytechnique.backend.dto.response.TrendsResponseDTO> getTrends() {
-        return ResponseEntity.ok(statistiquesService.getTrends());
+    public ResponseEntity<com.polytechnique.backend.dto.response.TrendsResponseDTO> getTrends(
+            @RequestParam(required = false) Integer adminId) {
+        return ResponseEntity.ok(statistiquesService.getTrends(adminId));
     }
 }

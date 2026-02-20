@@ -26,6 +26,7 @@ public class ParametresResponseDTO {
     private Integer pressionArterielleSystolique;
     private Integer pressionArterielleDiastolique;
     private Integer frequenceFoetale;
+    private Integer frequenceCardiaqueMere;
     private BigDecimal glycemie;
     private Integer saturationOxygene;
     private LocalDate dateDernieresRegles;
@@ -47,6 +48,7 @@ public class ParametresResponseDTO {
     private Integer verrouilleParMedecinId;
     private String verrouilleParMedecinNom;
     private LocalDateTime verrouilleAt;
+    private Integer lockTimeoutMinutes;
 
     // Diagnostic associé (le plus récent)
     private DiagnosticSummary diagnostic;

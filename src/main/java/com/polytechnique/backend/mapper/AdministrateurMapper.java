@@ -34,6 +34,10 @@ public class AdministrateurMapper {
             // Ignore invalid roles, default is ADMIN
         }
 
+        if (dto.getPatientLockTimeout() != null) {
+            admin.setPatientLockTimeout(dto.getPatientLockTimeout());
+        }
+
         return admin;
     }
 
@@ -52,6 +56,7 @@ public class AdministrateurMapper {
         dto.setTel2(admin.getTel2());
         dto.setGenre(admin.getGenre() != null ? admin.getGenre().name() : null);
         dto.setDoitChangerMotDePasse(admin.getDoitChangerMotDePasse());
+        dto.setPatientLockTimeout(admin.getPatientLockTimeout());
         dto.setCreatedAt(admin.getCreatedAt());
         dto.setUpdatedAt(admin.getUpdatedAt());
 
@@ -87,6 +92,9 @@ public class AdministrateurMapper {
             } catch (IllegalArgumentException e) {
                 // Ignore invalid role updates
             }
+        }
+        if (dto.getPatientLockTimeout() != null) {
+            admin.setPatientLockTimeout(dto.getPatientLockTimeout());
         }
     }
 }

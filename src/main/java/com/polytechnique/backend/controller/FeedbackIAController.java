@@ -74,4 +74,17 @@ public class FeedbackIAController {
         feedbackIAService.deleteFeedback(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/export-csv")
+    @Operation(summary = "Exporter les feedbacks en CSV", description = "Génère un fichier CSV contenant tous les feedbacks pour réentraînement du modèle")
+    public ResponseEntity<byte[]> exportCsv() {
+        String csv = feedbackIAService.generateCsv();
+        byte[] bytes = csv.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=feedbacks_ia.csv")
+                .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+                .body(bytes);
+    }
 }

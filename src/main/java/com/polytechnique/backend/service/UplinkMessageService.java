@@ -33,14 +33,15 @@ public class UplinkMessageService {
     private final ParametresRepository parametresRepository;
     private final DispositifRepository dispositifRepository;
     private final SseService sseService;
+    private final SeuilMaintenanceService seuilMaintenanceService;
 
     /**
      * Format du payload attendu:
-     * "ID_LOCAL;POIDS;TAILLE;TEMP;SYS;DIA;FCF;GLYC;AGE"
-     * Exemple: "P05;65.5;165.0;36.8;120;80;142;5.2;28"
+     * "ID_LOCAL;POIDS;TAILLE;TEMP;SYS;DIA;FCF;GLYC;AGE;FCM[;SPO2;DDR]"
+     * Exemple: "P05;65.5;165.0;36.8;120;80;142;5.2;28;75"
      */
     private static final String PAYLOAD_DELIMITER = ";";
-    private static final int EXPECTED_FIELDS = 9;
+    private static final int EXPECTED_FIELDS = 10;
 
     /**
      * Traite tous les messages non encore traités
@@ -93,7 +94,7 @@ public class UplinkMessageService {
         String[] parts = payload.split(PAYLOAD_DELIMITER);
         if (parts.length < EXPECTED_FIELDS) {
             throw new RuntimeException("Format de payload invalide. Attendu " + EXPECTED_FIELDS
-                    + " champs, reçu " + parts.length + ". Payload: " + payload);
+                    + " champs (min), reçu " + parts.length + ". Payload: " + payload);
         }
 
         // 3. Extraire les valeurs
@@ -106,25 +107,26 @@ public class UplinkMessageService {
         int fcf = Integer.parseInt(parts[6].trim());
         BigDecimal glycemie = new BigDecimal(parts[7].trim());
         int age = Integer.parseInt(parts[8].trim());
+        int fcm = Integer.parseInt(parts[9].trim());
 
         // Champs optionnels : SpO2 et DDR
         Integer spo2 = null;
         LocalDate ddr = null;
 
-        if (parts.length >= 10 && !parts[9].trim().isEmpty()) {
+        if (parts.length >= 11 && !parts[10].trim().isEmpty()) {
             try {
-                spo2 = Integer.parseInt(parts[9].trim());
+                spo2 = Integer.parseInt(parts[10].trim());
             } catch (NumberFormatException e) {
-                log.warn("Format SpO2 invalide: {}", parts[9]);
+                log.warn("Format SpO2 invalide: {}", parts[10]);
             }
         }
 
-        if (parts.length >= 11 && !parts[10].trim().isEmpty()) {
+        if (parts.length >= 12 && !parts[11].trim().isEmpty()) {
             try {
                 // Essayer plusieurs formats si nécessaire, ici on attend yyyy-MM-dd
-                ddr = LocalDate.parse(parts[10].trim());
+                ddr = LocalDate.parse(parts[11].trim());
             } catch (Exception e) {
-                log.warn("Format DDR invalide: {}", parts[10]);
+                log.warn("Format DDR invalide: {}", parts[11]);
             }
         }
 
@@ -144,6 +146,7 @@ public class UplinkMessageService {
         parametres.setFrequenceFoetale(fcf);
         parametres.setGlycemie(glycemie);
         parametres.setAgePatient(age);
+        parametres.setFrequenceCardiaqueMere(fcm);
         parametres.setSaturationOxygene(spo2);
         parametres.setDateDernieresRegles(ddr);
         parametres.setDateMesure(message.getCreatedAt() != null ? message.getCreatedAt() : LocalDateTime.now());
@@ -177,6 +180,9 @@ public class UplinkMessageService {
         // 6. Sauvegarder
         Parametres saved = parametresRepository.save(parametres);
         log.info("Parametres créés: ID={}, Patient={}", saved.getId(), codePatientUnique);
+
+        // Vérification des seuils de maintenance
+        seuilMaintenanceService.checkMaintenance(saved);
 
         // Envoyer une notification temps réel
         sseService.broadcast("NEW_PATIENT_DATA", saved.getIdentifiantPatient());

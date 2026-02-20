@@ -58,6 +58,9 @@ public class PatientResponseDTO {
     @Schema(description = "Dernière fréquence fœtale en bpm", example = "142")
     private Integer frequenceFoetale;
 
+    @Schema(description = "Dernière fréquence cardiaque maternelle en bpm", example = "82")
+    private Integer frequenceCardiaqueMere;
+
     @Schema(description = "Dernière glycémie en mmol/L", example = "5.2")
     private BigDecimal glycemie;
 
@@ -85,4 +88,7 @@ public class PatientResponseDTO {
 
     @Schema(description = "Date et heure du verrouillage")
     private LocalDateTime verrouilleAt;
+
+    @Schema(description = "Délai de verrouillage configuré par l'admin (en minutes)", example = "30")
+    private Integer lockTimeoutMinutes;
 }

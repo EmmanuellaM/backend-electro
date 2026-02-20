@@ -17,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,12 +63,10 @@ public class DiagnosticIAService {
                                 parametres.getTemperature().doubleValue(),
                                 parametres.getPressionArterielleSystolique(),
                                 parametres.getPressionArterielleDiastolique(),
-                                parametres.getFrequenceFoetale(),
-                                parametres.getGlycemie() != null ? parametres.getGlycemie().doubleValue() : 5.0, // Valeur
-                                                                                                                 // par
-                                                                                                                 // défaut
-                                                                                                                 // si
-                                                                                                                 // null
+                                parametres.getFrequenceFoetale() != null ? parametres.getFrequenceFoetale() : 140,
+                                parametres.getFrequenceCardiaqueMere() != null ? parametres.getFrequenceCardiaqueMere()
+                                                : 80,
+                                parametres.getGlycemie() != null ? parametres.getGlycemie().doubleValue() : 5.0,
                                 requestDTO.getIncludeExplanation());
 
                 // Créer l'entité DiagnosticIA
@@ -152,6 +148,25 @@ public class DiagnosticIAService {
         }
 
         /**
+         * Enregistre une note et un commentaire sur la qualité du diagnostic IA
+         */
+        @Transactional
+        public DiagnosticIAResponseDTO rateDiagnostic(Integer diagnosticIAId, Integer note, String commentaire,
+                        Integer medecinId) {
+                log.info("Notation du diagnostic IA {} par le médecin {} (Note: {})", diagnosticIAId, medecinId, note);
+
+                DiagnosticIA diagnosticIA = diagnosticIARepository.findById(diagnosticIAId)
+                                .orElseThrow(() -> new ResourceNotFoundException("DiagnosticIA", "id",
+                                                diagnosticIAId.toString()));
+
+                diagnosticIA.setNoteIa(note);
+                diagnosticIA.setCommentaireMedecin(commentaire);
+
+                DiagnosticIA saved = diagnosticIARepository.save(diagnosticIA);
+                return toResponseDTO(saved);
+        }
+
+        /**
          * Valide ou rejette un diagnostic IA
          */
         @Transactional
@@ -197,6 +212,7 @@ public class DiagnosticIAService {
                 // Validation
                 dto.setValideParMedecin(entity.getValideParMedecin());
                 dto.setCommentaireMedecin(entity.getCommentaireMedecin());
+                dto.setNoteIa(entity.getNoteIa());
 
                 if (entity.getMedecinValidateur() != null) {
                         dto.setMedecinValidateurId(entity.getMedecinValidateur().getId());

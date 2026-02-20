@@ -73,4 +73,12 @@ public class AdministrateurController {
         administrateurService.updatePassword(id, changePasswordRequest);
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("/{id}/lock-timeout")
+    @Operation(summary = "Modifier le délai de verrouillage", description = "Définit le temps avant qu'un dossier patient ne soit automatiquement déverrouillé.")
+    public ResponseEntity<AdministrateurResponseDTO> updateLockTimeout(
+            @PathVariable int id,
+            @RequestParam int timeout) {
+        return ResponseEntity.ok(administrateurService.updateLockTimeout(id, timeout));
+    }
 }

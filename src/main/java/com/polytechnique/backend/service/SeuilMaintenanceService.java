@@ -22,4 +22,10 @@ public interface SeuilMaintenanceService {
      * Réinitialiser les seuils aux valeurs par défaut
      */
     SeuilMaintenanceResponseDTO resetSeuils();
+
+    /**
+     * Vérifie si les paramètres dépassent les seuils et met à jour le statut du
+     * dispositif si nécessaire
+     */
+    void checkMaintenance(com.polytechnique.backend.entity.Parametres parametres);
 }

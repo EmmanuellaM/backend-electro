@@ -28,7 +28,7 @@ public class DiagnosticRequestDTO {
     @Schema(description = "Recommandations médicales", example = "Surveillance rapprochée + bilan biologique complémentaire.")
     private String recommandations;
 
-    @Schema(description = "Niveau d'urgence", example = "ÉLEVÉ", allowableValues = { "FAIBLE", "MOYEN", "ÉLEVÉ",
+    @Schema(description = "Niveau d'urgence", example = "NORMAL", allowableValues = { "NORMAL", "URGENT",
             "CRITIQUE" })
     private String niveauUrgence;
 }

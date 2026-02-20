@@ -38,6 +38,12 @@ public class SeuilMaintenance {
     @Column(name = "frequence_foetale_max", nullable = false)
     private Integer frequenceFoetaleMax = 160;
 
+    @Column(name = "frequence_cardiaque_mere_min", nullable = false)
+    private Integer frequenceCardiaqueMereMin = 60;
+
+    @Column(name = "frequence_cardiaque_mere_max", nullable = false)
+    private Integer frequenceCardiaqueMereMax = 100;
+
     @Column(name = "pression_systolique_max", nullable = false)
     private Integer pressionSystoliqueMax = 140;
 

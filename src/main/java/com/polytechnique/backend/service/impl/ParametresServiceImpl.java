@@ -29,6 +29,7 @@ public class ParametresServiceImpl implements ParametresService {
     private final DispositifRepository dispositifRepository;
     private final ParametresMapper parametresMapper;
     private final com.polytechnique.backend.service.SseService sseService;
+    private final com.polytechnique.backend.service.SeuilMaintenanceService seuilMaintenanceService;
 
     @org.springframework.beans.factory.annotation.Value("${app.lock.timeout-minutes:30}")
     private int lockTimeoutMinutes;
@@ -58,6 +59,9 @@ public class ParametresServiceImpl implements ParametresService {
 
         // Sauvegarder
         Parametres savedParametres = parametresRepository.save(parametres);
+
+        // Vérification des seuils de maintenance
+        seuilMaintenanceService.checkMaintenance(savedParametres);
 
         // ACTIVER LE DISPOSITIF
         if (dispositif.getStatut() != com.polytechnique.backend.status.StatutDispositif.ACTIF &&
@@ -120,6 +124,9 @@ public class ParametresServiceImpl implements ParametresService {
         // Sauvegarder
         Parametres updatedParametres = parametresRepository.save(parametres);
 
+        // Vérification des seuils de maintenance
+        seuilMaintenanceService.checkMaintenance(updatedParametres);
+
         return parametresMapper.toResponseDTO(updatedParametres);
     }
 
@@ -161,12 +168,18 @@ public class ParametresServiceImpl implements ParametresService {
         Parametres parametres = parametresRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Paramètres", "id", id));
 
+        // Obtenir le timeout de l'administrateur
+        int timeout = lockTimeoutMinutes;
+        if (parametres.getDispositif() != null && parametres.getDispositif().getAdministrateur() != null) {
+            timeout = parametres.getDispositif().getAdministrateur().getPatientLockTimeout();
+        }
+
         // Vérifier si déjà verrouillé par un autre médecin
         if (parametres.getVerrouilleParMedecinId() != null
                 && !parametres.getVerrouilleParMedecinId().equals(medecinId)) {
             // Vérifier le timeout
             if (parametres.getVerrouilleAt() != null
-                    && parametres.getVerrouilleAt().plusMinutes(lockTimeoutMinutes)
+                    && parametres.getVerrouilleAt().plusMinutes(timeout)
                             .isAfter(java.time.LocalDateTime.now())) {
                 throw new IllegalStateException(
                         "Ces paramètres sont actuellement consultés par un autre médecin (ID: "
@@ -207,12 +220,12 @@ public class ParametresServiceImpl implements ParametresService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional // Pas readOnly - on peut modifier si le verrou est expiré
     public boolean isLocked(int id, int medecinId) {
         Parametres parametres = parametresRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Paramètres", "id", id));
 
-        // Pas verrouillé
+        // Pas verrouillé du tout
         if (parametres.getVerrouilleParMedecinId() == null) {
             return false;
         }
@@ -222,14 +235,25 @@ public class ParametresServiceImpl implements ParametresService {
             return false;
         }
 
-        // Vérifier le timeout
-        if (parametres.getVerrouilleAt() != null
-                && parametres.getVerrouilleAt().plusMinutes(lockTimeoutMinutes)
-                        .isBefore(java.time.LocalDateTime.now())) {
-            return false; // Timeout expiré
+        // Obtenir le timeout de l'administrateur
+        int timeout = lockTimeoutMinutes;
+        if (parametres.getDispositif() != null && parametres.getDispositif().getAdministrateur() != null) {
+            timeout = parametres.getDispositif().getAdministrateur().getPatientLockTimeout();
         }
 
-        return true; // Verrouillé par un autre médecin
+        // Vérifier si le verrou a expiré
+        if (parametres.getVerrouilleAt() != null
+                && parametres.getVerrouilleAt().plusMinutes(timeout)
+                        .isBefore(java.time.LocalDateTime.now())) {
+            // Le verrou est expiré → on le libère proactivement en base
+            parametres.setVerrouilleParMedecinId(null);
+            parametres.setVerrouilleAt(null);
+            parametresRepository.save(parametres);
+            sseService.broadcast("LOCK_RELEASED", parametres.getIdentifiantPatient());
+            return false; // Plus verrouillé
+        }
+
+        return true; // Véritablement verrouillé par un autre médecin actif
     }
 
     @Override
@@ -243,5 +267,45 @@ public class ParametresServiceImpl implements ParametresService {
         return parametresList.stream()
                 .map(parametresMapper::toResponseDTO)
                 .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public ParametresResponseDTO renewLock(int id, int medecinId) {
+        Parametres parametres = parametresRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Paramètres", "id", id));
+
+        // Obtenir le timeout de l'administrateur
+        int timeoutMinutes = lockTimeoutMinutes;
+        if (parametres.getDispositif() != null && parametres.getDispositif().getAdministrateur() != null) {
+            timeoutMinutes = parametres.getDispositif().getAdministrateur().getPatientLockTimeout();
+        }
+
+        Integer currentLockOwner = parametres.getVerrouilleParMedecinId();
+        java.time.LocalDateTime lockTime = parametres.getVerrouilleAt();
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+
+        // On peut renouveler si:
+        // 1. Personne n'a le verrou
+        // 2. Je possède déjà le verrou (même s'il est expiré, tant que personne d'autre
+        // ne l'a pris)
+        // 3. Le verrou d'un autre a expiré
+        boolean canRenew = (currentLockOwner == null) ||
+                (currentLockOwner.equals(medecinId)) ||
+                (lockTime != null && lockTime.plusMinutes(timeoutMinutes).isBefore(now));
+
+        if (!canRenew) {
+            throw new IllegalStateException(
+                    "Un autre médecin a pris le relais sur ce dossier. Vous ne pouvez plus le modifier.");
+        }
+
+        // Renouveler le verrou
+        parametres.setVerrouilleParMedecinId(medecinId);
+        parametres.setVerrouilleAt(now);
+        Parametres saved = parametresRepository.save(parametres);
+
+        ParametresResponseDTO responseDTO = parametresMapper.toResponseDTO(saved);
+        sseService.broadcast("LOCK_UPDATE", responseDTO);
+
+        return responseDTO;
     }
 }

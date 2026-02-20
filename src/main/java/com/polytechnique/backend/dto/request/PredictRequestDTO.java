@@ -46,6 +46,10 @@ public class PredictRequestDTO {
     @Schema(description = "Fréquence cardiaque fœtale en bpm", example = "145")
     private Integer frequenceFoetale;
 
+    @NotNull(message = "La fréquence cardiaque maternelle est obligatoire")
+    @Schema(description = "Fréquence cardiaque maternelle en bpm", example = "80")
+    private Integer frequenceCardiaqueMere;
+
     @NotNull(message = "La glycémie est obligatoire")
     @Schema(description = "Glycémie en mmol/L", example = "5.2")
     private Double glycemie;

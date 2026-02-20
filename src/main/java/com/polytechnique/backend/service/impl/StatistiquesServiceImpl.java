@@ -197,60 +197,60 @@ public class StatistiquesServiceImpl implements StatistiquesService {
         }
 
         @Override
-        public com.polytechnique.backend.dto.response.TrendsResponseDTO getTrends() {
+        public com.polytechnique.backend.dto.response.TrendsResponseDTO getTrends(Integer adminId) {
                 // 1. Weekly (7 jours)
                 java.time.LocalDateTime startWeek = java.time.LocalDateTime.now().minusDays(7);
-                List<Object[]> weeklyRaw = diagnosticRepository.countDiagnosticsByDay(startWeek);
+                List<Object[]> weeklyRaw = diagnosticRepository.countDiagnosticsByDayFiltered(startWeek, adminId);
                 java.util.Map<String, Long> weekly = new java.util.LinkedHashMap<>();
                 for (Object[] row : weeklyRaw) {
                         weekly.put(row[0].toString(), (Long) row[1]);
                 }
-
+ 
                 // 2. Monthly (30 jours) - Default
                 java.time.LocalDateTime startMonth = java.time.LocalDateTime.now().minusDays(30);
-                List<Object[]> monthlyRaw = diagnosticRepository.countDiagnosticsByDay(startMonth);
+                List<Object[]> monthlyRaw = diagnosticRepository.countDiagnosticsByDayFiltered(startMonth, adminId);
                 java.util.Map<String, Long> monthly = new java.util.LinkedHashMap<>();
                 for (Object[] row : monthlyRaw) {
                         monthly.put(row[0].toString(), (Long) row[1]);
                 }
-
+ 
                 // 3. Quarterly (90 jours) - By Day for detail
                 java.time.LocalDateTime startQuarter = java.time.LocalDateTime.now().minusDays(90);
-                List<Object[]> quarterlyRaw = diagnosticRepository.countDiagnosticsByDay(startQuarter);
+                List<Object[]> quarterlyRaw = diagnosticRepository.countDiagnosticsByDayFiltered(startQuarter, adminId);
                 java.util.Map<String, Long> quarterly = new java.util.LinkedHashMap<>();
                 for (Object[] row : quarterlyRaw) {
                         quarterly.put(row[0].toString(), (Long) row[1]);
                 }
-
+ 
                 // 4. Yearly (12 mois) - By Month
                 java.time.LocalDateTime startYear = java.time.LocalDateTime.now().minusMonths(12);
-                List<Object[]> yearlyRaw = diagnosticRepository.countDiagnosticsByMonth(startYear);
+                List<Object[]> yearlyRaw = diagnosticRepository.countDiagnosticsByMonthFiltered(startYear, adminId);
                 java.util.Map<String, Long> yearly = new java.util.LinkedHashMap<>();
                 for (Object[] row : yearlyRaw) {
                         yearly.put(row[0].toString(), (Long) row[1]);
                 }
-
-                List<Object[]> emergencyRaw = diagnosticRepository.countByEmergencyLevel();
+ 
+                List<Object[]> emergencyRaw = diagnosticRepository.countByEmergencyLevelFiltered(adminId);
                 java.util.Map<String, Long> emergency = new java.util.HashMap<>();
                 for (Object[] row : emergencyRaw) {
                         String level = row[0] != null ? row[0].toString() : "NORMAL";
                         emergency.put(level, (Long) row[1]);
                 }
-
-                List<Object[]> specialtyRaw = diagnosticRepository.countBySpecialty();
+ 
+                List<Object[]> specialtyRaw = diagnosticRepository.countBySpecialtyFiltered(adminId);
                 java.util.Map<String, Long> specialty = new java.util.HashMap<>();
                 for (Object[] row : specialtyRaw) {
                         String spec = row[0] != null ? row[0].toString() : "MEDECIN_GENERALISTE";
                         specialty.put(spec, (Long) row[1]);
                 }
-
-                List<Object[]> centreRaw = diagnosticRepository.countByCentre();
+ 
+                List<Object[]> centreRaw = diagnosticRepository.countByCentreFiltered(adminId);
                 java.util.Map<String, Long> centre = new java.util.HashMap<>();
                 for (Object[] row : centreRaw) {
                         String name = row[0] != null ? row[0].toString() : "Centre Inconnu";
                         centre.put(name, (Long) row[1]);
                 }
-
+ 
                 List<Object[]> adminPerformanceRaw = diagnosticRepository.countDiagnosticsPerAdministrateur();
                 java.util.List<com.polytechnique.backend.dto.response.AdminPerformanceDTO> adminPerformance = new java.util.ArrayList<>();
                 for (Object[] row : adminPerformanceRaw) {
@@ -261,7 +261,7 @@ public class StatistiquesServiceImpl implements StatistiquesService {
                                         .totalDiagnostics((Long) row[3])
                                         .build());
                 }
-
+ 
                 return com.polytechnique.backend.dto.response.TrendsResponseDTO.builder()
                                 .diagnosticsByDay(monthly) // Default is monthly
                                 .weeklyTrends(weekly)

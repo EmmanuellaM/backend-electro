@@ -19,4 +19,9 @@ public interface FeedbackIAService {
     List<FeedbackIAResponseDTO> getFeedbacksByMedecin(int medecinId);
 
     void deleteFeedback(int id);
+
+    /**
+     * Génère un contenu CSV à partir de tous les feedbacks
+     */
+    String generateCsv();
 }

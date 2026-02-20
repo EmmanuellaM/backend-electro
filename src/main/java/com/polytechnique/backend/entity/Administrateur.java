@@ -74,6 +74,9 @@ public class Administrateur {
     @Column(name = "doit_changer_mot_de_passe")
     private Boolean doitChangerMotDePasse = true;
 
+    @Column(name = "patient_lock_timeout", nullable = false)
+    private Integer patientLockTimeout = 30;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

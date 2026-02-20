@@ -37,6 +37,7 @@ public class DiagnosticResponseDTO {
     private Integer pressionArterielleSystolique;
     private Integer pressionArterielleDiastolique;
     private Integer frequenceFoetale;
+    private Integer frequenceCardiaqueMere;
     private LocalDateTime dateMesure;
     private BigDecimal glycemie;
 

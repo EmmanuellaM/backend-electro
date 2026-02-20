@@ -24,6 +24,7 @@ public class FeedbackIAResponseDTO {
     private Integer pressionSystolique;
     private Integer pressionDiastolique;
     private Integer frequenceFoetale;
+    private Integer frequenceCardiaqueMere;
     private Double glycemie;
 
     // Résultat IA

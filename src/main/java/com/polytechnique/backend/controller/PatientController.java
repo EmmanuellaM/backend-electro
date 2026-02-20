@@ -106,6 +106,7 @@ public class PatientController {
                                 .pressionArterielleSystolique(p.getPressionArterielleSystolique())
                                 .pressionArterielleDiastolique(p.getPressionArterielleDiastolique())
                                 .frequenceFoetale(p.getFrequenceFoetale())
+                                .frequenceCardiaqueMere(p.getFrequenceCardiaqueMere())
                                 .glycemie(p.getGlycemie())
                                 .saturationOxygene(p.getSaturationOxygene())
                                 .dateDernieresRegles(p.getDateDernieresRegles())
