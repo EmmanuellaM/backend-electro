@@ -36,7 +36,7 @@ public class UplinkMessageController {
     @GetMapping("/unprocessed")
     @Operation(summary = "Messages non traités", description = "Retourne les messages en attente de traitement")
     public ResponseEntity<List<UplinkMessage>> getUnprocessedMessages() {
-        return ResponseEntity.ok(uplinkMessageRepository.findByProcessedFalseOrderByCreatedAtAsc());
+        return ResponseEntity.ok(uplinkMessageRepository.findByProcessedFalseOrderByPublishedAtAsc());
     }
 
     @GetMapping("/unprocessed/count")

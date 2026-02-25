@@ -22,7 +22,8 @@ import java.util.Optional;
 
 /**
  * Service de traitement des messages uplink LoRaWAN
- * Parse les payloads et crée les Parametres correspondants
+ * Lit directement les colonnes médicales depuis UplinkMessage
+ * et crée les Parametres correspondants
  */
 @Service
 @Slf4j
@@ -30,27 +31,15 @@ import java.util.Optional;
 public class UplinkMessageService {
 
     private final UplinkMessageRepository uplinkMessageRepository;
-    private final ParametresRepository parametresRepository;
-    private final DispositifRepository dispositifRepository;
-    private final SseService sseService;
-    private final SeuilMaintenanceService seuilMaintenanceService;
-
-    /**
-     * Format du payload attendu:
-     * "ID_LOCAL;POIDS;TAILLE;TEMP;SYS;DIA;FCF;GLYC;AGE;FCM[;SPO2;DDR]"
-     * Exemple: "P05;65.5;165.0;36.8;120;80;142;5.2;28;75"
-     */
-    private static final String PAYLOAD_DELIMITER = ";";
-    private static final int EXPECTED_FIELDS = 10;
+    private final UplinkProcessingService uplinkProcessingService;
 
     /**
      * Traite tous les messages non encore traités
      * Appelé périodiquement par le scheduler
      */
     @Scheduled(fixedDelayString = "${uplink.polling.interval:30000}")
-    @Transactional
     public void processUnprocessedMessages() {
-        List<UplinkMessage> unprocessedMessages = uplinkMessageRepository.findByProcessedFalseOrderByCreatedAtAsc();
+        List<UplinkMessage> unprocessedMessages = uplinkMessageRepository.findByProcessedFalseOrderByPublishedAtAsc();
 
         if (!unprocessedMessages.isEmpty()) {
             log.info("Traitement de {} nouveaux messages uplink", unprocessedMessages.size());
@@ -58,7 +47,7 @@ public class UplinkMessageService {
 
         for (UplinkMessage message : unprocessedMessages) {
             try {
-                processMessage(message);
+                uplinkProcessingService.processMessage(message);
                 message.setProcessed(true);
                 uplinkMessageRepository.save(message);
             } catch (Exception e) {
@@ -68,126 +57,6 @@ public class UplinkMessageService {
                 uplinkMessageRepository.save(message);
             }
         }
-    }
-
-    /**
-     * Traite un message uplink individuel
-     */
-    @Transactional
-    public Parametres processMessage(UplinkMessage message) {
-        log.debug("Traitement du message ID={}, DevEUI={}", message.getId(), message.getDevEui());
-
-        // 1. Trouver le dispositif par DevEUI
-        Optional<Dispositif> dispositifOpt = dispositifRepository.findByDeveui(message.getDevEui());
-        if (dispositifOpt.isEmpty()) {
-            log.warn("Dispositif non trouvé pour DevEUI={}", message.getDevEui());
-            throw new RuntimeException("Dispositif non trouvé pour DevEUI: " + message.getDevEui());
-        }
-        Dispositif dispositif = dispositifOpt.get();
-
-        // 2. Parser le payload
-        String payload = message.getTextPayload();
-        if (payload == null || payload.isBlank()) {
-            throw new RuntimeException("Payload vide pour le message ID=" + message.getId());
-        }
-
-        String[] parts = payload.split(PAYLOAD_DELIMITER);
-        if (parts.length < EXPECTED_FIELDS) {
-            throw new RuntimeException("Format de payload invalide. Attendu " + EXPECTED_FIELDS
-                    + " champs (min), reçu " + parts.length + ". Payload: " + payload);
-        }
-
-        // 3. Extraire les valeurs
-        String idLocal = parts[0].trim();
-        BigDecimal poids = new BigDecimal(parts[1].trim());
-        BigDecimal taille = new BigDecimal(parts[2].trim());
-        BigDecimal temperature = new BigDecimal(parts[3].trim());
-        int sys = Integer.parseInt(parts[4].trim());
-        int dia = Integer.parseInt(parts[5].trim());
-        int fcf = Integer.parseInt(parts[6].trim());
-        BigDecimal glycemie = new BigDecimal(parts[7].trim());
-        int age = Integer.parseInt(parts[8].trim());
-        int fcm = Integer.parseInt(parts[9].trim());
-
-        // Champs optionnels : SpO2 et DDR
-        Integer spo2 = null;
-        LocalDate ddr = null;
-
-        if (parts.length >= 11 && !parts[10].trim().isEmpty()) {
-            try {
-                spo2 = Integer.parseInt(parts[10].trim());
-            } catch (NumberFormatException e) {
-                log.warn("Format SpO2 invalide: {}", parts[10]);
-            }
-        }
-
-        if (parts.length >= 12 && !parts[11].trim().isEmpty()) {
-            try {
-                // Essayer plusieurs formats si nécessaire, ici on attend yyyy-MM-dd
-                ddr = LocalDate.parse(parts[11].trim());
-            } catch (Exception e) {
-                log.warn("Format DDR invalide: {}", parts[11]);
-            }
-        }
-
-        // 4. Générer le codePatientUnique = DevEUI + "-" + ID_LOCAL
-        String codePatientUnique = message.getDevEui() + "-" + idLocal;
-        log.info("Code patient unique généré: {}", codePatientUnique);
-
-        // 5. Créer l'objet Parametres
-        Parametres parametres = new Parametres();
-        parametres.setIdentifiantPatient(codePatientUnique);
-        parametres.setDispositif(dispositif);
-        parametres.setPoidsPatient(poids);
-        parametres.setTaillePatient(taille);
-        parametres.setTemperature(temperature);
-        parametres.setPressionArterielleSystolique(sys);
-        parametres.setPressionArterielleDiastolique(dia);
-        parametres.setFrequenceFoetale(fcf);
-        parametres.setGlycemie(glycemie);
-        parametres.setAgePatient(age);
-        parametres.setFrequenceCardiaqueMere(fcm);
-        parametres.setSaturationOxygene(spo2);
-        parametres.setDateDernieresRegles(ddr);
-        parametres.setDateMesure(message.getCreatedAt() != null ? message.getCreatedAt() : LocalDateTime.now());
-
-        // ARCHIVAGE AUTOMATIQUE : Si le patient a déjà des mesures "en_attente", on les
-        // passe en "archive"
-        List<Parametres> mesuresEnAttente = parametresRepository.findByIdentifiantPatientAndStatut(
-                codePatientUnique,
-                StatutParametre.EN_ATTENTE);
-        if (!mesuresEnAttente.isEmpty()) {
-            mesuresEnAttente.forEach(p -> p.setStatut(StatutParametre.ARCHIVE));
-            parametresRepository.saveAll(mesuresEnAttente);
-        }
-
-        parametres.setStatut(StatutParametre.EN_ATTENTE);
-
-        // 6. ACTIVER LE DISPOSITIF ET L'INFIRMIER
-        if (dispositif.getStatut() != com.polytechnique.backend.status.StatutDispositif.ACTIF &&
-                dispositif.getStatut() != com.polytechnique.backend.status.StatutDispositif.SUPPRIME) {
-            dispositif.setStatut(com.polytechnique.backend.status.StatutDispositif.ACTIF);
-        }
-
-        if (dispositif.getInfirmierLocal() != null) {
-            com.polytechnique.backend.entity.InfirmierLocal inf = dispositif.getInfirmierLocal();
-            if (inf.getStatut() != com.polytechnique.backend.status.StatutInfirmier.ACTIF &&
-                    inf.getStatut() != com.polytechnique.backend.status.StatutInfirmier.SUPPRIME) {
-                inf.setStatut(com.polytechnique.backend.status.StatutInfirmier.ACTIF);
-            }
-        }
-
-        // 6. Sauvegarder
-        Parametres saved = parametresRepository.save(parametres);
-        log.info("Parametres créés: ID={}, Patient={}", saved.getId(), codePatientUnique);
-
-        // Vérification des seuils de maintenance
-        seuilMaintenanceService.checkMaintenance(saved);
-
-        // Envoyer une notification temps réel
-        sseService.broadcast("NEW_PATIENT_DATA", saved.getIdentifiantPatient());
-
-        return saved;
     }
 
     /**
@@ -201,6 +70,6 @@ public class UplinkMessageService {
      * Récupère les derniers messages d'un dispositif
      */
     public List<UplinkMessage> getMessagesByDevEui(String devEui) {
-        return uplinkMessageRepository.findByDevEuiOrderByCreatedAtDesc(devEui);
+        return uplinkMessageRepository.findByDevEuiOrderByPublishedAtDesc(devEui);
     }
 }

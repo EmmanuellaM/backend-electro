@@ -1,0 +1,6 @@
+event:INIT
+data:Connected to MaterniCare Real-time System
+
+event:NEW_PATIENT_DATA
+data:A840411AB22C33D1-2
+

@@ -435,6 +435,7 @@ CREATE TABLE feedback_ia (
     id_feedback SERIAL PRIMARY KEY,
     age_patient INTEGER NOT NULL,
     poids_patient DOUBLE PRECISION NOT NULL,
+    taille_patient DOUBLE PRECISION,
     temperature DOUBLE PRECISION NOT NULL,
     pression_systolique INTEGER NOT NULL,
     pression_diastolique INTEGER NOT NULL,
@@ -473,30 +474,67 @@ CREATE INDEX idx_feedback_classe ON feedback_ia(classe_predite);
 -- ============================================================================
 -- TABLE : uplink_messages
 -- Messages LoRaWAN reçus de ChirpStack (LECTURE SEULE)
+-- Nouvelle structure : chaque paramètre médical a sa propre colonne
 -- ============================================================================
 CREATE TABLE uplink_messages (
+
+    -- Informations générales
     id SERIAL PRIMARY KEY,
-    application_id VARCHAR(100),
+    type VARCHAR(10),
+
+    -- Payload - identification application
+    application_id VARCHAR(50),
     application_name VARCHAR(100),
     device_name VARCHAR(100),
-    device_profile_name VARCHAR(100),
-    device_profile_id UUID,
-    dev_eui VARCHAR(50),
+    dev_eui VARCHAR(100),
+
+    -- TX Info
     frequency BIGINT,
-    dr INTEGER,
+    modulation VARCHAR(20),
+
+    -- LoRa modulation info
+    bandwidth INT,
+    spreading_factor INT,
+    code_rate VARCHAR(10),
+    polarization_inversion BOOLEAN,
+
+    -- Paramètres radio
     adr BOOLEAN,
-    f_cnt INTEGER,
-    f_port INTEGER,
-    data_base64 TEXT,
-    text_payload TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    dr INT,
+    f_cnt INT,
+    f_port INT,
+    data TEXT,
+
+    -- Données médicales (objectJSON décomposé)
+    age INT,
+    bpm_moyen INT,
+    ddr VARCHAR(20),
+    fcf INT,
+    glycemie DECIMAL(5,2),
+    id_patient INT,
+    poids DECIMAL(5,2),
+    taille DECIMAL(5,2),
+    temperature DECIMAL(5,2),
+    tension VARCHAR(20),
+    tension_dia INT,
+    tension_sys INT,
+
+    -- Autres informations
+    confirmed_uplink BOOLEAN,
+    dev_addr VARCHAR(100),
+    published_at TIMESTAMP,
+    device_profile_id VARCHAR(100),
+    device_profile_name VARCHAR(100),
+
+    -- Champ de traitement interne
     processed BOOLEAN DEFAULT FALSE
 );
 
 -- Index
 CREATE INDEX idx_uplink_deveui ON uplink_messages(dev_eui);
 CREATE INDEX idx_uplink_processed ON uplink_messages(processed);
-CREATE INDEX idx_uplink_created ON uplink_messages(created_at);
+CREATE INDEX idx_uplink_published ON uplink_messages(published_at);
+CREATE INDEX idx_uplink_id_patient ON uplink_messages(id_patient);
 
 -- ============================================================================
 -- TABLE : password_reset_token
@@ -550,16 +588,11 @@ CREATE TABLE seuil_maintenance (
 -- Insérer l'enregistrement par défaut
 INSERT INTO seuil_maintenance (id) VALUES (1) ON CONFLICT DO NOTHING;
 
--- Trigger updated_at pour seuil_maintenance
-CREATE TRIGGER update_seuil_maintenance_updated_at
-    BEFORE UPDATE ON seuil_maintenance
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 -- ============================================================================
--- TRIGGERS
+-- TRIGGERS GÉNÉRIQUES
 -- ============================================================================
 
--- Trigger pour mettre à jour updated_at automatiquement
+-- Fonction pour mettre à jour updated_at automatiquement
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -567,6 +600,11 @@ BEGIN
     RETURN NEW;
 END;
 $$ language 'plpgsql';
+
+-- Trigger updated_at pour seuil_maintenance
+CREATE TRIGGER update_seuil_maintenance_updated_at
+    BEFORE UPDATE ON seuil_maintenance
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Appliquer le trigger sur les tables concernées
 CREATE TRIGGER update_administrateur_updated_at
@@ -608,80 +646,29 @@ CREATE TRIGGER trigger_update_param_on_diag
     AFTER INSERT ON diagnostic
     FOR EACH ROW EXECUTE FUNCTION update_parametres_statut_on_diagnostic();
 
+/* 
 -- ============================================================================
 -- TRIGGER : Traitement automatique des uplink_messages vers parametres
--- Ce trigger parse le payload LoRaWAN et crée automatiquement les paramètres
+-- Lit les colonnes médicales individuelles et crée les paramètres
 -- ============================================================================
 
 -- Fonction trigger pour traiter les messages uplink
 CREATE OR REPLACE FUNCTION fn_process_uplink_message()
 RETURNS TRIGGER AS $$
 DECLARE
-    v_id_local TEXT;
-    v_poids DECIMAL(10,2);
-    v_taille DECIMAL(10,2);
-    v_temperature DECIMAL(5,2);
-    v_sys INTEGER;
-    v_dia INTEGER;
-    v_fcf INTEGER;
-    v_glycemie DECIMAL(10,2);
-    v_age INTEGER;
-    v_fcm INTEGER;
-    v_spo2 INTEGER;
-    v_ddr DATE;
     v_code_patient TEXT;
     v_dispositif_id INTEGER;
-    v_parts TEXT[];
-    v_nb_parts INTEGER;
+    v_ddr DATE;
 BEGIN
-    -- Vérifier que le payload n'est pas vide
-    IF NEW.text_payload IS NULL OR NEW.text_payload = '' THEN
-        RAISE NOTICE 'Payload vide pour uplink_message id=%', NEW.id;
+    -- Vérifier que l'id_patient est présent
+    IF NEW.id_patient IS NULL THEN
+        RAISE NOTICE 'id_patient manquant pour uplink_message id=%', NEW.id;
         NEW.processed := TRUE;
         RETURN NEW;
     END IF;
 
-    -- Séparer le payload par le délimiteur ';'
-    -- Format attendu: ID_LOCAL;POIDS;TAILLE;TEMP;SYS;DIA;FCF;GLYC;AGE[;SPO2;DDR]
-    v_parts := string_to_array(NEW.text_payload, ';');
-    v_nb_parts := array_length(v_parts, 1);
-
-    -- Vérifier le nombre de champs (minimum 10, max 12)
-    IF v_nb_parts < 10 THEN
-        RAISE NOTICE 'Format payload invalide. Attendu >= 10 champs, reçu %. Payload: %', 
-                     v_nb_parts, NEW.text_payload;
-        NEW.processed := TRUE;
-        RETURN NEW;
-    END IF;
-
-    -- Extraire les valeurs
-    BEGIN
-        v_id_local := TRIM(v_parts[1]);
-        v_poids := CAST(TRIM(v_parts[2]) AS DECIMAL(10,2));
-        v_taille := CAST(TRIM(v_parts[3]) AS DECIMAL(10,2));
-        v_temperature := CAST(TRIM(v_parts[4]) AS DECIMAL(5,2));
-        v_sys := CAST(TRIM(v_parts[5]) AS INTEGER);
-        v_dia := CAST(TRIM(v_parts[6]) AS INTEGER);
-        v_fcf := CAST(TRIM(v_parts[7]) AS INTEGER);
-        v_glycemie := CAST(TRIM(v_parts[8]) AS DECIMAL(10,2));
-        v_age := CAST(TRIM(v_parts[9]) AS INTEGER);
-        v_fcm := CAST(TRIM(v_parts[10]) AS INTEGER);
-
-        -- Champs optionnels (SpO2 et DDR)
-        IF v_nb_parts >= 11 AND TRIM(v_parts[11]) != '' THEN
-            v_spo2 := CAST(TRIM(v_parts[11]) AS INTEGER);
-        END IF;
-        IF v_nb_parts >= 12 AND TRIM(v_parts[12]) != '' THEN
-            v_ddr := CAST(TRIM(v_parts[12]) AS DATE);
-        END IF;
-    EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'Erreur de parsing du payload: %. Payload: %', SQLERRM, NEW.text_payload;
-        NEW.processed := TRUE;
-        RETURN NEW;
-    END;
-
-    -- Générer le code patient unique: DevEUI-ID_LOCAL
-    v_code_patient := NEW.dev_eui || '-' || v_id_local;
+    -- Générer le code patient unique: dev_eui-id_patient
+    v_code_patient := NEW.dev_eui || '-' || NEW.id_patient;
 
     -- Trouver le dispositif correspondant au DevEUI
     SELECT id_dispositif INTO v_dispositif_id 
@@ -694,14 +681,23 @@ BEGIN
         RETURN NEW;
     END IF;
 
+    -- Convertir la DDR si présente
+    v_ddr := NULL;
+    IF NEW.ddr IS NOT NULL AND NEW.ddr != '' THEN
+        BEGIN
+            v_ddr := CAST(NEW.ddr AS DATE);
+        EXCEPTION WHEN OTHERS THEN
+            RAISE NOTICE 'Format DDR invalide: %. Erreur: %', NEW.ddr, SQLERRM;
+        END;
+    END IF;
+
     -- ARCHIVAGE AUTOMATIQUE : Passer les anciennes mesures "en_attente" en "archive"
-    -- pour ce patient spécifique avant d'insérer la nouvelle
     UPDATE parametres 
     SET statut = 'archive' 
     WHERE identifiant_patient = v_code_patient 
-    AND statut = 'en_attente';
+      AND statut = 'en_attente';
 
-    -- Insérer dans la table parametres
+    -- Insérer dans la table parametres (lecture directe des colonnes)
     INSERT INTO parametres (
         identifiant_patient,
         id_dispositif,
@@ -714,7 +710,6 @@ BEGIN
         frequence_cardiaque_mere,
         glycemie,
         age_patient,
-        saturation_oxygene,
         date_dernieres_regles,
         date_mesure,
         statut,
@@ -722,18 +717,17 @@ BEGIN
     ) VALUES (
         v_code_patient,
         v_dispositif_id,
-        v_poids,
-        v_taille,
-        v_temperature,
-        v_sys,
-        v_dia,
-        v_fcf,
-        v_fcm,
-        v_glycemie,
-        v_age,
-        v_spo2,
+        NEW.poids,
+        NEW.taille,
+        NEW.temperature,
+        NEW.tension_sys,
+        NEW.tension_dia,
+        NEW.fcf,
+        NEW.bpm_moyen,
+        NEW.glycemie,
+        NEW.age,
         v_ddr,
-        COALESCE(NEW.created_at, NOW()),
+        COALESCE(NEW.published_at, NOW()),
         'en_attente',
         NOW()
     );
@@ -755,7 +749,8 @@ CREATE TRIGGER trg_process_uplink_message
 
 -- Commentaires descriptifs
 COMMENT ON FUNCTION fn_process_uplink_message() IS 
-'Fonction trigger qui parse automatiquement les messages uplink LoRaWAN et crée les entrées Parametres correspondantes. Format payload: ID_LOCAL;POIDS;TAILLE;TEMP;SYS;DIA;FCF;GLYC;AGE[;SPO2;DDR]';
+'Fonction trigger qui lit les colonnes médicales individuelles des messages uplink LoRaWAN et crée les entrées Parametres correspondantes. Colonnes: id_patient, poids, taille, temperature, tension_sys, tension_dia, fcf, glycemie, age, bpm_moyen, ddr';
 
 COMMENT ON TRIGGER trg_process_uplink_message ON uplink_messages IS 
 'Trigger déclenché à chaque insertion dans uplink_messages pour créer automatiquement les Parametres';
+*/
